@@ -1,0 +1,399 @@
+:root {
+  --bg-deep: #050505;
+  --primary: #7b61ff; /* Purple */
+  --secondary: #ff8a17; /* Orange */
+  --accent: #22d3ee; /* Cyan */
+  --text-main: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.3);
+  
+  --font-heading: 'Outfit', sans-serif;
+  --font-main: 'Inter', sans-serif;
+  
+  --transition-cinematic: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  --section-gap: 20vh;
+  
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glow-primary: 0 0 30px rgba(123, 97, 255, 0.2);
+  --glow-secondary: 0 0 30px rgba(255, 138, 23, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+  text-align: center;
+}
+
+/* --- CINEMATIC ESSENTIALS --- */
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.glow-reveal {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 15px rgba(123, 97, 255, 0.4));
+}
+
+/* Layout */
+.chapter-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  margin-bottom: var(--section-gap);
+  position: relative;
+}
+
+.container {
+  max-width: 1000px;
+  width: 100%;
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.hero-headline {
+  font-size: clamp(3rem, 12vw, 8.5rem);
+  line-height: 0.85;
+  font-weight: 950;
+}
+
+.chapter-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.8em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  display: block;
+  font-weight: 900;
+  opacity: 0.8;
+  text-shadow: 0 0 15px rgba(123, 97, 255, 0.3);
+}
+
+.chapter-title {
+  font-size: clamp(4rem, 11vw, 9rem);
+  margin-bottom: 4rem;
+  font-weight: 950;
+  line-height: 0.9;
+}
+
+/* NEW: Pill-Shaped Team Card (Architects / Team Page) */
+.pill-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.2rem 2.5rem 1.2rem 1.2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 100px; /* Fully rounded */
+  transition: var(--transition-cinematic);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+
+.pill-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 40px rgba(123, 97, 255, 0.15);
+}
+
+.pill-avatar-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(45deg, var(--primary), var(--secondary));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pill-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111;
+  border: 2px solid #050505;
+}
+
+.pill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pill-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.pill-role {
+  font-size: 0.7rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+/* Zig Zag Layout */
+.zig-zag-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15vh;
+  position: relative;
+  width: 100%;
+}
+
+.zig-zag-row {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+}
+
+.zig-zag-row.reverse {
+  flex-direction: row-reverse;
+}
+
+.zig-zag-content {
+  flex: 1;
+  text-align: left;
+}
+
+.zig-zag-row.reverse .zig-zag-content {
+  text-align: right;
+}
+
+.zig-zag-image-wrapper {
+  flex: 1.2;
+  position: relative;
+  aspect-ratio: 16/10;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.zig-zag-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.zig-zag-image-wrapper:hover .zig-zag-image {
+  transform: scale(1.08);
+}
+
+/* Forge Project Grid */
+.forge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  width: 100%;
+}
+
+.forge-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  padding: 3rem;
+  text-align: left;
+  transition: var(--transition-cinematic);
+}
+
+.forge-card:hover {
+  transform: translateY(-12px);
+  border-color: var(--secondary);
+  box-shadow: var(--glow-secondary);
+}
+
+.tech-tag {
+  font-size: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  color: var(--secondary);
+  border: 1px solid rgba(255, 138, 23, 0.2);
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(255, 138, 23, 0.05);
+}
+
+/* Infinite Scroll */
+.infinite-scroll-container {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* FIX: Align to left end */
+  gap: 2rem;
+}
+
+.infinite-scroll-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: scroll 40s linear infinite;
+  padding-left: 0; /* Ensure no leading space */
+}
+
+.infinite-scroll-track.reverse {
+  animation: scroll-reverse 40s linear infinite;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.bg-text-scrolling {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18rem;
+  font-weight: 950;
+  color: rgba(255, 255, 255, 0.015);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Buttons */
+.btn-catalyst-large {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem 4.5rem;
+  font-size: 1.1rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.btn-catalyst-large:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(123, 97, 255, 0.4);
+}
+
+/* Text Gradients */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.scan-line-text::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  animation: scan-move 4s infinite cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes scan-move {
+  0% { transform: translateX(-100%); }
+  35% { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; filter: blur(20px) brightness(1); }
+  50% { opacity: 0.8; filter: blur(30px) brightness(1.5); }
+}
+
+.system-pulse {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
+
+/* Stats Grid Responsiveness */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .zig-zag-row, .zig-zag-row.reverse {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  .zig-zag-content {
+    text-align: center !important;
+  }
+}
