@@ -27,8 +27,13 @@ dist_test
 # Confidential and Temp
 .env
 .env.*
+APIKEY.txt
 apikey.txt
 build_log*.txt
 lint_report.txt
+~$*
+*.xlsx
+*.sql
+!migrations.sql
 website images/
 .gemini/

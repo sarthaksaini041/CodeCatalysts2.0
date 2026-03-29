@@ -11,6 +11,7 @@ import Chapter_Journey from '../components/Chapter_Journey';
 import Chapter_Forge from '../components/Chapter_Forge';
 import Chapter_Architects from '../components/Chapter_Architects';
 import UnifiedBackground from '../components/UnifiedBackground';
+import Footer from '../components/Footer';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -53,9 +54,7 @@ const LandingPage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span style={{ fontSize: '0.9rem', letterSpacing: '0.8em', textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '3rem', display: 'block', fontWeight: 900 }}>
-               THE FINAL CALL
-            </span>
+            {/* Removed THE FINAL CALL header as requested */}
             <h2 className="hero-headline" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', marginBottom: '2rem', lineHeight: 0.9 }}>
               JOIN THE <br />
               <span className="text-gradient">BUILDERS.</span>
@@ -83,38 +82,13 @@ const LandingPage = () => {
               onClick={() => navigate('/apply')}
               className="btn-catalyst-large"
             >
-              ASSEMBLY_REQUIRED <Sparkles size={28} />
+              BECOME A CATALYST <Sparkles size={28} />
             </motion.button>
           </motion.div>
         </div>
       </section>
 
-      <footer style={{ padding: '10rem 2rem 5rem', background: 'linear-gradient(to top, #020202, transparent)' }}>
-         <div className="container" style={{ opacity: 0.4 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '2rem' }}>
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ textTransform: 'uppercase', letterSpacing: '0.4em', fontSize: '1rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem' }}>
-                   CODE CATALYSTS
-                </div>
-                <div style={{ fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                   BUILDERS COLLECTIVE // GLA UNIVERSITY
-                </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>
-                   © 2026 ALL RIGHTS RESERVED. <br />
-                   ASSEMBLED IN THE SHADOWS.
-                </div>
-              </div>
-            </div>
-            <div style={{ 
-              marginTop: '4rem', 
-              height: '1px', 
-              width: '100%', 
-              background: 'linear-gradient(to right, transparent, var(--glass-border), transparent)' 
-            }} />
-         </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
