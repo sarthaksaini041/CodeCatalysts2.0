@@ -12,10 +12,6 @@ const ShiftManager = () => {
     const [chapterTitle, setChapterTitle] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        fetchShiftData();
-    }, []);
-
     const fetchShiftData = async () => {
         setLoading(true);
         const { data: cardsData } = await supabase.from('chapter2_cards').select('*').order('order_index', { ascending: true });
@@ -27,6 +23,10 @@ const ShiftManager = () => {
         setChapterTitle(titleData?.content || 'THE SHIFT');
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchShiftData();
+    }, []);
 
     const handleSaveTitle = async () => {
         setIsSaving(true);

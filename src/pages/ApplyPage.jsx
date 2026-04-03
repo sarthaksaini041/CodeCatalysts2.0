@@ -513,7 +513,7 @@ const ApplyPage = () => {
         .apply-container {
           min-height: 100vh;
           width: 100vw;
-          background: radial-gradient(circle at top right, #1a1a2e, #050505);
+          background: transparent;
           display: flex;
           align-items: center;
           justify-content: center;

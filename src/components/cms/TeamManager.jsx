@@ -12,16 +12,17 @@ const TeamManager = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-        fetchTeamData();
-    }, []);
-
     const fetchTeamData = async () => {
         setLoading(true);
         const { data } = await supabase.from('team_members').select('*').order('order_index', { ascending: true }).order('name', { ascending: true });
         setMembers(data || []);
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchTeamData();
+    }, []);
+
 
     const filteredMembers = members.filter(member => 
         member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

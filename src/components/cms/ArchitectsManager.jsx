@@ -11,10 +11,6 @@ const ArchitectsManager = () => {
     const [chapterTitle, setChapterTitle] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        fetchArchitectsData();
-    }, []);
-
     const fetchArchitectsData = async () => {
         setLoading(true);
         const { data: itemsData } = await supabase.from('chapter5_showcase').select('*').order('order_index', { ascending: true });
@@ -24,6 +20,11 @@ const ArchitectsManager = () => {
         setChapterTitle(titleData?.content || 'THE NETWORK');
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchArchitectsData();
+    }, []);
+
 
     const handleSaveTitle = async () => {
         setIsSaving(true);

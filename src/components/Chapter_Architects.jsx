@@ -4,13 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useCMS } from '../hooks/useCMS';
 import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
 
-const MemberCard = ({ person, accent, navigate }) => (
+const MemberCard = ({ person, accent }) => (
     <motion.div
         className="pill-card"
         style={{ width: '380px', flexShrink: 0, background: 'rgba(255,255,255,0.02)' }}
         whileHover={{ scale: 1.02, borderColor: accent || 'var(--secondary)', background: 'rgba(255,255,255,0.05)', boxShadow: `0 0 20px ${accent}22` }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => navigate('/team')}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
         <div className="pill-avatar-wrap" style={{ 
             width: '56px', 
@@ -34,8 +33,7 @@ const MemberCard = ({ person, accent, navigate }) => (
     </motion.div>
 );
 
-const ScrollingTrack = ({ items, duration, reverse = false, accent, navigate }) => {
-    const [isPaused, setIsPaused] = React.useState(false);
+const ScrollingTrack = ({ items, duration, reverse = false, accent }) => {
     const displayItems = React.useMemo(() => (items.length > 0 ? [...items, ...items] : []), [items]);
 
     if (items.length === 0) return null;
@@ -44,11 +42,9 @@ const ScrollingTrack = ({ items, duration, reverse = false, accent, navigate }) 
         <div className="infinite-scroll-container" style={{ overflow: 'hidden', width: '100vw', margin: '1rem 0' }}>
             <motion.div 
                 className="infinite-scroll-track" 
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
                 animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
                 transition={{ 
-                    duration: isPaused ? 1000000 : duration, 
+                    duration: duration, 
                     ease: "linear", 
                     repeat: Infinity,
                     repeatType: "loop"
@@ -57,11 +53,11 @@ const ScrollingTrack = ({ items, duration, reverse = false, accent, navigate }) 
                     display: 'flex', 
                     gap: '2rem', 
                     width: 'max-content',
-                    cursor: 'pointer'
+                    cursor: 'default'
                 }}
             >
                 {displayItems.map((member, i) => (
-                    <MemberCard key={i} person={member} accent={accent} navigate={navigate} />
+                    <MemberCard key={i} person={member} accent={accent} />
                 ))}
             </motion.div>
         </div>
@@ -91,7 +87,6 @@ const Chapter_Architects = () => {
         const all = teamMembers.map(m => ({ ...m, image: m.image_url }));
         const third = Math.ceil(all.length / 3);
         row1Items = all.slice(0, third);
-        row2Items = all.slice(third, index => index < 2 * third ? all[index] : null).filter(Boolean); // Safety slice
         row2Items = all.slice(third, 2 * third);
         row3Items = all.slice(2 * third);
     }
@@ -130,9 +125,9 @@ const Chapter_Architects = () => {
             </div>
 
             <div className="scrolling-rows-container" style={{ margin: '3rem 0', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <ScrollingTrack items={row1Items} duration={35} accent="var(--primary)" navigate={navigate} />
-              <ScrollingTrack items={row2Items} duration={50} reverse={true} accent="var(--secondary)" navigate={navigate} />
-              <ScrollingTrack items={row3Items} duration={40} accent="var(--accent)" navigate={navigate} />
+              <ScrollingTrack items={row1Items} duration={60} accent="var(--primary)" />
+              <ScrollingTrack items={row2Items} duration={80} reverse={true} accent="var(--secondary)" />
+              <ScrollingTrack items={row3Items} duration={70} accent="var(--accent)" />
             </div>
 
             <div className="container" style={{ marginTop: '4rem', position: 'relative', zIndex: 1, textAlign: 'center' }}>
@@ -150,16 +145,7 @@ const Chapter_Architects = () => {
                 </motion.button>
             </div>
 
-            <div style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '20vh',
-                background: 'linear-gradient(to top, var(--bg-deep), transparent)',
-                zIndex: 2,
-                pointerEvents: 'none'
-            }} />
+            {/* Bottom overlay removed to prevent background breakage */}
         </section>
     );
 };

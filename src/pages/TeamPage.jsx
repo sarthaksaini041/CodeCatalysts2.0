@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +59,14 @@ const SectionHeader = ({ title }) => (
 // ── Expanded Profile Modal ───────────────────────────────────────────
 
 const ExpandedProfile = ({ person, onClose }) => {
+  useEffect(() => {
+    // Lock body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   if (!person) return null;
 
   let displayRole = person.role;
@@ -65,13 +74,14 @@ const ExpandedProfile = ({ person, onClose }) => {
   if (person.role === 'Rep') displayRole = "REPRESENTATIVE";
   if (person.role === 'Member') displayRole = "MEMBER";
 
-  return (
+  const modalContent = (
     <motion.div 
       className="profile-modal-backdrop"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
+      style={{ zIndex: 9999 }} // Ensure it's above everything including any relative parents
     >
       <motion.div 
         className="profile-modal-card"
@@ -109,6 +119,8 @@ const ExpandedProfile = ({ person, onClose }) => {
       </motion.div>
     </motion.div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 // ── Card Components ────────────────────────────────────────────────────
@@ -214,7 +226,7 @@ export default function TeamPage() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+    <div className="min-h-screen bg-[#000000] flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>
   );
@@ -307,14 +319,17 @@ export default function TeamPage() {
       </main>
 
       {/* Return Button */}
-      <motion.button
-        whileHover={{ x: -10, backgroundColor: 'rgba(255,255,255,0.1)' }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => navigate('/')}
-        className="return-root-btn"
-      >
-        <ChevronLeft size={16} /> RETURN
-      </motion.button>
+      {createPortal(
+        <motion.button
+          whileHover={{ x: -10, backgroundColor: 'rgba(255,255,255,0.1)' }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/')}
+          className="return-root-btn"
+        >
+          <ChevronLeft size={16} /> RETURN
+        </motion.button>,
+        document.body
+      )}
 
       <Footer />
     </div>

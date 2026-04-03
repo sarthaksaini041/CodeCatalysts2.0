@@ -10,11 +10,6 @@ const Footer = () => {
     const navigate = useNavigate();
     const { footerSettings, siteContent, teamMembers, projects, loading } = useCMS();
 
-    const engineersCount = teamMembers?.length || 0;
-    const buildsCount = projects?.length || 0;
-    const formattedEngineers = `${Math.floor(engineersCount / 10) * 10}+`;
-    const formattedBuilds = `${Math.floor(buildsCount / 5) * 5}+`;
-
     if (loading) return null;
 
     const scrollToTop = () => {
@@ -22,11 +17,10 @@ const Footer = () => {
     };
 
     const socialLinks = [
-        { icon: <LinkedInIcon size={20} />, href: footerSettings.linkedin_url || '#', label: 'LinkedIn' },
-        { icon: <GitHubIcon size={20} />, href: footerSettings.github_url || '#', label: 'GitHub' },
-        { icon: <InstagramIcon size={20} />, href: footerSettings.instagram_url || '#', label: 'Instagram' },
-        { icon: <Mail size={20} />, href: `mailto:${footerSettings.contact_email || '#'}`, label: 'Email' },
-    ];
+        { icon: <LinkedInIcon size={20} />, href: footerSettings.linkedin_url, label: 'LinkedIn' },
+        { icon: <GitHubIcon size={20} />, href: footerSettings.github_url, label: 'GitHub' },
+        { icon: <InstagramIcon size={20} />, href: footerSettings.instagram_url, label: 'Instagram' },
+    ].filter(link => link.href && link.href !== '#' && link.href.trim() !== '');
 
     return (
         <motion.footer 
@@ -35,7 +29,6 @@ const Footer = () => {
             viewport={{ once: true }}
             style={{ 
                 padding: '10rem 2rem 4rem', 
-                background: 'linear-gradient(to top, #020202, transparent)',
                 position: 'relative',
                 zIndex: 10
             }}
@@ -71,7 +64,7 @@ const Footer = () => {
                             fontWeight: 900,
                             marginBottom: '2rem'
                         }}>
-                            ENGINEERED FOR EXCELLENCE.
+                            {footerSettings.tagline || "ENGINEERED FOR EXCELLENCE."}
                         </div>
                         <p style={{ 
                             fontSize: '1rem', 
@@ -80,9 +73,35 @@ const Footer = () => {
                             maxWidth: '380px',
                             marginBottom: '2.5rem'
                         }}>
-                            A living system of builders, designers, and visionaries growing as one. We don't just build code; we build the future of collective intelligence.
+                            {footerSettings.footer_text || "Building the future of collective intelligence."}
                         </p>
                         
+                        {/* SOCIAL LINKS */}
+                        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                            {socialLinks.map((social) => (
+                                <motion.a
+                                    key={social.label}
+                                    href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    whileHover={{ y: -5, color: '#fff', borderColor: 'var(--primary)' }}
+                                    style={{ 
+                                        width: '44px', 
+                                        height: '44px', 
+                                        borderRadius: '12px', 
+                                        background: 'rgba(255,255,255,0.03)', 
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: 'rgba(255,255,255,0.4)',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    {social.icon}
+                                </motion.a>
+                            ))}
+                        </div>
                     </motion.div>
 
                     {/* COLUMN 2: SYSTEM */}
@@ -101,7 +120,7 @@ const Footer = () => {
                             {['Genesis', 'The Shift', 'The Journey', 'The Forge', 'The Network'].map(link => (
                                 <motion.a 
                                     key={link}
-                                    href="#"
+                                    href={`#${link.toLowerCase().replace(' ', '-')}`}
                                     whileHover={{ x: 5, color: '#fff' }}
                                     style={{ color: 'var(--text-dim)', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500 }}
                                 >
@@ -161,9 +180,10 @@ const Footer = () => {
                         letterSpacing: '0.2em', 
                         textTransform: 'uppercase', 
                         fontWeight: 700,
-                        color: '#fff'
+                        color: '#fff',
+                        textAlign: 'center'
                     }}>
-                        © 2026 CODE CATALYSTS. ALL RIGHTS RESERVED.
+                        {siteContent.footer_copyright || "© 2026 CODE CATALYSTS. ALL RIGHTS RESERVED."}
                     </div>
                 </motion.div>
             </motion.div>

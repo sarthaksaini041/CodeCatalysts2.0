@@ -9,7 +9,7 @@ main {
 .system-footer {
   padding: 10rem 2rem 4rem;
   border-top: 1px solid var(--glass-border);
-  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.02));
+  background: transparent !important;
 }
 
 .footer-content {
@@ -355,7 +355,7 @@ main {
 
 .creation-visual {
   flex: 1;
-  background: linear-gradient(135deg, #050505, #111);
+  background: #000000;
   position: relative;
   overflow: hidden;
 }
@@ -430,9 +430,8 @@ main {
   top: 0;
   bottom: 0;
   width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--primary), transparent);
-  transform: translateX(-50%);
-  opacity: 0.3;
+  background: transparent !important;
+  opacity: 0.15;
 }
 
 .milestone-item {

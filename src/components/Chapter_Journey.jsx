@@ -148,18 +148,7 @@ const Chapter_Journey = () => {
             );
           })}
 
-          {/* Dramatic Background Pulse */}
-          <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '80vw',
-              height: '80vh',
-              background: 'radial-gradient(circle at center, rgba(123, 97, 255, 0.03) 0%, transparent 70%)',
-              zIndex: -1,
-              pointerEvents: 'none'
-          }} />
+          {/* Internal background pulse removed for unity */}
         </div>
       </div>
     </section>

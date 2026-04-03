@@ -15,10 +15,6 @@ const FooterSettings = () => {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        fetchFooterData();
-    }, []);
-
     const fetchFooterData = async () => {
         setLoading(true);
         const { data: footerData } = await supabase.from('footer_settings').select('*').maybeSingle();
@@ -28,6 +24,11 @@ const FooterSettings = () => {
         if (copyData) setCopyright(copyData.content);
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchFooterData();
+    }, []);
+
 
     const handleSave = async (e) => {
         e.preventDefault();

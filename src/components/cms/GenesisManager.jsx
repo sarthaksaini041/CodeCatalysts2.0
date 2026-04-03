@@ -11,10 +11,6 @@ const GenesisManager = () => {
     const [chapterTitle, setChapterTitle] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        fetchGenesisData();
-    }, []);
-
     const fetchGenesisData = async () => {
         setLoading(true);
         const { data: itemsData } = await supabase.from('chapter1_items').select('*').order('order_index', { ascending: true });
@@ -24,6 +20,11 @@ const GenesisManager = () => {
         setChapterTitle(titleData?.content || 'THE GENESIS');
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchGenesisData();
+    }, []);
+
 
     const handleSaveTitle = async () => {
         setIsSaving(true);

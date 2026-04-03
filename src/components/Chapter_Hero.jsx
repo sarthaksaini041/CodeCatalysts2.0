@@ -87,16 +87,7 @@ const Chapter_Hero = () => {
         </motion.div>
       </div>
 
-      {/* Narrative Gradient Overlay - Softens the bottom transition */}
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: '30vh',
-        background: 'linear-gradient(to bottom, transparent, var(--bg-deep))',
-        zIndex: 1
-      }} />
+      {/* Narrative Gradient Overlay removed to prevent background "breakage" cuts */}
     </section>
   );
 };

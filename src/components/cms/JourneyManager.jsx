@@ -11,10 +11,6 @@ const JourneyManager = () => {
     const [chapterTitle, setChapterTitle] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        fetchJourneyData();
-    }, []);
-
     const fetchJourneyData = async () => {
         setLoading(true);
         const { data: stepsData } = await supabase.from('chapter3_steps').select('*').order('order_index', { ascending: true });
@@ -24,6 +20,11 @@ const JourneyManager = () => {
         setChapterTitle(titleData?.content || 'THE JOURNEY');
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchJourneyData();
+    }, []);
+
 
     const handleSaveTitle = async () => {
         setIsSaving(true);

@@ -16,7 +16,7 @@ const iconMap = {
 };
 
 const Chapter_Shift = () => {
-  const { chapter2Cards, chapter2Stats, teamMembers, projects, siteContent, loading } = useCMS();
+  const { chapter2Cards, chapter2Stats, siteContent, loading } = useCMS();
 
   if (loading) return null;
 
@@ -25,7 +25,6 @@ const Chapter_Shift = () => {
 
   return (
     <section id="chapter-02" className="chapter-section shift-hybrid" style={{
-      background: 'radial-gradient(circle at 50% 10%, rgba(123, 97, 255, 0.05) 0%, transparent 60%)',
       padding: '15vh 2rem'
     }}>
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
@@ -160,14 +159,6 @@ const Chapter_Shift = () => {
           {chapter2Stats.map((stat, i) => {
             const count = i + 1;
             const accentColor = i % 2 === 0 ? 'var(--primary)' : 'var(--secondary)';
-            
-            // DYNAMIC COUNT LOGIC
-            let displayValue = stat.value;
-            if (stat.label === 'ENGINEERS') {
-                displayValue = `${teamMembers.length}+`;
-            } else if (stat.label === 'BUILDS') {
-                displayValue = `${projects.length}+`;
-            }
 
             return (
               <motion.div
@@ -217,7 +208,7 @@ const Chapter_Shift = () => {
                   position: 'relative',
                   lineHeight: 1
                 }}>
-                  {displayValue}
+                  {stat.value}
                 </h4>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'relative', zIndex: 1 }}>

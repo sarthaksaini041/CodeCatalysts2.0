@@ -46,16 +46,7 @@ const Chapter_Genesis = () => {
         </motion.div>
 
         <div className="zig-zag-container" style={{ position: 'relative' }}>
-          <div className="timeline-line" style={{
-            position: 'absolute',
-            left: '50%',
-            top: 0,
-            bottom: 0,
-            width: '1px',
-            background: 'linear-gradient(180deg, transparent, var(--primary), var(--secondary), transparent)',
-            opacity: 0.2,
-            transform: 'translateX(-50%)'
-          }} />
+          {/* Timeline line removed as per request to remove grids */}
 
           {points.map((point, index) => (
             <motion.div

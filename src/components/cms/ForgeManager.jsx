@@ -12,10 +12,6 @@ const ForgeManager = () => {
     const [chapterTitle, setChapterTitle] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        fetchProjectsData();
-    }, []);
-
     const fetchProjectsData = async () => {
         setLoading(true);
         const { data: projectsData } = await supabase.from('projects').select('*').order('order_index', { ascending: true });
@@ -25,6 +21,11 @@ const ForgeManager = () => {
         setChapterTitle(titleData?.content || 'THE FORGE');
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchProjectsData();
+    }, []);
+
 
     const handleSaveTitle = async () => {
         setIsSaving(true);
