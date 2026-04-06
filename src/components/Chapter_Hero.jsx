@@ -9,7 +9,7 @@ const Chapter_Hero = () => {
   const subtitle = siteContent?.site_subtitle || "A COLLECTIVE OF BUILDERS.";
 
   return (
-    <section className="chapter-section hero-spark" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <section id="hero" className="chapter-section hero-spark" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="container" style={{ zIndex: 1, textAlign: 'center' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

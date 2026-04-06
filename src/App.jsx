@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import SmoothScroll from './components/SmoothScroll';
 import GlobalBackground from './components/GlobalBackground';
+import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import TeamPage from './pages/TeamPage';
 import ApplyPage from './pages/ApplyPage';
@@ -19,6 +20,9 @@ const AppContent = () => {
     }
   }, []);
 
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/apply';
+
   return (
     <>
       <GlobalBackground />
@@ -27,6 +31,9 @@ const AppContent = () => {
       <div className="world-orb world-orb-purple"  aria-hidden="true" />
       <div className="world-orb world-orb-orange"  aria-hidden="true" />
       <div className="world-orb world-orb-cyan"    aria-hidden="true" />
+
+      {/* ── Navbar (hidden on admin pages) ── */}
+      {!isAdminRoute && <Navbar />}
 
       <SmoothScroll>
         <div className="app-container">
