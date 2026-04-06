@@ -2,22 +2,31 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
-const StatCard = ({ title, value, subValue, icon: Icon, color = 'primary', delay = 0 }) => {
+const StatCard = ({ title, value, subValue, icon: Icon, color = 'indigo', delay = 0 }) => {
+  const colorClasses = {
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    slate: 'bg-slate-50 text-slate-600 border-slate-100',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    rose: 'bg-rose-50 text-rose-600 border-rose-100',
+  };
+
+  const selectedColor = colorClasses[color] || colorClasses.indigo;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="bg-white/[0.03] backdrop-blur-xl border border-white/5 p-8 rounded-[32px] hover:bg-white/[0.05] transition-all group"
+      className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-6">
-        <div className={`w-12 h-12 rounded-2xl bg-${color}/10 flex items-center justify-center text-${color} border border-${color}/20 group-hover:scale-110 transition-transform`}>
-          <Icon size={24} />
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-transform group-hover:scale-105 ${selectedColor}`}>
+          <Icon size={20} />
         </div>
         {subValue && (
-          <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-white/20">
-            {subValue.includes('+') ? <TrendingUp size={12} className="text-emerald-400" /> : 
-             subValue.includes('-') ? <TrendingDown size={12} className="text-rose-400" /> : 
+          <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            {subValue.includes('+') ? <TrendingUp size={12} className="text-emerald-500" /> : 
+             subValue.includes('-') ? <TrendingDown size={12} className="text-rose-500" /> : 
              <Minus size={12} />}
             {subValue}
           </div>
@@ -25,16 +34,13 @@ const StatCard = ({ title, value, subValue, icon: Icon, color = 'primary', delay
       </div>
 
       <div className="space-y-1">
-        <h3 className="text-white font-black text-3xl tracking-tighter tabular-nums">
+        <h3 className="text-slate-900 font-bold text-2xl tracking-tight tabular-nums">
           {value}
         </h3>
-        <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.2em]">
+        <p className="text-slate-400 text-xs font-medium tracking-tight">
           {title}
         </p>
       </div>
-
-      {/* Decorative Glow */}
-      <div className={`absolute -bottom-4 -right-4 w-24 h-24 bg-${color}/10 rounded-full blur-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity`} />
     </motion.div>
   );
 };

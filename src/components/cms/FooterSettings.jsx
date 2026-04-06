@@ -50,92 +50,95 @@ const FooterSettings = () => {
         alert('Settings saved successfully!');
     };
 
-    if (loading) return <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    if (loading) return <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div></div>;
 
     return (
-        <div className="max-w-4xl space-y-12 pb-20">
-            <div className="bg-white/[0.02] border border-white/5 rounded-[32px] p-10">
-                <div className="flex items-center gap-4 mb-10">
-                    <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20">
-                        <Info size={24} className="text-primary" />
+        <div className="max-w-4xl space-y-12 pb-20 text-left">
+            <div className="bg-white border border-slate-200 rounded-[32px] p-10 shadow-sm">
+                <div className="flex items-center gap-4 mb-10 border-b border-slate-100 pb-8">
+                    <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-100">
+                        <Info size={24} className="text-indigo-600" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black uppercase tracking-widest text-white">FOOTER_SYSTEM_CONFIG</h3>
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-black">Global brand identity & social hooks</p>
+                        <h3 className="text-sm font-bold text-slate-900">Footer Configuration</h3>
+                        <p className="text-xs text-slate-400 font-medium">Global brand identity & social hooks</p>
                     </div>
                 </div>
 
-                <form onSubmit={handleSave} className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <form onSubmit={handleSave} className="space-y-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Footer Brand Text</label>
+                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Footer Brand Text</label>
                                 <textarea 
                                     value={settings.footer_text} 
                                     onChange={(e) => setSettings({...settings, footer_text: e.target.value})}
                                     rows={3}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-primary transition-all text-white"
+                                    className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900"
+                                    placeholder="Enter brand description..."
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Footer Tagline</label>
+                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Footer Tagline</label>
                                 <input 
                                     value={settings.tagline} 
                                     onChange={(e) => setSettings({...settings, tagline: e.target.value})}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-primary transition-all text-white"
+                                    className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900"
+                                    placeholder="Enter tagline..."
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Copyright Text</label>
+                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Copyright Text</label>
                                 <input 
                                     value={copyright} 
                                     onChange={(e) => setCopyright(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-primary transition-all text-white"
+                                    className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900"
+                                    placeholder="e.g. © 2024 Code Catalysts"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-6">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-4 px-2">SOCIAL_INTEGRATIONS</h4>
+                            <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 px-1">Connect Channels</h4>
                             <div className="space-y-4">
-                                <div className="relative">
-                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20"><LinkedInIcon size={18} /></div>
+                                <div className="group relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors"><LinkedInIcon size={18} /></div>
                                     <input 
                                         value={settings.linkedin_url} 
                                         onChange={(e) => setSettings({...settings, linkedin_url: e.target.value})}
                                         placeholder="LinkedIn URL"
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-5 py-4 text-sm focus:outline-none focus:border-[#0077b5] transition-all text-white"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900 shadow-sm"
                                     />
                                 </div>
-                                <div className="relative">
-                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20"><GitHubIcon size={18} /></div>
+                                <div className="group relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors"><Mail size={18} /></div>
                                     <input 
-                                        value={settings.github_url} 
-                                        onChange={(e) => setSettings({...settings, github_url: e.target.value})}
-                                        placeholder="GitHub URL"
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-5 py-4 text-sm focus:outline-none focus:border-white transition-all text-white"
+                                        value={settings.email} 
+                                        onChange={(e) => setSettings({...settings, email: e.target.value})}
+                                        placeholder="Contact Email"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900 shadow-sm"
                                     />
                                 </div>
-                                <div className="relative">
-                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20"><InstagramIcon size={18} /></div>
+                                <div className="group relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-rose-500 transition-colors"><InstagramIcon size={18} /></div>
                                     <input 
                                         value={settings.instagram_url} 
                                         onChange={(e) => setSettings({...settings, instagram_url: e.target.value})}
                                         placeholder="Instagram URL"
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-5 py-4 text-sm focus:outline-none focus:border-[#e1306c] transition-all text-white"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-rose-500 transition-all text-slate-900 shadow-sm"
                                     />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-6 border-t border-white/5">
+                    <div className="pt-8 border-t border-slate-100">
                         <button 
                             type="submit" 
                             disabled={isSaving}
-                            className="w-full py-5 bg-white text-black font-black text-xs uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all shadow-xl shadow-white/5 disabled:opacity-50"
+                            className="w-full py-4 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 disabled:opacity-50"
                         >
-                            {isSaving ? 'UPLOADING_CHANGES...' : 'SAVE_GLOBAL_SETTINGS'}
+                            {isSaving ? 'Saving Changes...' : 'Save Settings'}
                         </button>
                     </div>
                 </form>

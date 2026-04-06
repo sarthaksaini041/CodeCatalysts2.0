@@ -37,43 +37,35 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <div className="w-64 h-screen bg-white/[0.02] border-r border-white/5 flex flex-col p-6 fixed left-0 top-0 z-20 backdrop-blur-3xl">
-      <div className="flex items-center gap-3 mb-12 px-2">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center shadow-lg shadow-primary/20">
+    <div className="w-64 h-screen bg-white border-r border-slate-200 flex flex-col p-6 fixed left-0 top-0 z-20">
+      <div className="flex items-center gap-3 mb-10 px-2">
+        <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
           <ShieldCheck size={20} className="text-white" />
         </div>
         <div>
-          <h2 className="text-white font-black text-sm tracking-tight leading-none mb-1">ADMIN_HUB</h2>
-          <p className="text-[10px] text-white/30 font-black tracking-widest uppercase">Verified Access</p>
+          <h2 className="text-slate-900 font-bold text-sm tracking-tight leading-none mb-1">Admin Panel</h2>
+          <p className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Verified Access</p>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 space-y-1">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full group relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 ${
+              className={`w-full group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                 isActive 
-                  ? 'bg-white/5 text-white shadow-lg' 
-                  : 'text-white/40 hover:text-white hover:bg-white/[0.02]'
+                  ? 'bg-indigo-50 text-indigo-700 font-bold' 
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
-              {isActive && (
-                <motion.div 
-                  layoutId="activeNav"
-                  className="absolute left-0 w-1 h-6 bg-primary rounded-full"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-              
-              <item.icon size={18} className={`${isActive ? 'text-primary' : 'group-hover:text-white'} transition-colors`} />
-              <span className="text-xs font-black tracking-tight">{item.label}</span>
+              <item.icon size={18} className={`${isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'} transition-colors`} />
+              <span className="text-xs font-semibold">{item.label}</span>
               
               {isActive && (
-                <ChevronRight size={14} className="ml-auto text-white/20" />
+                <ChevronRight size={14} className="ml-auto text-indigo-300" />
               )}
             </button>
           );
@@ -82,10 +74,10 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
 
       <button
         onClick={handleLogout}
-        className="mt-auto flex items-center gap-3 px-4 py-4 rounded-2xl text-red-400/60 hover:text-red-400 hover:bg-red-500/5 transition-all text-xs font-black tracking-tight group"
+        className="mt-auto flex items-center gap-3 px-4 py-4 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all text-xs font-bold group"
       >
-        <LogOut size={18} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
-        <span>TERMINATE_SESSION</span>
+        <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
+        <span>Log Out</span>
       </button>
     </div>
   );

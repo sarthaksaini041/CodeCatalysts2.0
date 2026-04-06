@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '../../utils/supabase';
 import { Plus, Trash2, ArrowUp, ArrowDown, Edit3, X, Users } from 'lucide-react';
 import { LinkedInIcon, GitHubIcon } from '../icons/TechnicalIcons';
@@ -87,77 +88,77 @@ const TeamManager = () => {
         fetchTeamData();
     };
 
-    if (loading) return <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    if (loading) return <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div></div>;
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 px-2">
+        <div className="space-y-8 pb-20 text-left">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 px-1">
                 <div className="space-y-1">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-primary">TEAM_REPOSITORY</h3>
-                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-black">Manage members across GLA, IET & SRM hubs</p>
+                    <h3 className="text-sm font-bold text-slate-900">Team Repository</h3>
+                    <p className="text-xs text-slate-400 font-medium">Manage members across GLA, IET & SRM hubs</p>
                 </div>
                 
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
+                    <div className="relative flex-1 md:w-72">
                         <input 
                             type="text" 
-                            placeholder="SEARCH_MEMBERS..." 
+                            placeholder="Search members..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-white/5 border border-white/5 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest text-white focus:outline-none focus:border-primary/50 transition-all"
+                            className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-semibold text-slate-900 focus:outline-none focus:border-indigo-500 transition-all shadow-sm"
                         />
                     </div>
-                    <button onClick={() => setEditingMember({ image_url: '', role: 'Member' })} className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all text-white whitespace-nowrap">
-                        <Plus size={14} /> RECRUIT
+                    <button onClick={() => setEditingMember({ image_url: '', role: 'Member' })} className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-100 hover:bg-indigo-700 transition-all whitespace-nowrap">
+                        <Plus size={16} /> Add Member
                     </button>
                 </div>
             </div>
 
-            <div className="space-y-12">
+            <div className="space-y-10">
                 {categories.map(category => {
                     const categoryMembers = getMembersByCategory(category.roles);
                     if (categoryMembers.length === 0 && searchTerm) return null;
                     
                     return (
-                        <div key={category.id} className="space-y-6">
-                            <div className="flex items-center gap-4 px-2">
-                                <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] whitespace-nowrap">{category.label}</h4>
-                                <div className="h-[1px] w-full bg-white/5"></div>
-                                <span className="text-[10px] font-black text-primary/40">{categoryMembers.length}</span>
+                        <div key={category.id} className="space-y-4">
+                            <div className="flex items-center gap-4 px-1">
+                                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">{category.label.replace('_', ' ')}</h4>
+                                <div className="h-[1px] w-full bg-slate-100"></div>
+                                <span className="text-xs font-bold text-indigo-600/50">{categoryMembers.length}</span>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 gap-3">
                                 {categoryMembers.map((member) => {
                                     const realIndex = members.findIndex(m => m.id === member.id);
                                     return (
-                                        <div key={member.id} className="group relative bg-white/[0.02] border border-white/5 rounded-[24px] p-6 hover:bg-white/[0.04] transition-all flex items-center gap-6">
-                                            <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                        <div key={member.id} className="group relative bg-white border border-slate-200 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-md transition-all flex items-center gap-6">
+                                            <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 {member.image_url ? (
                                                     <img src={member.image_url} alt="" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <Users size={24} className="text-primary" />
+                                                    <Users size={24} className="text-slate-300" />
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-3 mb-1">
-                                                    <h4 className="text-sm font-black text-white truncate">{member.name}</h4>
-                                                    <span className="px-2 py-0.5 bg-primary/10 border border-primary/20 rounded-full text-[8px] font-black uppercase text-primary">{member.role === 'Rep' ? 'Representative' : member.role}</span>
+                                                    <h4 className="text-sm font-bold text-slate-900 truncate">{member.name}</h4>
+                                                    <span className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 rounded-full text-[9px] font-bold uppercase text-indigo-600">{member.role === 'Rep' ? 'Representative' : member.role}</span>
                                                 </div>
-                                                <p className="text-[10px] text-white/40 uppercase tracking-widest font-black">{member.university}</p>
+                                                <p className="text-xs text-slate-400 font-medium">{member.university}</p>
                                             </div>
-                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                                <button onClick={() => moveMember(realIndex, -1)} className="p-2 hover:text-primary transition-colors text-white/20 hover:scale-110"><ArrowUp size={16} /></button>
-                                                <button onClick={() => moveMember(realIndex, 1)} className="p-2 hover:text-primary transition-colors text-white/20 hover:scale-110"><ArrowDown size={16} /></button>
-                                                <button onClick={() => setEditingMember(member)} className="p-2 hover:text-primary transition-colors text-white/20 hover:scale-110"><Edit3 size={16} /></button>
-                                                <button onClick={() => handleDelete(member.id)} className="p-2 hover:text-red-500 transition-colors text-white/20 hover:scale-110"><Trash2 size={16} /></button>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                <button onClick={() => moveMember(realIndex, -1)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all" title="Move Up"><ArrowUp size={16} /></button>
+                                                <button onClick={() => moveMember(realIndex, 1)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all" title="Move Down"><ArrowDown size={16} /></button>
+                                                <button onClick={() => setEditingMember(member)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all" title="Edit"><Edit3 size={16} /></button>
+                                                <button onClick={() => handleDelete(member.id)} className="p-2 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-600 transition-all" title="Delete"><Trash2 size={16} /></button>
                                             </div>
                                         </div>
                                     );
                                 })}
                                 {categoryMembers.length === 0 && !searchTerm && (
-                                    <div className="py-8 border border-dashed border-white/5 rounded-[24px] flex flex-col items-center justify-center gap-3 opacity-30">
-                                        <Users size={24} />
-                                        <p className="text-[8px] font-black uppercase tracking-widest">NO_MEMBERS_IN_SECTION</p>
+                                    <div className="py-10 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center gap-3">
+                                        <Users size={32} className="text-slate-200" />
+                                        <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">No members found in this section</p>
                                     </div>
                                 )}
                             </div>
@@ -166,70 +167,74 @@ const TeamManager = () => {
                 })}
             </div>
 
-            <AnimatePresence>
-                {editingMember && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-[#050505]/80 backdrop-blur-md">
-                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-[#0a0a0a] border border-white/10 rounded-[32px] w-full max-w-2xl p-8 shadow-2xl maxHeight-[90vh] overflow-y-auto">
-                            <form onSubmit={handleSaveMember} className="space-y-6 text-white">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-sm font-black uppercase tracking-widest text-primary">EDIT_MEMBER_PROFILE</h3>
-                                    <button type="button" onClick={() => setEditingMember(null)} className="text-white/20 hover:text-white"><X size={20} /></button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-6">
-                                        <ImageUpload 
-                                            folder="team" 
-                                            currentImageUrl={editingMember.image_url} 
-                                            onUpload={(url) => setEditingMember(prev => ({ ...prev, image_url: url }))}
-                                            label="PROFILE_PICTURE"
-                                        />
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Full Name</label>
-                                            <input name="name" defaultValue={editingMember.name} required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white" />
-                                        </div>
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Role</label>
-                                            <select name="role" defaultValue={editingMember.role || 'Member'} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white appearance-none">
-                                                <option value="Lead" className="bg-[#0a0a0a]">Lead</option>
-                                                <option value="Rep" className="bg-[#0a0a0a]">Representative</option>
-                                                <option value="Member" className="bg-[#0a0a0a]">Member</option>
-                                            </select>
-                                        </div>
+            {/* Modals */}
+            {createPortal(
+                <AnimatePresence>
+                    {editingMember && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm px-4">
+                            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                                <form onSubmit={handleSaveMember} className="space-y-6 text-slate-900">
+                                    <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                                        <h3 className="text-lg font-bold text-slate-900">Edit Member Profile</h3>
+                                        <button type="button" onClick={() => setEditingMember(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"><X size={20} /></button>
                                     </div>
-                                    <div className="space-y-4">
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">University</label>
-                                            <input name="university" defaultValue={editingMember.university} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white" placeholder="GLA UNIVERSITY" />
-                                        </div>
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Tagline</label>
-                                            <input name="tagline" defaultValue={editingMember.tagline} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white" />
-                                        </div>
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">Bio</label>
-                                            <textarea name="bio" defaultValue={editingMember.bio} rows={3} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white" />
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="space-y-1 text-left">
-                                                <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">LinkedIn URL</label>
-                                                <input name="linkedin" defaultValue={editingMember.linkedin} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white" placeholder="#" />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-6">
+                                            <ImageUpload 
+                                                folder="team" 
+                                                currentImageUrl={editingMember.image_url} 
+                                                onUpload={(url) => setEditingMember(prev => ({ ...prev, image_url: url }))}
+                                                label="Profile Photo"
+                                            />
+                                            <div className="space-y-2 text-left">
+                                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Full Name</label>
+                                                <input name="name" defaultValue={editingMember.name} required className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="e.g. John Doe" />
                                             </div>
-                                            <div className="space-y-1 text-left">
-                                                <label className="text-[10px] font-black uppercase tracking-wider text-white/30 ml-2">GitHub URL</label>
-                                                <input name="github" defaultValue={editingMember.github} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-all text-white" placeholder="#" />
+                                            <div className="space-y-2 text-left">
+                                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Role</label>
+                                                <select name="role" defaultValue={editingMember.role || 'Member'} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all text-slate-700 appearance-none shadow-sm">
+                                                    <option value="Lead">Lead</option>
+                                                    <option value="Rep">Representative</option>
+                                                    <option value="Member">Member</option>
+                                                </select>
                                             </div>
                                         </div>
+                                        <div className="space-y-4">
+                                            <div className="space-y-2 text-left">
+                                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">University</label>
+                                                <input name="university" defaultValue={editingMember.university} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="e.g. GLA UNIVERSITY" />
+                                            </div>
+                                            <div className="space-y-2 text-left">
+                                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Tagline</label>
+                                                <input name="tagline" defaultValue={editingMember.tagline} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="e.g. Building the future" />
+                                            </div>
+                                            <div className="space-y-2 text-left">
+                                                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Bio</label>
+                                                <textarea name="bio" defaultValue={editingMember.bio} rows={3} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="A short bio..." />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="space-y-2 text-left">
+                                                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">LinkedIn</label>
+                                                    <input name="linkedin" defaultValue={editingMember.linkedin} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="#" />
+                                                </div>
+                                                <div className="space-y-2 text-left">
+                                                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">GitHub</label>
+                                                    <input name="github" defaultValue={editingMember.github} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="#" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex gap-4 pt-4 text-white">
-                                    <button type="button" onClick={() => setEditingMember(null)} className="flex-1 py-4 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all text-white">CANCEL</button>
-                                    <button type="submit" disabled={isSaving} className="flex-1 py-4 bg-primary text-black rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 transition-all font-bold">SAVE_PROFILE</button>
-                                </div>
-                            </form>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+                                    <div className="flex gap-4 pt-6 mt-4 border-t border-slate-100">
+                                        <button type="button" onClick={() => setEditingMember(null)} className="flex-1 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
+                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Save Profile</button>
+                                    </div>
+                                </form>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </div>
     );
 };

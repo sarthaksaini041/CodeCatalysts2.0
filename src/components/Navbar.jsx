@@ -2,16 +2,17 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Menu, X } from 'lucide-react';
+import { useCMS } from '../hooks/useCMS';
 import './Navbar.css';
 
 /* ─────────────────────────────────────────────
    Nav link definitions for the Landing page
 ───────────────────────────────────────────── */
 const LANDING_LINKS = [
-  { label: 'About',    href: '#chapter-01', sectionId: 'chapter-01' },
-  { label: 'Mission',  href: '#chapter-02', sectionId: 'chapter-02' },
+  { label: 'Genesis',  href: '#chapter-01', sectionId: 'chapter-01' },
+  { label: 'Shift',    href: '#chapter-02', sectionId: 'chapter-02' },
   { label: 'Journey',  href: '#chapter-03', sectionId: 'chapter-03' },
-  { label: 'Projects', href: '#chapter-04', sectionId: 'chapter-04' },
+  { label: 'Forge',    href: '#chapter-04', sectionId: 'chapter-04' },
   { label: 'Team',     href: '/team',        sectionId: null,          route: true },
 ];
 
@@ -29,6 +30,7 @@ const scrollToSection = (sectionId) => {
 };
 
 const Navbar = () => {
+  const { loading } = useCMS();
   const navigate = useNavigate();
   const location = useLocation();
   const isLanding = location.pathname === '/';
@@ -52,7 +54,7 @@ const Navbar = () => {
 
   /* ── Active section via Intersection Observer ── */
   useEffect(() => {
-    if (!isLanding) return;
+    if (!isLanding || loading) return;
     const sectionIds = LANDING_LINKS
       .filter(l => l.sectionId)
       .map(l => l.sectionId);
@@ -65,7 +67,7 @@ const Navbar = () => {
           }
         });
       },
-      { rootMargin: '-30% 0px -60% 0px', threshold: 0 }
+      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
     );
 
     sectionIds.forEach(id => {
@@ -99,8 +101,12 @@ const Navbar = () => {
     if (!isLanding) {
       if (location.pathname === '/team')  return LANDING_LINKS.findIndex(l => l.href === '/team');
       if (location.pathname === '/apply') return -1; // handled separately
+      return -1;
     }
-    return LANDING_LINKS.findIndex(l => l.sectionId === activeSection);
+    // Return -1 if no chapter is active (e.g. Header), hiding the box
+    if (!activeSection) return -1;
+    const idx = LANDING_LINKS.findIndex(l => l.sectionId === activeSection);
+    return idx;
   };
 
   useEffect(() => {
@@ -177,9 +183,9 @@ const Navbar = () => {
                 opacity: indicatorStyle.opacity,
               }}
               transition={{
-                left:    { type: 'tween', duration: 0.28, ease: [0.4, 0, 0.2, 1] },
-                width:   { type: 'tween', duration: 0.28, ease: [0.4, 0, 0.2, 1] },
-                opacity: { type: 'tween', duration: 0.18, ease: 'easeInOut' },
+                left:    { type: 'spring', stiffness: 380, damping: 30 },
+                width:   { type: 'spring', stiffness: 380, damping: 30 },
+                opacity: { duration: 0.25, ease: 'easeInOut' },
               }}
               aria-hidden="true"
             />
