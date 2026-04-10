@@ -1,25 +1,47 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Upload, X, Check, Loader2, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ImageCropper from './ImageCropper';
 import { uploadFile } from '../../utils/storage';
 
-const ImageUpload = ({ folder, onUpload, currentImageUrl, label = "UPLOAD_IMAGE" }) => {
+const ImageUpload = ({ folder, onUpload, currentImageUrl, label = "UPLOAD_IMAGE", aspect = 1 }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [previewUrl, setPreviewUrl] = useState(currentImageUrl);
+    const [imageToCrop, setImageToCrop] = useState(null);
+    const [selectedFileName, setSelectedFileName] = useState("");
     const fileInputRef = useRef(null);
 
-    const handleFile = async (file) => {
+
+    useEffect(() => {
+        setPreviewUrl(currentImageUrl);
+    }, [currentImageUrl]);
+
+    const handleFileSelect = (file) => {
         if (!file) return;
         if (!file.type.startsWith('image/')) {
             alert('Please upload an image file.');
             return;
         }
 
-        setIsUploading(true);
-        setUploadProgress(10); // Start progress simulation
+        setSelectedFileName(file.name);
+        const reader = new FileReader();
+        reader.onload = () => {
+            setImageToCrop(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
 
+    const handleCropComplete = async (croppedBlob) => {
+        setImageToCrop(null);
+        setIsUploading(true);
+        setUploadProgress(10);
+
+        // Convert blob to file
+        const file = new File([croppedBlob], selectedFileName, { type: 'image/jpeg' });
+        
         const { url, error } = await uploadFile(file, folder);
         
         if (error) {
@@ -36,7 +58,7 @@ const ImageUpload = ({ folder, onUpload, currentImageUrl, label = "UPLOAD_IMAGE"
         e.preventDefault();
         setIsDragging(false);
         const file = e.dataTransfer.files[0];
-        handleFile(file);
+        handleFileSelect(file);
     };
 
     return (
@@ -98,9 +120,25 @@ const ImageUpload = ({ folder, onUpload, currentImageUrl, label = "UPLOAD_IMAGE"
                     ref={fileInputRef} 
                     className="hidden" 
                     accept="image/*"
-                    onChange={(e) => handleFile(e.target.files[0])}
+                    onChange={(e) => handleFileSelect(e.target.files[0])}
                 />
             </div>
+
+            {/* Render ImageCropper via portal to avoid stacking context issues */}
+            {typeof document !== 'undefined' && createPortal(
+                <AnimatePresence>
+                    {imageToCrop && (
+                        <ImageCropper 
+                            image={imageToCrop} 
+                            aspect={aspect}
+                            label={label}
+                            onCropComplete={handleCropComplete}
+                            onCancel={() => setImageToCrop(null)}
+                        />
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </div>
     );
 };

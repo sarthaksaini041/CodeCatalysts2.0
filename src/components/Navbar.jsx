@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Menu, X } from 'lucide-react';
-import { useCMS } from '../hooks/useCMS';
-import './Navbar.css';
 
 /* ─────────────────────────────────────────────
    Nav link definitions for the Landing page
@@ -13,66 +11,145 @@ const LANDING_LINKS = [
   { label: 'Shift',    href: '#chapter-02', sectionId: 'chapter-02' },
   { label: 'Journey',  href: '#chapter-03', sectionId: 'chapter-03' },
   { label: 'Forge',    href: '#chapter-04', sectionId: 'chapter-04' },
-  { label: 'Team',     href: '/team',        sectionId: null,          route: true },
+  { label: 'Team',     href: '/team',        sectionId: null, route: true },
 ];
 
 const PRIMARY_ACTIONS = [
-  { label: 'Apply Now',   href: '/apply',        route: true, accent: true },
+  { label: 'Apply Now', href: '/apply', route: true, accent: true },
 ];
 
 /* ─────────────────────────────────────────────
-   Smooth-scroll helper (respects Lenis)
+   Smooth-scroll helper — respects Lenis
 ───────────────────────────────────────────── */
-const scrollToSection = (sectionId) => {
+const scrollToSection = (sectionId, immediate = false) => {
   const el = document.getElementById(sectionId);
-  if (!el) return;
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!el) return false;
+
+  if (window.lenis) {
+    window.lenis.scrollTo(el, {
+      offset: -20,
+      duration: immediate ? 0 : 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+  } else {
+    el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth', block: 'start' });
+  }
+  return true;
 };
 
+/* ─────────────────────────────────────────────
+   Wait for an element to appear in the DOM
+───────────────────────────────────────────── */
+const waitForElement = (id, timeout = 3000) =>
+  new Promise((resolve) => {
+    if (document.getElementById(id)) return resolve(true);
+    const observer = new MutationObserver(() => {
+      if (document.getElementById(id)) {
+        observer.disconnect();
+        resolve(true);
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(() => { observer.disconnect(); resolve(false); }, timeout);
+  });
+
 const Navbar = () => {
-  const { loading } = useCMS();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isLanding = location.pathname === '/';
+  const router = useRouter();
+  const isLanding = router.pathname === '/';
 
-  const [scrolled,      setScrolled]      = useState(false);
-  const [activeSection, setActiveSection] = useState(null);
-  const [mobileOpen,    setMobileOpen]    = useState(false);
+  const [scrolled,       setScrolled]       = useState(false);
+  const [activeSection,  setActiveSection]  = useState(null);
+  const [mobileOpen,     setMobileOpen]     = useState(false);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
-  const [hoveredIdx,    setHoveredIdx]    = useState(null);
+  const [hoveredIdx,     setHoveredIdx]     = useState(null);
 
-  const linkRefs      = useRef([]);
-  const navbarRef     = useRef(null);
-  const linksWrapRef  = useRef(null);
+  const linkRefs     = useRef([]);
+  const navbarRef    = useRef(null);
+  const linksWrapRef = useRef(null);
+  const lenisScrollY = useRef(0); // Track Lenis scroll position
 
-  /* ── Scroll shadow ── */
+  /* ── Track Lenis scroll for accurate position ── */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const trackLenis = () => {
+      if (window.lenis) {
+        lenisScrollY.current = window.lenis.scroll;
+      }
+    };
+
+    // Poll until Lenis is ready, then hook in
+    const pollInterval = setInterval(() => {
+      if (window.lenis) {
+        clearInterval(pollInterval);
+        window.lenis.on('scroll', ({ scroll }) => {
+          lenisScrollY.current = scroll;
+        });
+      }
+    }, 100);
+
+    return () => clearInterval(pollInterval);
   }, []);
 
-  /* ── Active section via Intersection Observer ── */
+  /* ── Scroll shadow (based on Lenis position) ── */
   useEffect(() => {
-    if (!isLanding || loading) return;
-    const sectionIds = LANDING_LINKS
-      .filter(l => l.sectionId)
-      .map(l => l.sectionId);
+    const onScroll = () => {
+      const pos = window.lenis ? lenisScrollY.current : window.scrollY;
+      setScrolled(pos > 40);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Also poll when Lenis is driving (doesn't fire window scroll always)
+    let rafId;
+    const poll = () => {
+      const pos = window.lenis ? lenisScrollY.current : window.scrollY;
+      setScrolled(pos > 40);
+      rafId = requestAnimationFrame(poll);
+    };
+    // Only poll on landing page where there's long scroll
+    if (isLanding) rafId = requestAnimationFrame(poll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isLanding]);
+
+  /* ── Active section via Intersection Observer (more reliable than scroll listener) ── */
+  useEffect(() => {
+    if (!isLanding) {
+      setActiveSection(null);
+      return;
+    }
+
+    const sectionIds = LANDING_LINKS.filter(l => l.sectionId).map(l => l.sectionId);
+    const visibleSections = new Map();
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
+          visibleSections.set(entry.target.id, entry.intersectionRatio);
         });
+
+        // Find the section with highest intersection ratio
+        let bestId = null;
+        let bestRatio = 0;
+        for (const [id, ratio] of visibleSections) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        }
+        setActiveSection(bestRatio > 0.05 ? bestId : null);
       },
-      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+      {
+        threshold: [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1.0],
+        rootMargin: '-10% 0px -20% 0px',
+      }
     );
 
-    sectionIds.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
+    const els = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    els.forEach(el => {
+      visibleSections.set(el.id, 0);
+      observer.observe(el);
     });
 
     return () => observer.disconnect();
@@ -81,7 +158,7 @@ const Navbar = () => {
   /* ── Floating indicator (pill glider) ── */
   const updateIndicator = useCallback((idx) => {
     const ref  = linkRefs.current[idx];
-    const wrap = linksWrapRef.current;   // parent of the indicator & links
+    const wrap = linksWrapRef.current;
     if (!ref || !wrap) return;
     const rRect = ref.getBoundingClientRect();
     const wRect = wrap.getBoundingClientRect();
@@ -96,44 +173,68 @@ const Navbar = () => {
     setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
   }, []);
 
-  /* ── Which link is "active" right now ── */
-  const getActiveIdx = () => {
+  const getActiveIdx = useCallback(() => {
     if (!isLanding) {
-      if (location.pathname === '/team')  return LANDING_LINKS.findIndex(l => l.href === '/team');
-      if (location.pathname === '/apply') return -1; // handled separately
+      if (router.pathname === '/team') return LANDING_LINKS.findIndex(l => l.href === '/team');
       return -1;
     }
-    // Return -1 if no chapter is active (e.g. Header), hiding the box
     if (!activeSection) return -1;
-    const idx = LANDING_LINKS.findIndex(l => l.sectionId === activeSection);
-    return idx;
-  };
+    return LANDING_LINKS.findIndex(l => l.sectionId === activeSection);
+  }, [isLanding, router.pathname, activeSection]);
 
+  /* ── Indicator positioning ── */
   useEffect(() => {
-    if (hoveredIdx !== null) {
-      updateIndicator(hoveredIdx);
-    } else {
+    const idx = hoveredIdx !== null ? hoveredIdx : getActiveIdx();
+    if (idx >= 0) updateIndicator(idx);
+    else clearIndicator();
+  }, [hoveredIdx, activeSection, router.pathname, getActiveIdx, updateIndicator, clearIndicator]);
+
+  /* ── Resize ── */
+  useEffect(() => {
+    const handleResize = () => {
       const ai = getActiveIdx();
       if (ai >= 0) updateIndicator(ai);
       else clearIndicator();
-    }
-  }, [hoveredIdx, activeSection, location.pathname]);
+    };
+    window.addEventListener('resize', handleResize);
+    const t = setTimeout(handleResize, 500);
+    return () => { window.removeEventListener('resize', handleResize); clearTimeout(t); };
+  }, [getActiveIdx, updateIndicator, clearIndicator]);
 
   /* ── Click handler ── */
-  const handleNavClick = (link, e) => {
+  const handleNavClick = useCallback(async (link, e) => {
     e.preventDefault();
     setMobileOpen(false);
+
     if (link.route) {
-      navigate(link.href);
-    } else if (link.sectionId && isLanding) {
-      scrollToSection(link.sectionId);
-    } else if (!isLanding) {
-      navigate('/');
-      setTimeout(() => {
-        if (link.sectionId) scrollToSection(link.sectionId);
-      }, 600);
+      // Clear saved scroll for destination so it opens fresh
+      if (link.href !== router.asPath) {
+        sessionStorage.removeItem(`scroll-pos:${link.href}`);
+      }
+      router.push(link.href);
+      return;
     }
-  };
+
+    if (link.sectionId) {
+      if (isLanding) {
+        // Already on landing — just scroll
+        scrollToSection(link.sectionId);
+      } else {
+        // Navigate to landing, then scroll to section
+        // Clear any saved scroll position for home so it doesn't fight us
+        sessionStorage.removeItem('scroll-pos:/');
+
+        await router.push('/');
+
+        // Wait for the section element to appear in the DOM after navigation
+        const found = await waitForElement(link.sectionId, 3000);
+        if (found) {
+          // Small delay for Lenis to initialize on new page
+          setTimeout(() => scrollToSection(link.sectionId), 150);
+        }
+      }
+    }
+  }, [isLanding, router]);
 
   /* ── Mobile backdrop close ── */
   useEffect(() => {
@@ -142,8 +243,13 @@ const Navbar = () => {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
+  /* ── Close mobile menu on route change ── */
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [router.asPath]);
+
   const isLinkActive = (link) => {
-    if (link.route) return location.pathname === link.href;
+    if (link.route) return router.pathname === link.href;
     return link.sectionId === activeSection && isLanding;
   };
 
@@ -154,7 +260,7 @@ const Navbar = () => {
         className="navbar-root"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
         aria-label="Main navigation"
       >
         <div className={`navbar-pill ${scrolled ? 'navbar-pill--scrolled' : ''}`} ref={navbarRef}>
@@ -162,7 +268,14 @@ const Navbar = () => {
           {/* Logo */}
           <button
             className="navbar-logo"
-            onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onClick={() => {
+              sessionStorage.removeItem('scroll-pos:/');
+              if (isLanding) {
+                window.lenis ? window.lenis.scrollTo(0, { duration: 1 }) : window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                router.push('/');
+              }
+            }}
             aria-label="Go to top"
           >
             <img src="/logo.svg" alt="Code Catalysts" className="navbar-logo-img" />
@@ -183,9 +296,9 @@ const Navbar = () => {
                 opacity: indicatorStyle.opacity,
               }}
               transition={{
-                left:    { type: 'spring', stiffness: 380, damping: 30 },
-                width:   { type: 'spring', stiffness: 380, damping: 30 },
-                opacity: { duration: 0.25, ease: 'easeInOut' },
+                left:    { type: 'spring', stiffness: 420, damping: 38, mass: 0.8 },
+                width:   { type: 'spring', stiffness: 420, damping: 38, mass: 0.8 },
+                opacity: { duration: 0.18, ease: 'easeInOut' },
               }}
               aria-hidden="true"
             />
@@ -206,7 +319,7 @@ const Navbar = () => {
                   <motion.span
                     className="navbar-link-dot"
                     layoutId="activeNavDot"
-                    transition={{ type: 'tween', duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
               </a>
@@ -221,7 +334,10 @@ const Navbar = () => {
             <motion.button
               key={action.label}
               className="navbar-cta"
-              onClick={() => navigate(action.href)}
+              onClick={() => {
+                sessionStorage.removeItem(`scroll-pos:${action.href}`);
+                router.push(action.href);
+              }}
               whileHover={{ scale: 1.04, y: -1 }}
               whileTap={{ scale: 0.96 }}
             >
@@ -239,8 +355,8 @@ const Navbar = () => {
           >
             <AnimatePresence mode="wait" initial={false}>
               {mobileOpen
-                ? <motion.span key="x"    initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}><X size={20} /></motion.span>
-                : <motion.span key="menu" initial={{ rotate: 90,  opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}><Menu size={20} /></motion.span>
+                ? <motion.span key="x"    initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90,  opacity: 0 }} transition={{ duration: 0.18 }}><X    size={20} /></motion.span>
+                : <motion.span key="menu" initial={{ rotate:  90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.18 }}><Menu size={20} /></motion.span>
               }
             </AnimatePresence>
           </button>
@@ -257,7 +373,7 @@ const Navbar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.22 }}
               onClick={() => setMobileOpen(false)}
               aria-hidden="true"
             />
@@ -265,10 +381,10 @@ const Navbar = () => {
             {/* Drawer */}
             <motion.div
               className="mobile-drawer"
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0,      opacity: 1 }}
-              exit={{ x: '100%',    opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 35 }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 380, damping: 38, mass: 0.9 }}
               role="dialog"
               aria-modal="true"
               aria-label="Mobile navigation"
@@ -287,9 +403,9 @@ const Navbar = () => {
                     href={link.href}
                     className={`mobile-nav-link ${isLinkActive(link) ? 'mobile-nav-link--active' : ''}`}
                     onClick={(e) => handleNavClick(link, e)}
-                    initial={{ opacity: 0, x: 30 }}
+                    initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 + idx * 0.07, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ delay: 0.04 + idx * 0.055, duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <span className="mobile-nav-num">0{idx + 1}</span>
                     <span className="mobile-nav-label">{link.label}</span>
@@ -301,10 +417,10 @@ const Navbar = () => {
               <div className="mobile-drawer-footer">
                 <motion.button
                   className="navbar-cta mobile-cta"
-                  onClick={() => { navigate('/apply'); setMobileOpen(false); }}
-                  initial={{ opacity: 0, y: 20 }}
+                  onClick={() => { sessionStorage.removeItem('scroll-pos:/apply'); router.push('/apply'); setMobileOpen(false); }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.4 }}
+                  transition={{ delay: 0.35, duration: 0.32 }}
                 >
                   <Sparkles size={16} strokeWidth={2.5} />
                   Apply Now

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../lib/supabase-browser';
 
 export const useCMS = () => {
     const [data, setData] = useState({
@@ -17,7 +17,6 @@ export const useCMS = () => {
     });
 
     const fetchAllContent = async () => {
-        console.log('CMS: Starting fetch...');
         try {
             const [
                 { data: siteContent },
@@ -47,7 +46,6 @@ export const useCMS = () => {
                 return acc;
             }, {}) || {};
 
-            console.log('CMS: Fetch successful', { siteContent: Object.keys(contentMap).length });
             setData({
                 siteContent: contentMap,
                 chapter1Items: chapter1Items || [],

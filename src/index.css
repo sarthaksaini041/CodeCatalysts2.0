@@ -16,7 +16,7 @@
   --font-heading: 'Outfit', sans-serif;
   --font-main: 'Inter', sans-serif;
 
-  --transition-cinematic: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-cinematic: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   --section-gap: 20vh;
 
   --glass-bg: rgba(255, 255, 255, 0.02);
@@ -33,8 +33,13 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  scroll-snap-type: y proximity;
+  scroll-behavior: auto; /* Handled by Lenis */
+  overflow: -moz-scrollbars-none; 
+  -ms-overflow-style: none;
+}
+
+html ::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for immersive feel, using custom if needed */
 }
 
 body {
@@ -358,6 +363,7 @@ h3 {
   object-fit: cover;
   background: #111;
   border: 2px solid #050505;
+  overflow: hidden;
 }
 
 .pill-info {
@@ -673,8 +679,11 @@ a, button {
   cursor: default;
 }
 
-a, button, [role="button"] {
-  cursor: pointer;
+/* ── Global Cursor Management ── */
+/* Managed by CustomCursor.jsx to ensure mobile compatibility */
+
+.parallax-container {
+  will-change: transform;
 }
 
 /* ── Neon bottom accent on stat cards ── */

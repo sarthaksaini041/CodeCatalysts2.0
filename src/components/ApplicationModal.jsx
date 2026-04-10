@@ -16,13 +16,20 @@ import {
 } from 'lucide-react';
 import { GitHubIcon, LinkedInIcon } from './icons/TechnicalIcons';
 
-const DetailItem = ({ icon: Icon, label, value, href }) => {
+const DetailItem = React.memo(({ icon: Icon, label, value, href }) => {
   const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    let timer;
+    if (copied) {
+      timer = setTimeout(() => setCopied(false), 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [copied]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(value);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -50,9 +57,23 @@ const DetailItem = ({ icon: Icon, label, value, href }) => {
       </div>
     </div>
   );
-};
+});
 
 const ApplicationModal = ({ app, onClose, onUpdateStatus, onDelete }) => {
+  React.useEffect(() => {
+    if (app) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
+    };
+  }, [app]);
+
   if (!app) return null;
 
   return (

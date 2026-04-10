@@ -14,6 +14,14 @@ import Chapter_Architects from '../components/Chapter_Architects';
 import UnifiedBackground from '../components/UnifiedBackground';
 import Footer from '../components/Footer';
 
+const scrollOffset = ["start start", "end end"];
+const landingWrapperStyle = { background: 'transparent', color: 'white' };
+const finalCtaStyle = { minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' };
+const finalContainerStyle = { textAlign: 'center' };
+const heroHeadlineStyle = { fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', marginBottom: '2rem', lineHeight: 0.9 };
+const p1Style = { fontSize: '1.6rem', color: 'var(--text-dim)', maxWidth: '700px', margin: '0 auto 1.5rem auto', lineHeight: 1.6 };
+const p2Style = { fontSize: '1.6rem', color: 'white', maxWidth: '700px', margin: '0 auto 4rem auto', lineHeight: 1.6, fontWeight: 700 };
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const containerRef = useRef(null);
@@ -21,7 +29,7 @@ const LandingPage = () => {
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: scrollOffset
   });
 
   return (
@@ -58,7 +66,7 @@ const LandingPage = () => {
           transition={{ duration: 1.2, delay: 0.1 }}
           className="landing-page" 
           ref={containerRef} 
-          style={{ background: 'transparent', color: 'white' }}
+          style={landingWrapperStyle}
         >
           {/* Dynamic Evolution Background */}
           <UnifiedBackground />
@@ -82,14 +90,14 @@ const LandingPage = () => {
           <Chapter_Architects />
 
           {/* FINAL SECTION: JOIN THE BUILDERS */}
-          <section className="chapter-section final-cta" style={{ minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="container" style={{ textAlign: 'center' }}>
+          <section className="chapter-section final-cta" style={finalCtaStyle}>
+            <div className="container" style={finalContainerStyle}>
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <h2 className="hero-headline" style={{ fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', marginBottom: '2rem', lineHeight: 0.9 }}>
+                <h2 className="hero-headline" style={heroHeadlineStyle}>
                   JOIN THE <br />
                   <span className="text-gradient">BUILDERS.</span>
                 </h2>
@@ -97,7 +105,7 @@ const LandingPage = () => {
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 0.5 }}
-                  style={{ fontSize: '1.6rem', color: 'var(--text-dim)', maxWidth: '700px', margin: '0 auto 1.5rem auto', lineHeight: 1.6 }}
+                  style={p1Style}
                 >
                   You don’t need to be the best.
                 </motion.p>
@@ -105,7 +113,7 @@ const LandingPage = () => {
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 1.5 }}
-                  style={{ fontSize: '1.6rem', color: 'white', maxWidth: '700px', margin: '0 auto 4rem auto', lineHeight: 1.6, fontWeight: 700 }}
+                  style={p2Style}
                 >
                   Just someone who starts.
                 </motion.p>

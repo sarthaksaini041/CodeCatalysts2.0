@@ -1,79 +1,110 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useCMS } from '../hooks/useCMS';
+import ParallaxLayer from './ParallaxLayer';
+import { SplitWords } from '../utils/animations.jsx';
 
-const Chapter_Hero = () => {
-  const { siteContent, loading } = useCMS();
-  
-  // Default subtitle if not loaded yet
-  const subtitle = siteContent?.site_subtitle || "A COLLECTIVE OF BUILDERS.";
+/* Stagger timings for the hero entrance sequence */
+const EASE_OUT   = [0.16, 1, 0.3, 1];
+const EASE_EXPO  = [0.87, 0, 0.13, 1];
 
+const Chapter_Hero = ({ siteContent = {} }) => {
   return (
-    <section id="hero" className="chapter-section hero-spark" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <section
+      id="hero"
+      className="chapter-section hero-spark"
+      style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
       <div className="container" style={{ zIndex: 1, textAlign: 'center' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {/* Sequential Narrative Lines - NOW CENTERED AND CLEAN */}
+        <ParallaxLayer offset={30}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+            {/* TAG LINE — clip-path slide up */}
             <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              style={{ 
-                marginBottom: '2rem', 
-                fontSize: '0.8rem', 
-                fontWeight: 900, 
-                letterSpacing: '0.8em', 
-                color: 'var(--primary)', 
-                textTransform: 'uppercase'
+              initial={{ opacity: 0, y: 12, letterSpacing: '0.3em' }}
+              animate={{ opacity: 1, y: 0, letterSpacing: '0.8em' }}
+              transition={{ duration: 1.1, delay: 0.2, ease: EASE_OUT }}
+              style={{
+                marginBottom: '2.5rem',
+                fontSize: '0.78rem',
+                fontWeight: 900,
+                letterSpacing: '0.8em',
+                color: 'var(--primary)',
+                textTransform: 'uppercase',
               }}
             >
               CODE CATALYSTS
             </motion.p>
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: 0.5 }}
-              className="hero-headline"
-              style={{ marginBottom: '1.5rem', lineHeight: 1.1, fontSize: 'clamp(3rem, 10vw, 7.5rem)' }}
-            >
-              WE DIDN’T FIND A PATH.
-            </motion.h1>
 
-            <motion.h1
+            {/* HEADLINE LINE 1 — word by word */}
+            <div style={{ overflow: 'hidden', marginBottom: '0.4rem' }}>
+              <motion.h1
+                className="hero-headline"
+                style={{ lineHeight: 1.05, fontSize: 'clamp(3rem, 10vw, 7.5rem)', marginBottom: 0 }}
+                initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1.1, delay: 0.55, ease: EASE_OUT }}
+              >
+                WE DIDN&apos;T FIND A PATH.
+              </motion.h1>
+            </div>
+
+            {/* HEADLINE LINE 2 — delayed, gradient */}
+            <div style={{ overflow: 'hidden', marginBottom: '3rem' }}>
+              <motion.h1
+                className="hero-headline"
+                style={{ lineHeight: 1.05, fontSize: 'clamp(3rem, 10vw, 7.5rem)', marginBottom: 0 }}
+                initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1.1, delay: 1.1, ease: EASE_OUT }}
+              >
+                <span className="text-gradient">WE BUILT ONE.</span>
+              </motion.h1>
+            </div>
+
+            {/* UNDERLINE accent — draws in after headline */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 2.0, ease: EASE_EXPO, originX: 0.5 }}
+              style={{
+                height: '2px',
+                width: '80px',
+                background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
+                borderRadius: '100px',
+                boxShadow: '0 0 20px var(--primary)',
+                transformOrigin: 'center',
+              }}
+            />
+
+            {/* SCROLL HINT */}
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: 1.5 }}
-              className="hero-headline"
-              style={{ lineHeight: 1.1, fontSize: 'clamp(3rem, 10vw, 7.5rem)' }}
+              transition={{ duration: 1, delay: 2.5 }}
+              style={{
+                marginTop: '3rem',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                letterSpacing: '0.35em',
+                color: 'rgba(255,255,255,0.2)',
+                textTransform: 'uppercase',
+              }}
             >
-              <span className="text-gradient">WE BUILT ONE.</span>
-            </motion.h1>
+              Scroll to begin
+            </motion.p>
 
           </div>
-        </motion.div>
+        </ParallaxLayer>
       </div>
 
-      {/* Particle Cluster Background (The Spark) - RE-CENTERED & CUTOFF FIXED */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 0,
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'visible' // Ensure glow isn't clipped
-      }}>
+      {/* Background Logo — develops in slowly like a photographic print */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 0.3, scale: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.85, filter: 'blur(30px)' }}
+          animate={{ opacity: 0.28, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 3, delay: 0.5, ease: EASE_OUT }}
           style={{
-            width: '120vh', // Slightly larger for safety
+            width: '120vh',
             height: '120vh',
             WebkitMaskImage: 'radial-gradient(circle at center, black 0%, black 50%, transparent 80%)',
             maskImage: 'radial-gradient(circle at center, black 0%, black 50%, transparent 80%)',
@@ -86,8 +117,6 @@ const Chapter_Hero = () => {
           />
         </motion.div>
       </div>
-
-      {/* Narrative Gradient Overlay removed to prevent background "breakage" cuts */}
     </section>
   );
 };

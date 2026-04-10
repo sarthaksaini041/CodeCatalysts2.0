@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { supabase } from '../../utils/supabase';
+import { supabase } from '../../lib/supabase-browser';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, History } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageUpload from './ImageUpload';
@@ -21,6 +21,20 @@ const GenesisManager = () => {
         setChapterTitle(titleData?.content || 'THE GENESIS');
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (editingItem) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        };
+    }, [editingItem]);
 
     useEffect(() => {
         fetchGenesisData();
@@ -126,11 +140,12 @@ const GenesisManager = () => {
             {createPortal(
                 <AnimatePresence>
                     {editingItem && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm px-4">
-                            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
+                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
+                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-2xl p-8 shadow-2xl relative my-8">
                                 <form onSubmit={handleSaveItem} className="space-y-6 text-slate-900">
                                     <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                                        <h3 className="text-lg font-bold text-slate-900">Edit Story</h3>
+                                        <h3 className="text-lg font-bold text-slate-900">{editingItem?.id ? 'Edit Story Point' : 'Add New Story Point'}</h3>
                                         <button type="button" onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"><X size={20} /></button>
                                     </div>
 
@@ -139,8 +154,9 @@ const GenesisManager = () => {
                                             <ImageUpload 
                                                 folder="genesis" 
                                                 currentImageUrl={editingItem.image_url} 
-                                                onUpload={(url) => setEditingItem(prev => ({ ...prev, image_url: url }))}
+                                                onUpload={(url) => setEditingItem(prev => prev ? { ...prev, image_url: url } : prev)}
                                                 label="Social Visual"
+                                                aspect={4/3}
                                             />
                                             <div className="space-y-2">
                                                 <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Title</label>
@@ -157,11 +173,14 @@ const GenesisManager = () => {
 
                                     <div className="flex gap-4 pt-6 mt-4 border-t border-slate-100">
                                         <button type="button" onClick={() => setEditingItem(null)} className="flex-1 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Save Changes</button>
+                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+                                            {editingItem?.id ? 'Save Changes' : 'Add Story'}
+                                        </button>
                                     </div>
                                 </form>
                             </motion.div>
                         </div>
+                    </div>
                     )}
                 </AnimatePresence>,
                 document.body

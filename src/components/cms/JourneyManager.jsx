@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { supabase } from '../../utils/supabase';
+import { supabase } from '../../lib/supabase-browser';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, Map } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageUpload from './ImageUpload';
@@ -21,6 +21,20 @@ const JourneyManager = () => {
         setChapterTitle(titleData?.content || 'THE JOURNEY');
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (editingStep) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        };
+    }, [editingStep]);
 
     useEffect(() => {
         fetchJourneyData();
@@ -126,11 +140,12 @@ const JourneyManager = () => {
             {createPortal(
                 <AnimatePresence>
                     {editingStep && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm px-4">
-                            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
+                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
+                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-3xl p-8 shadow-2xl relative my-8">
                                 <form onSubmit={handleSaveItem} className="space-y-6 text-slate-900">
                                     <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                                        <h3 className="text-lg font-bold text-slate-900">Edit Journey Step</h3>
+                                        <h3 className="text-lg font-bold text-slate-900">{editingStep?.id ? 'Edit Journey Step' : 'Add New Journey Step'}</h3>
                                         <button type="button" onClick={() => setEditingStep(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"><X size={20} /></button>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -138,8 +153,9 @@ const JourneyManager = () => {
                                             <ImageUpload 
                                                 folder="journey" 
                                                 currentImageUrl={editingStep.image_url} 
-                                                onUpload={(url) => setEditingStep(prev => ({ ...prev, image_url: url }))}
+                                                onUpload={(url) => setEditingStep(prev => prev ? { ...prev, image_url: url } : prev)}
                                                 label="Step Image"
+                                                aspect={16/9}
                                             />
                                             <div className="space-y-2 text-left">
                                                 <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Title</label>
@@ -163,11 +179,14 @@ const JourneyManager = () => {
                                     </div>
                                     <div className="flex gap-4 pt-6 mt-4 border-t border-slate-100">
                                         <button type="button" onClick={() => setEditingStep(null)} className="flex-1 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Save Step</button>
+                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+                                            {editingStep?.id ? 'Save Changes' : 'Add Step'}
+                                        </button>
                                     </div>
                                 </form>
                             </motion.div>
                         </div>
+                    </div>
                     )}
                 </AnimatePresence>,
                 document.body

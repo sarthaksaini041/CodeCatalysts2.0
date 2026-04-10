@@ -1,41 +1,38 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
-import { useCMS } from '../hooks/useCMS';
 
-const Footer = () => {
-    const navigate = useNavigate();
-    const { footerSettings, siteContent, loading } = useCMS();
-
-    if (loading) return null;
+const Footer = ({ footerSettings = {}, siteContent = {} }) => {
+    const router = useRouter();
 
     const scrollToSection = (id) => {
         const element = document.getElementById(id);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
         } else {
-            navigate('/');
+            router.push('/');
             setTimeout(() => {
                 const el = document.getElementById(id);
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
+            }, 500);
         }
     };
 
     const chapterLinks = [
-        { name: 'Genesis', id: 'genesis' },
-        { name: 'The Shift', id: 'the-shift' },
-        { name: 'The Journey', id: 'journey' },
-        { name: 'The Forge', id: 'the-forge' },
-        { name: 'The Network', id: 'the-network' }
+        { name: 'Genesis', id: 'chapter-01' },
+        { name: 'The Shift', id: 'chapter-02' },
+        { name: 'The Journey', id: 'chapter-03' },
+        { name: 'The Forge', id: 'chapter-04' },
+        { name: 'The Network', id: 'chapter-05' }
     ];
 
     const contactLinks = [
         { name: 'Email', href: `mailto:${footerSettings.email || 'codecatalysts000@gmail.com'}` },
+        { name: 'LinkedIn', href: footerSettings.linkedin_url || 'https://linkedin.com' },
         { name: 'Instagram', href: footerSettings.instagram_url || 'https://instagram.com' },
-        { name: 'LinkedIn', href: footerSettings.linkedin_url || 'https://linkedin.com' }
+        { name: 'Community', href: footerSettings.community_url || 'https://community.com' }
     ];
 
     return (
@@ -105,7 +102,7 @@ const Footer = () => {
                                 <span className="text-white ml-2">CATALYSTS</span>
                             </h2>
                             <p className="text-xs sm:text-base text-slate-500 font-bold max-w-md mx-auto leading-relaxed px-4 opacity-80 italic">
-                                "{footerSettings.footer_text || "Building, learning, and shipping together since 2025."}"
+                                &quot;{footerSettings.footer_text || "Building, learning, and shipping together since 2025."}&quot;
                             </p>
                         </div>
                     </motion.div>

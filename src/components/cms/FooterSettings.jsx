@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../utils/supabase';
-import { Save, Mail, Info } from 'lucide-react';
+import { supabase } from '../../lib/supabase-browser';
+import { Save, Mail, Info, Users } from 'lucide-react';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../icons/TechnicalIcons';
 
 const FooterSettings = () => {
@@ -9,7 +9,8 @@ const FooterSettings = () => {
         tagline: '',
         linkedin_url: '',
         github_url: '',
-        instagram_url: ''
+        instagram_url: '',
+        community_url: ''
     });
     const [copyright, setCopyright] = useState('');
     const [loading, setLoading] = useState(true);
@@ -102,20 +103,20 @@ const FooterSettings = () => {
                             <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 px-1">Connect Channels</h4>
                             <div className="space-y-4">
                                 <div className="group relative">
-                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors"><LinkedInIcon size={18} /></div>
-                                    <input 
-                                        value={settings.linkedin_url} 
-                                        onChange={(e) => setSettings({...settings, linkedin_url: e.target.value})}
-                                        placeholder="LinkedIn URL"
-                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900 shadow-sm"
-                                    />
-                                </div>
-                                <div className="group relative">
                                     <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors"><Mail size={18} /></div>
                                     <input 
                                         value={settings.email} 
                                         onChange={(e) => setSettings({...settings, email: e.target.value})}
                                         placeholder="Contact Email"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900 shadow-sm"
+                                    />
+                                </div>
+                                <div className="group relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors"><LinkedInIcon size={18} /></div>
+                                    <input 
+                                        value={settings.linkedin_url} 
+                                        onChange={(e) => setSettings({...settings, linkedin_url: e.target.value})}
+                                        placeholder="LinkedIn URL"
                                         className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900 shadow-sm"
                                     />
                                 </div>
@@ -126,6 +127,15 @@ const FooterSettings = () => {
                                         onChange={(e) => setSettings({...settings, instagram_url: e.target.value})}
                                         placeholder="Instagram URL"
                                         className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-rose-500 transition-all text-slate-900 shadow-sm"
+                                    />
+                                </div>
+                                <div className="group relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-purple-500 transition-colors"><Users size={18} /></div>
+                                    <input 
+                                        value={settings.community_url} 
+                                        onChange={(e) => setSettings({...settings, community_url: e.target.value})}
+                                        placeholder="Community URL"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl pl-14 pr-5 py-4 text-sm font-semibold focus:outline-none focus:border-purple-500 transition-all text-slate-900 shadow-sm"
                                     />
                                 </div>
                             </div>

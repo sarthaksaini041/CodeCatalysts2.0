@@ -62,8 +62,10 @@ const ExpandedProfile = ({ person, onClose }) => {
   useEffect(() => {
     // Lock body scroll when modal is open
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     };
   }, []);
 
@@ -81,7 +83,7 @@ const ExpandedProfile = ({ person, onClose }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      style={{ zIndex: 9999 }} // Ensure it's above everything including any relative parents
+      style={{ zIndex: 5000 }} // High enough for UI overlays but below global elements
     >
       <motion.div 
         className="profile-modal-card"
@@ -96,7 +98,7 @@ const ExpandedProfile = ({ person, onClose }) => {
 
         <div className="modal-avatar">
           {person.image_url ? (
-            <img src={person.image_url} alt={person.name} />
+            <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />
           ) : (
             <div className="modal-initials">{person.name.split(' ').map(n => n[0]).join('')}</div>
           )}
@@ -136,7 +138,7 @@ const VisionaryCard = ({ person, onClick }) => (
     <div className="visionary-card">
       <div className="visionary-avatar-box">
         {person.image_url ? (
-          <img src={person.image_url} alt={person.name} />
+          <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />
         ) : (
           <div className="visionary-initials">{person.name.split(' ').map(n => n[0]).join('')}</div>
         )}
@@ -160,7 +162,7 @@ const BuilderCard = ({ person, onClick }) => (
   >
     <div className="builder-image-area">
       <div className="builder-initials-bg">{person.name.split(' ').map(n => n[0]).join('')}</div>
-      {person.image_url && <img src={person.image_url} alt={person.name} />}
+      {person.image_url && <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />}
     </div>
     
     <div className="builder-info-area">
@@ -190,7 +192,7 @@ const CatalystCard = ({ person, onClick }) => (
     <div className="catalyst-header-row">
       <div className="catalyst-avatar-circle">
           {person.image_url ? (
-              <img src={person.image_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
+              <img src={person.image_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
           ) : (
             <span className="catalyst-initials">{person.name.split(' ').map(n => n[0]).join('')}</span>
           )}
@@ -251,19 +253,17 @@ export default function TeamPage() {
       {/* Hero Section */}
       <section className="team-hero">
         <motion.span 
-          variants={fadeUpVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           className="team-hero-label"
         >
           The Architect of Code
         </motion.span>
         <motion.h1 
-          variants={fadeUpVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.35 }}
           className="team-hero-title"
         >
           The Catalysts.

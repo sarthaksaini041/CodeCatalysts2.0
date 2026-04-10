@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Loader2, Mail, Lock, AlertCircle, ChevronLeft } from 'lucide-react';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../lib/supabase-browser';
 
 const AdminLogin = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ const AdminLogin = () => {
       });
 
       if (error) throw error;
-      navigate('/admin');
+      router.push('/admin');
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -41,7 +41,7 @@ const AdminLogin = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       <motion.button 
-        onClick={() => navigate('/')}
+        onClick={() => router.push('/')}
         className="absolute top-8 left-8 flex items-center gap-2 text-white/40 hover:text-white transition-colors font-black text-xs tracking-widest uppercase z-10"
       >
         <ChevronLeft size={16} /> EXIT_TO_BASE
@@ -73,7 +73,7 @@ const AdminLogin = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@codecatalysts.dev"
+                placeholder="Email address"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white text-sm outline-none focus:border-primary/50 transition-all"
               />
             </div>

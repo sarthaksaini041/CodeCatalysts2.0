@@ -107,7 +107,7 @@
 }
 
 .visionary-avatar-box {
-  flex: 0 0 280px; /* Large square on left */
+  flex: 0 0 280px;
   height: 280px;
   background: #10101a;
   border-radius: 25px;
@@ -116,6 +116,12 @@
   justify-content: center;
   overflow: hidden;
   position: relative;
+  box-shadow: 0 0 40px rgba(123,97,255,0.12), inset 0 0 0 1px rgba(123,97,255,0.12);
+  transition: box-shadow 0.4s ease;
+}
+
+.visionary-avatar-box:hover {
+  box-shadow: 0 0 60px rgba(123,97,255,0.22), inset 0 0 0 1px rgba(123,97,255,0.25);
 }
 
 .visionary-initials {
@@ -188,10 +194,7 @@
 }
 
 .builder-card:hover {
-  transform: translateY(-8px);
-  border-color: var(--primary);
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 20px rgba(123, 97, 255, 0.1);
 }
 
 .builder-image-area {
@@ -293,8 +296,6 @@
 
 .catalyst-card:hover {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-5px);
 }
 
 .catalyst-header-row {
@@ -307,12 +308,14 @@
 .catalyst-avatar-circle {
   width: 48px;
   height: 48px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: #111;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
 }
 
 .catalyst-initials {
@@ -379,22 +382,22 @@
 }
 
 .social-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: #222;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #888;
-  transition: all 0.3s ease;
+  color: rgba(255,255,255,0.5);
+  transition: all 0.25s ease;
+  text-decoration: none;
 }
 
 .social-btn:hover {
-  background: #333;
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255,255,255,0.25);
 }
 
 /* --- Media Queries --- */
@@ -467,9 +470,7 @@
 }
 
 .modal-close-btn:hover {
-  background: rgba(255, 0, 0, 0.2);
-  border-color: rgba(255, 0, 0, 0.4);
-  transform: rotate(90deg);
+  /* Handled by framer-motion whileHover */
 }
 
 .modal-avatar {

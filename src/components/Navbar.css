@@ -31,9 +31,9 @@
     0 4px 30px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition:
-    background  0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow  0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    background   0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow   0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: 900px;
   width: 100%;
 }
@@ -106,10 +106,13 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 32px;
+  height: 30px;
   border-radius: 100px;
-  background: rgba(124, 58, 237, 0.14);
-  border: 1px solid rgba(124, 58, 237, 0.22);
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  box-shadow: 
+    0 2px 10px rgba(124, 58, 237, 0.15),
+    inset 0 0 8px rgba(124, 58, 237, 0.1);
   pointer-events: none;
   z-index: 0;
   will-change: left, width, opacity;
@@ -122,7 +125,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 13px;
+  padding: 7px 14px;
   border-radius: 100px;
   text-decoration: none;
   font-size: 0.78rem;
@@ -130,10 +133,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.42);
-  /* single unified transition for everything that changes on hover */
-  transition:
-    color       0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    text-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   cursor: pointer;
   will-change: color;

@@ -1,154 +1,225 @@
 import React from 'react';
-import { useCMS } from '../hooks/useCMS';
 import { motion } from 'framer-motion';
-import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
+import { fadeUpVariant, staggerContainer, SplitWords } from '../utils/animations.jsx';
+import ParallaxLayer from './ParallaxLayer';
+import ScrollReveal from './ScrollReveal';
 
-const Chapter_Journey = () => {
-  const { chapter3Steps, siteContent, loading } = useCMS();
+const EASE_EXPO = [0.87, 0, 0.13, 1];
+const EASE_OUT  = [0.16, 1, 0.3, 1];
 
-  if (loading) return null;
+const ChapterLabel = ({ label, color }) => (
+  <motion.div
+    variants={staggerContainer(0.12, 0)}
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, amount: 0.6 }}
+    className="chapter-label-line"
+  >
+    <motion.div
+      variants={{ hidden: { scaleX: 0, opacity: 0 }, visible: { scaleX: 1, opacity: 1, transition: { duration: 0.7, ease: EASE_EXPO } } }}
+      style={{ background: color, transformOrigin: 'left', flex: 1, height: '1px', maxWidth: '120px' }}
+    />
+    <motion.span variants={fadeUpVariant} className="text">{label}</motion.span>
+    <motion.div
+      variants={{ hidden: { scaleX: 0, opacity: 0 }, visible: { scaleX: 1, opacity: 1, transition: { duration: 0.7, ease: EASE_EXPO, delay: 0.15 } } }}
+      style={{ background: color, transformOrigin: 'right', flex: 1, height: '1px', maxWidth: '120px' }}
+    />
+  </motion.div>
+);
 
-  const title = siteContent.chapter3_title || 'The Path Unknown.';
+const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
   const journeySteps = chapter3Steps.map(step => ({
     title: step.title,
     desc: step.description,
     image: step.image_url,
-    layout: step.layout_type || 'image-right'
+    layout: step.layout_type || 'image-right',
   }));
 
   return (
     <section id="chapter-03" className="chapter-section journey-scroll" style={{ padding: '20vh 0' }}>
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-        <motion.div
-           variants={fadeUpVariant}
-           initial="hidden"
-           whileInView="visible"
-           viewport={{ once: true }}
-           className="chapter-label-line"
-        >
-          <div className="line" style={{ background: '#60A5FA' }} />
-          <span className="text">CHAPTER 03</span>
-          <div className="line" style={{ background: '#60A5FA' }} />
-        </motion.div>
 
-        <motion.div
-           variants={staggerContainer(0.1, 0)}
-           initial="hidden"
-           whileInView="visible"
-           viewport={{ once: true }}
-           className="chapter-header-v2"
-        >
-          <div className="chapter-title-v2">
-            <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
-            <motion.h2 variants={fadeUpVariant} className="title-main" style={{ '--chapter-gradient': 'linear-gradient(135deg, #60A5FA, var(--primary))' }}>JOURNEY</motion.h2>
-          </div>
-        </motion.div>
+        {/* Header */}
+        <ParallaxLayer offset={20}>
+          <ChapterLabel label="CHAPTER 03" color="#60A5FA" />
 
-        <motion.p 
-          variants={fadeUpVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          style={{ 
-              fontSize: '1.2rem', 
-              color: 'rgba(255,255,255,0.4)', 
-              maxWidth: '700px', 
-              margin: '3rem auto 10vh', 
-              lineHeight: 1.8,
+          <motion.div
+            variants={staggerContainer(0.14, 0.05)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.6 }}
+            className="chapter-header-v2"
+          >
+            <div className="chapter-title-v2">
+              <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
+              <motion.h2
+                variants={{
+                  hidden:  { opacity: 0, y: 50, filter: 'blur(10px)' },
+                  visible: { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 1, ease: EASE_OUT } },
+                }}
+                className="title-main"
+                style={{ '--chapter-gradient': 'linear-gradient(135deg, #60A5FA, var(--primary))' }}
+              >
+                JOURNEY
+              </motion.h2>
+            </div>
+          </motion.div>
+
+          {/* Quote — reveals word by word */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: EASE_OUT }}
+            style={{
+              fontSize: '1.15rem',
+              color: 'rgba(255,255,255,0.38)',
+              maxWidth: '680px',
+              margin: '3rem auto 10vh',
+              lineHeight: 1.85,
               fontWeight: 500,
-              textAlign: 'center'
-          }}
-        >
-          “It didn't happen in one moment... It was a thousand moments of choosing to stay when we could have left.”
-        </motion.p>
+              textAlign: 'center',
+              fontStyle: 'italic',
+              borderLeft: '2px solid rgba(96, 165, 250, 0.3)',
+              paddingLeft: '1.5rem',
+              textAlign: 'left',
+            }}
+          >
+            &ldquo;It didn&apos;t happen in one moment&hellip; It was a thousand moments of choosing to stay when we could have left.&rdquo;
+          </motion.div>
+        </ParallaxLayer>
 
+        {/* Journey steps */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15vh' }}>
           {journeySteps.map((step, i) => {
             const isImageLeft = step.layout === 'image-left';
-            const accentColor = i % 2 === 0 ? 'var(--primary)' : 'var(--secondary)';
-            
+            const accentColor = i % 2 === 0 ? 'var(--primary)' : '#60A5FA';
+
             return (
-              <div key={i} style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '5rem', 
-                  flexDirection: isImageLeft ? 'row' : 'row-reverse',
-                  textAlign: isImageLeft ? 'left' : 'right'
-              }}>
-                <motion.div
-                  initial={{ opacity: 0, x: isImageLeft ? 50 : -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  style={{ 
-                      flex: 1, 
+              <ParallaxLayer key={i} offset={35}>
+                <div
+                  className="journey-step-row"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5rem',
+                    flexDirection: isImageLeft ? 'row' : 'row-reverse',
+                    textAlign: isImageLeft ? 'left' : 'right',
+                  }}
+                >
+                  {/* Text panel — slides from its side */}
+                  <ScrollReveal
+                    direction={isImageLeft ? 'left' : 'right'}
+                    delay={0}
+                    duration={1}
+                    amount={0.15}
+                    style={{
+                      flex: 1,
                       padding: '4rem',
                       background: 'rgba(255,255,255,0.015)',
                       borderRadius: '40px',
-                      border: '1px solid rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.055)',
                       backdropFilter: 'blur(20px)',
-                      boxShadow: `0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 0 20px ${accentColor}11`,
+                      boxShadow: `0 30px 60px -12px rgba(0,0,0,0.5), 0 0 30px ${accentColor}0d`,
                       position: 'relative',
-                      overflow: 'hidden'
-                  }}
-                >
-                  <div style={{
-                    fontFamily: 'JetBrains Mono',
-                    fontSize: '0.65rem',
-                    color: accentColor,
-                    letterSpacing: '0.3em',
-                    marginBottom: '1.5rem',
-                    fontWeight: 900,
-                    textTransform: 'uppercase'
-                  }}>
-                    {isImageLeft ? 'LOG_TYPE::CORE_VISUAL' : 'LOG_TYPE::SYSTEM_CHRONICLE'}
-                  </div>
-                  <h3 style={{ 
-                      fontSize: '2.5rem', 
-                      marginBottom: '1.5rem', 
-                      fontWeight: 950, 
-                      color: '#fff',
-                      letterSpacing: '-0.02em' 
-                  }}>{step.title}</h3>
-                  <p style={{ 
-                      fontSize: '1.1rem', 
-                      color: 'rgba(255,255,255,0.5)', 
-                      lineHeight: 1.7 
-                  }}>{step.desc}</p>
-                </motion.div>
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* Log badge */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.35 }}
+                      style={{
+                        fontFamily: 'JetBrains Mono',
+                        fontSize: '0.62rem',
+                        color: accentColor,
+                        letterSpacing: '0.3em',
+                        marginBottom: '1.5rem',
+                        fontWeight: 900,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      CHAPTER_LOG :: {String(i + 1).padStart(2, '0')}
+                    </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                  viewport={{ once: true }}
-                  style={{ 
-                      flex: 1.2, 
-                      position: 'relative', 
-                      borderRadius: '40px', 
+                    {/* Step title — word by word */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <SplitWords
+                        as="h3"
+                        text={step.title}
+                        delay={0.2}
+                        style={{
+                          fontSize: 'clamp(1.8rem, 2.8vw, 2.5rem)',
+                          fontWeight: 950,
+                          color: '#fff',
+                          letterSpacing: '-0.02em',
+                          display: 'block',
+                        }}
+                      />
+                    </div>
+
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ duration: 0.7, delay: 0.45, ease: EASE_OUT }}
+                      style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.48)', lineHeight: 1.75 }}
+                    >
+                      {step.desc}
+                    </motion.p>
+
+                    {/* Accent corner */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0, [isImageLeft ? 'left' : 'right']: 0,
+                      width: '80px', height: '3px',
+                      background: accentColor,
+                      borderRadius: '100px',
+                      boxShadow: `0 0 16px ${accentColor}`,
+                    }} />
+                  </ScrollReveal>
+
+                  {/* Image — photo reveal from opposite side */}
+                  <ScrollReveal
+                    direction={isImageLeft ? 'right' : 'left'}
+                    delay={0.12}
+                    duration={1.2}
+                    amount={0.15}
+                    style={{
+                      flex: 1.2,
+                      position: 'relative',
+                      borderRadius: '40px',
                       overflow: 'hidden',
                       aspectRatio: '16/10',
                       boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
-                      border: '1px solid rgba(255,255,255,0.05)'
-                  }}
-                >
-                  <img 
-                    src={step.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'} 
-                    alt={step.title} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: `linear-gradient(${isImageLeft ? 'to right' : 'to left'}, rgba(5,5,5,0.6), transparent)`
-                  }} />
-                </motion.div>
-              </div>
+                      border: '1px solid rgba(255,255,255,0.055)',
+                    }}
+                  >
+                    <img
+                      src={step.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'}
+                      alt={step.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      background: `linear-gradient(${isImageLeft ? 'to right' : 'to left'}, rgba(5,5,5,0.55), transparent)`,
+                    }} />
+                    {/* Step number watermark */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '1.2rem', [isImageLeft ? 'right' : 'left']: '1.5rem',
+                      fontFamily: 'JetBrains Mono', fontSize: '0.6rem',
+                      color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', fontWeight: 700,
+                    }}>
+                      STEP_{String(i + 1).padStart(2, '0')}
+                    </div>
+                  </ScrollReveal>
+                </div>
+              </ParallaxLayer>
             );
           })}
-
-          {/* Internal background pulse removed for unity */}
         </div>
       </div>
     </section>

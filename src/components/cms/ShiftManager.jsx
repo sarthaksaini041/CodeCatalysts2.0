@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { supabase } from '../../utils/supabase';
+import { supabase } from '../../lib/supabase-browser';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,6 +24,20 @@ const ShiftManager = () => {
         setChapterTitle(titleData?.content || 'THE SHIFT');
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (editingCard || editingStat) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        };
+    }, [editingCard, editingStat]);
 
     useEffect(() => {
         fetchShiftData();
@@ -184,8 +198,9 @@ const ShiftManager = () => {
             {createPortal(
                 <AnimatePresence>
                     {editingCard && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm px-4">
-                            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-lg p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
+                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
+                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-lg p-8 shadow-2xl relative my-8">
                                 <form onSubmit={handleSaveCard} className="space-y-6 text-slate-900">
                                     <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
                                         <h3 className="text-lg font-bold text-slate-900">Edit Principle Card</h3>
@@ -208,6 +223,7 @@ const ShiftManager = () => {
                                 </form>
                             </motion.div>
                         </div>
+                    </div>
                     )}
                 </AnimatePresence>,
                 document.body
@@ -216,8 +232,9 @@ const ShiftManager = () => {
             {createPortal(
                 <AnimatePresence>
                     {editingStat && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm px-4">
-                            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-sm p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
+                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
+                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-sm p-8 shadow-2xl relative my-8">
                                 <form onSubmit={handleSaveStat} className="space-y-6 text-slate-900">
                                     <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
                                         <h3 className="text-lg font-bold text-slate-900">Edit Analytic Stat</h3>
@@ -244,6 +261,7 @@ const ShiftManager = () => {
                                 </form>
                             </motion.div>
                         </div>
+                    </div>
                     )}
                 </AnimatePresence>,
                 document.body

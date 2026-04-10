@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { 
   ChevronLeft, ChevronRight, Loader2, Sparkles, Send, CheckCircle2, AlertCircle, ChevronDown, 
   Globe, Brain, Smartphone, Cloud, Shield, Link2, Gamepad2, Palette, BarChart3, TrendingUp, GraduationCap 
 } from 'lucide-react';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../lib/supabase-browser';
 
 const FORM_STEPS = [
   { id: 0, title: 'Who are you?' },
@@ -82,7 +82,8 @@ const CustomSelect = ({ options, value, onChange, placeholder, error, icon: Icon
 
 
 const ApplyPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const [isExiting, setIsExiting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState({ type: null, message: '' }); // 'success', 'error'
@@ -198,7 +199,8 @@ const ApplyPage = () => {
       setStatus({ type: 'success', message: 'Application submitted successfully 🚀' });
       // Reset after success
       setTimeout(() => {
-        navigate('/');
+        setIsExiting(true);
+        setTimeout(() => router.push('/'), 400);
       }, 3000);
       
     } catch (error) {
@@ -217,7 +219,11 @@ const ApplyPage = () => {
 
   if (status.type === 'success') {
     return (
-      <div className="apply-container">
+      <motion.div 
+        className="apply-container"
+        animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? 20 : 0 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+      >
         <div className="noise-overlay" />
         <motion.div 
           initial={{ opacity: 0, scale: 0.9, y: 30 }} 
@@ -246,7 +252,10 @@ const ApplyPage = () => {
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/')}
+            onClick={() => {
+              setIsExiting(true);
+              setTimeout(() => router.push('/'), 400);
+            }}
             className="nav-btn-submit"
             style={{ width: 'auto', padding: '1.2rem 3rem' }}
           >
@@ -257,12 +266,16 @@ const ApplyPage = () => {
             AUTO_SIGNAL_IN 3S
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="apply-container">
+    <motion.div 
+      className="apply-container"
+      animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? 20 : 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    >
       <div className="noise-overlay" />
       
       <div className="apply-content">
@@ -271,7 +284,10 @@ const ApplyPage = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           whileHover={{ x: -2 }}
-          onClick={() => navigate('/')}
+          onClick={() => {
+            setIsExiting(true);
+            setTimeout(() => router.push('/'), 400);
+          }}
           className="global-back-btn"
         >
           <ChevronLeft size={20} />
@@ -921,7 +937,7 @@ const ApplyPage = () => {
         }
 
       `}} />
-    </div>
+    </motion.div>
   );
 };
 

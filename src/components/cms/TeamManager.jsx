@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { supabase } from '../../utils/supabase';
+import { supabase } from '../../lib/supabase-browser';
 import { Plus, Trash2, ArrowUp, ArrowDown, Edit3, X, Users } from 'lucide-react';
 import { LinkedInIcon, GitHubIcon } from '../icons/TechnicalIcons';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,20 @@ const TeamManager = () => {
         setMembers(data || []);
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (editingMember) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.documentElement.style.overflow = 'unset';
+        };
+    }, [editingMember]);
 
     useEffect(() => {
         fetchTeamData();
@@ -171,11 +185,12 @@ const TeamManager = () => {
             {createPortal(
                 <AnimatePresence>
                     {editingMember && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm px-4">
-                            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-2xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
+                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
+                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-2xl p-8 shadow-2xl relative my-8">
                                 <form onSubmit={handleSaveMember} className="space-y-6 text-slate-900">
                                     <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                                        <h3 className="text-lg font-bold text-slate-900">Edit Member Profile</h3>
+                                        <h3 className="text-lg font-bold text-slate-900">{editingMember?.id ? 'Edit Member Profile' : 'Add New Member'}</h3>
                                         <button type="button" onClick={() => setEditingMember(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"><X size={20} /></button>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -183,8 +198,9 @@ const TeamManager = () => {
                                             <ImageUpload 
                                                 folder="team" 
                                                 currentImageUrl={editingMember.image_url} 
-                                                onUpload={(url) => setEditingMember(prev => ({ ...prev, image_url: url }))}
+                                                onUpload={(url) => setEditingMember(prev => prev ? { ...prev, image_url: url } : prev)}
                                                 label="Profile Photo"
+                                                aspect={1}
                                             />
                                             <div className="space-y-2 text-left">
                                                 <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Full Name</label>
@@ -226,11 +242,14 @@ const TeamManager = () => {
                                     </div>
                                     <div className="flex gap-4 pt-6 mt-4 border-t border-slate-100">
                                         <button type="button" onClick={() => setEditingMember(null)} className="flex-1 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Save Profile</button>
+                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+                                            {editingMember?.id ? 'Save Changes' : 'Add Member'}
+                                        </button>
                                     </div>
                                 </form>
                             </motion.div>
                         </div>
+                    </div>
                     )}
                 </AnimatePresence>,
                 document.body

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../utils/supabase';
+import { supabase } from '../../lib/supabase-browser';
 import { Save, Info } from 'lucide-react';
 
 const ArchitectsManager = () => {

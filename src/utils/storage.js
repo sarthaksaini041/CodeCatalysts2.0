@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from '../lib/supabase-browser';
 
 /**
  * Uploads a file to a specific folder in the 'website-assets' bucket.

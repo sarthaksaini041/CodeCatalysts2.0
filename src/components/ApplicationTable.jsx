@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -11,7 +11,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = memo(({ status }) => {
   const styles = {
     pending: 'bg-amber-50 text-amber-600 border-amber-100',
     approved: 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -23,9 +23,9 @@ const StatusBadge = ({ status }) => {
       {status || 'pending'}
     </span>
   );
-};
+});
 
-const ApplicationTable = ({ 
+const ApplicationTable = memo(({ 
   applications, 
   loading, 
   onView, 
@@ -39,8 +39,8 @@ const ApplicationTable = ({
   setFilterYear
 }) => {
   
-  const domains = ['All Domains', ...new Set(applications.map(a => a.domain))];
-  const years = ['All Years', ...new Set(applications.map(a => a.year))];
+  const domains = useMemo(() => ['All Domains', ...new Set(applications.map(a => a.domain))], [applications]);
+  const years = useMemo(() => ['All Years', ...new Set(applications.map(a => a.year))], [applications]);
 
   return (
     <div className="space-y-6">
@@ -174,6 +174,6 @@ const ApplicationTable = ({
       </div>
     </div>
   );
-};
+});
 
 export default ApplicationTable;
