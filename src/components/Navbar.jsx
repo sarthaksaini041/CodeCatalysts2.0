@@ -7,11 +7,11 @@ import { Sparkles, Menu, X } from 'lucide-react';
    Nav link definitions for the Landing page
 ───────────────────────────────────────────── */
 const LANDING_LINKS = [
-  { label: 'Genesis',  href: '#chapter-01', sectionId: 'chapter-01' },
-  { label: 'Shift',    href: '#chapter-02', sectionId: 'chapter-02' },
-  { label: 'Journey',  href: '#chapter-03', sectionId: 'chapter-03' },
-  { label: 'Forge',    href: '#chapter-04', sectionId: 'chapter-04' },
-  { label: 'Team',     href: '/team',        sectionId: null, route: true },
+  { label: 'Genesis',    href: '#chapter-01', sectionId: 'chapter-01' },
+  { label: 'Shift',      href: '#chapter-02', sectionId: 'chapter-02' },
+  { label: 'Journey',    href: '#chapter-03', sectionId: 'chapter-03' },
+  { label: 'Forge',      href: '#chapter-04', sectionId: 'chapter-04' },
+  { label: 'Architects', href: '#chapter-05', sectionId: 'chapter-05' },
 ];
 
 const PRIMARY_ACTIONS = [
@@ -170,13 +170,10 @@ const Navbar = () => {
   }, [isLanding]);
 
   const getActiveIdx = useCallback(() => {
-    if (!isLanding) {
-      if (router.pathname === '/team') return LANDING_LINKS.findIndex(l => l.href === '/team');
-      return -1;
-    }
+    if (!isLanding) return -1;
     if (!activeSection) return -1;
     return LANDING_LINKS.findIndex(l => l.sectionId === activeSection);
-  }, [isLanding, router.pathname, activeSection]);
+  }, [isLanding, activeSection]);
 
   /* ── Close mobile menu on route change ── */
   const handleNavClick = useCallback(async (link, e) => {
@@ -201,6 +198,7 @@ const Navbar = () => {
         sessionStorage.removeItem('scroll-pos:/#chapter-02');
         sessionStorage.removeItem('scroll-pos:/#chapter-03');
         sessionStorage.removeItem('scroll-pos:/#chapter-04');
+        sessionStorage.removeItem('scroll-pos:/#chapter-05');
         
         // Let the URL hash drive the destination
         router.push(`/${link.href}`);
