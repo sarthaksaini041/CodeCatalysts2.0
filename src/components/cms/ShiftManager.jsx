@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { supabase } from '../../lib/supabase-browser';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { triggerRevalidation } from '../../utils/revalidate';
 
 const ShiftManager = () => {
     const [cards, setCards] = useState([]);
@@ -47,6 +48,8 @@ const ShiftManager = () => {
         setIsSaving(true);
         await supabase.from('site_content').upsert({ key: 'chapter2_title', content: chapterTitle });
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleSaveCard = async (e) => {
@@ -68,12 +71,16 @@ const ShiftManager = () => {
         setEditingCard(null);
         fetchShiftData();
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleDeleteCard = async (id) => {
         if (!window.confirm('Delete this card?')) return;
         await supabase.from('chapter2_cards').delete().eq('id', id);
         fetchShiftData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const moveCard = async (index, direction) => {
@@ -84,6 +91,8 @@ const ShiftManager = () => {
         const updates = newCards.map((c, idx) => ({ ...c, order_index: idx }));
         await supabase.from('chapter2_cards').upsert(updates);
         fetchShiftData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleSaveStat = async (e) => {
@@ -106,12 +115,16 @@ const ShiftManager = () => {
         setEditingStat(null);
         fetchShiftData();
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleDeleteStat = async (id) => {
         if (!window.confirm('Delete this stat?')) return;
         await supabase.from('chapter2_stats').delete().eq('id', id);
         fetchShiftData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const moveStat = async (index, direction) => {
@@ -122,6 +135,8 @@ const ShiftManager = () => {
         const updates = newStats.map((s, idx) => ({ ...s, order_index: idx }));
         await supabase.from('chapter2_stats').upsert(updates);
         fetchShiftData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     if (loading) return <div className="flex justify-center p-20"><Zap className="animate-spin text-indigo-500" size={32} /></div>;

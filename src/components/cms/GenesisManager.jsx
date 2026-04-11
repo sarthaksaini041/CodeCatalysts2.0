@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase-browser';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, History, Loader2, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageUpload from './ImageUpload';
+import { triggerRevalidation } from '../../utils/revalidate';
 
 const GenesisManager = () => {
     const [items, setItems] = useState([]);
@@ -45,6 +46,8 @@ const GenesisManager = () => {
         setIsSaving(true);
         await supabase.from('site_content').upsert({ key: 'chapter1_title', content: chapterTitle });
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleSaveItem = async (e) => {
@@ -67,12 +70,16 @@ const GenesisManager = () => {
         setEditingItem(null);
         fetchGenesisData();
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleDeleteItem = async (id) => {
         if (!window.confirm('Delete this story point?')) return;
         await supabase.from('chapter1_items').delete().eq('id', id);
         fetchGenesisData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const moveItem = async (index, direction) => {
@@ -85,6 +92,8 @@ const GenesisManager = () => {
         const updates = newItems.map((item, idx) => ({ id: item.id, order_index: idx }));
         await supabase.from('chapter1_items').upsert(updates);
         fetchGenesisData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin text-indigo-500" size={32} /></div>;

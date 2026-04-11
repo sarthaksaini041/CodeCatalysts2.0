@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase-browser';
 import { Save, Info, Users } from 'lucide-react';
+import { triggerRevalidation } from '../../utils/revalidate';
 
 const ArchitectsManager = () => {
     const [loading, setLoading] = useState(true);
@@ -22,6 +23,8 @@ const ArchitectsManager = () => {
         setIsSaving(true);
         await supabase.from('site_content').upsert({ key: 'chapter5_title', content: chapterTitle });
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
         alert('Title updated successfully!');
     };
 

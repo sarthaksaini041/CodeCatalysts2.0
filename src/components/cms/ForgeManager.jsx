@@ -5,6 +5,7 @@ import { Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, Edit3, X, Code2, Sparkl
 import { GitHubIcon } from '../icons/TechnicalIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageUpload from './ImageUpload';
+import { triggerRevalidation } from '../../utils/revalidate';
 
 const ForgeManager = () => {
     const [projects, setProjects] = useState([]);
@@ -46,6 +47,8 @@ const ForgeManager = () => {
         setIsSaving(true);
         await supabase.from('site_content').upsert({ key: 'chapter4_title', content: chapterTitle });
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleSaveProject = async (e) => {
@@ -75,12 +78,16 @@ const ForgeManager = () => {
         setEditingProject(null);
         fetchProjectsData();
         setIsSaving(false);
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this project?')) return;
         await supabase.from('projects').delete().eq('id', id);
         fetchProjectsData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     const moveProject = async (index, direction) => {
@@ -91,6 +98,8 @@ const ForgeManager = () => {
         const updates = newProjects.map((p, idx) => ({ id: p.id, order_index: idx }));
         await supabase.from('projects').upsert(updates);
         fetchProjectsData();
+        // Trigger instant site refresh (Home page)
+        triggerRevalidation('/');
     };
 
     if (loading) return <div className="flex justify-center p-20"><Code2 className="animate-spin text-indigo-500" size={32} /></div>;

@@ -5,6 +5,7 @@ import { Plus, Trash2, ArrowUp, ArrowDown, Edit3, X, Users } from 'lucide-react'
 import { LinkedInIcon, GitHubIcon } from '../icons/TechnicalIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageUpload from './ImageUpload';
+import { triggerRevalidation } from '../../utils/revalidate';
 
 const TeamManager = () => {
     const [members, setMembers] = useState([]);
@@ -81,12 +82,16 @@ const TeamManager = () => {
         setEditingMember(null);
         fetchTeamData();
         setIsSaving(false);
+        // Trigger instant site refresh
+        triggerRevalidation('/team');
     };
 
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this team member?')) return;
         await supabase.from('team_members').delete().eq('id', id);
         fetchTeamData();
+        // Trigger instant site refresh
+        triggerRevalidation('/team');
     };
 
     const moveMember = async (index, direction) => {
@@ -100,6 +105,8 @@ const TeamManager = () => {
         }));
         await supabase.from('team_members').upsert(updates);
         fetchTeamData();
+        // Trigger instant site refresh
+        triggerRevalidation('/team');
     };
 
     if (loading) return <div className="flex justify-center p-20"><Users className="animate-spin text-indigo-500" size={32} /></div>;

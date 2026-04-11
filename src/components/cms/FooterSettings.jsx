@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase-browser';
 import { Save, Mail, Info, Users } from 'lucide-react';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../icons/TechnicalIcons';
+import { triggerRevalidation } from '../../utils/revalidate';
 
 const FooterSettings = () => {
     const [settings, setSettings] = useState({
@@ -48,6 +49,8 @@ const FooterSettings = () => {
         });
 
         setIsSaving(false);
+        // Trigger comprehensive site refresh (Home & Team)
+        triggerRevalidation(); 
         alert('Settings saved successfully!');
     };
 
