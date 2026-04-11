@@ -8,7 +8,7 @@ const TeamBackground = () => {
   // 0-0.2: Hero (The Spark)
   // 0.2-0.35: Visionary (The Architect)
   // 0.35-0.65: Builders (The Construction)
-  // 0.65-1.0: Catalysts (The Network)
+  // 0.65-1.0: Catalysts (The Architects)
 
   const opacityHero = useTransform(scrollYProgress, [0, 0.15, 0.2], [1, 1, 0]);
   const opacityVisionary = useTransform(scrollYProgress, [0.15, 0.2, 0.35, 0.45], [0, 1, 1, 0]);

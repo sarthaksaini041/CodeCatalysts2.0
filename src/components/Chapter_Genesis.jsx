@@ -49,8 +49,8 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
   }));
 
   return (
-    <section id="chapter-01" className="chapter-section genesis-timeline" style={{ padding: '15vh 0' }}>
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+    <section id="chapter-01" className="chapter-section genesis-timeline">
+      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
 
         {/* Chapter header */}
         <ParallaxLayer offset={20}>
@@ -88,9 +88,7 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4rem',
-                  marginBottom: '10rem',
-                  flexDirection: point.reverse ? 'row-reverse' : 'row',
+                  marginBottom: 'clamp(5rem, 10vh, 10rem)',
                 }}
               >
                 {/* Text block — slides in from its side */}
@@ -99,7 +97,8 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                   delay={0}
                   duration={1}
                   amount={0.15}
-                  style={{ flex: 1, textAlign: point.reverse ? 'right' : 'left' }}
+                  className="zig-zag-content"
+                  style={{ flex: 1 }}
                 >
                   {/* Index log */}
                   <motion.span
@@ -163,15 +162,8 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                   delay={0.1}
                   duration={1.3}
                   amount={0.15}
-                  style={{
-                    flex: 1,
-                    position: 'relative',
-                    borderRadius: '32px',
-                    overflow: 'hidden',
-                    aspectRatio: '16/10',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
-                  }}
+                  className="zig-zag-image-wrapper"
+                  style={{ flex: 1 }}
                 >
                   <motion.img
                     whileHover={{ scale: 1.06 }}

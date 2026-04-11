@@ -152,26 +152,36 @@ const AdminDashboard = () => {
   const CmsComponent = CMS_TABS[activeTab] ?? null;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex font-outfit text-left">
+    <div className="min-h-screen bg-[#000000] text-white flex font-outfit text-left overflow-x-hidden">
+      {/* ── Background Effects ── */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#7c3aed]/5 via-transparent to-[#06b6d4]/5 opacity-40" />
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#7c3aed]/10 to-transparent blur-[120px]" />
+      </div>
+
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className="flex-1 ml-64 p-10 relative min-h-screen">
+      <main className="flex-1 ml-64 p-10 relative min-h-screen z-10">
         {/* ── Header ── */}
-        <div className="flex items-end justify-between mb-10 relative z-10">
+        <div className="flex items-end justify-between mb-12 relative">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">System Core v2.4</span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tight text-white drop-shadow-sm uppercase">
               {TAB_LABELS[activeTab] ?? activeTab}
             </h1>
-            <p className="text-slate-400 text-xs font-medium mt-0.5">Code Catalysts Admin</p>
+            <p className="text-white/40 text-[11px] font-bold tracking-wider mt-1 uppercase">Command & Control Center</p>
           </div>
 
           {/* Show export only on data tabs */}
           {(activeTab === 'dashboard' || activeTab === 'applications') && (
             <button
               onClick={() => exportCSV(applications)}
-              className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl border border-slate-200 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+              className="px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer shadow-xl backdrop-blur-md group"
             >
-              <Download size={14} /> Export CSV
+              <Download size={14} className="group-hover:translate-y-0.5 transition-transform" /> Export Database
             </button>
           )}
         </div>
@@ -194,12 +204,12 @@ const AdminDashboard = () => {
               {/* Recent applications preview */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-sm font-bold text-slate-500">Recent Applications</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Intelligence Feed</h3>
                   <button
                     onClick={() => setActiveTab('applications')}
-                    className="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1.5"
+                    className="text-[10px] font-black uppercase tracking-wider text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1.5"
                   >
-                    View All <ArrowRight size={12} />
+                    ACCESS ALL <ArrowRight size={12} />
                   </button>
                 </div>
                 <ApplicationTable
@@ -261,8 +271,11 @@ const AdminDashboard = () => {
 
       {/* Global loading overlay */}
       {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm pointer-events-none">
-          <Loader2 className="animate-spin text-indigo-600" size={28} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md pointer-events-none">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="animate-spin text-indigo-500" size={40} />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Synchronizing...</span>
+          </div>
         </div>
       )}
     </div>

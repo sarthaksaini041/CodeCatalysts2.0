@@ -20,8 +20,8 @@ const Chapter_Hero = ({ siteContent = {} }) => {
 
             {/* TAG LINE — clip-path slide up */}
             <motion.p
-              initial={{ opacity: 0, y: 12, letterSpacing: '0.3em' }}
-              animate={{ opacity: 1, y: 0, letterSpacing: '0.8em' }}
+              initial={{ opacity: 0, y: 12, letterSpacing: '0.2em' }}
+              animate={{ opacity: 1, y: 0, letterSpacing: 'clamp(0.2em, 2vw, 0.8em)' }}
               transition={{ duration: 1.1, delay: 0.2, ease: EASE_OUT }}
               style={{
                 marginBottom: '2.5rem',
@@ -39,7 +39,7 @@ const Chapter_Hero = ({ siteContent = {} }) => {
             <div style={{ overflow: 'hidden', marginBottom: '0.4rem' }}>
               <motion.h1
                 className="hero-headline"
-                style={{ lineHeight: 1.05, fontSize: 'clamp(3rem, 10vw, 7.5rem)', marginBottom: 0 }}
+                style={{ lineHeight: 1.05, fontSize: 'clamp(2.2rem, 10vw, 8rem)', marginBottom: 0 }}
                 initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 transition={{ duration: 1.1, delay: 0.55, ease: EASE_OUT }}
@@ -52,7 +52,7 @@ const Chapter_Hero = ({ siteContent = {} }) => {
             <div style={{ overflow: 'hidden', marginBottom: '3rem' }}>
               <motion.h1
                 className="hero-headline"
-                style={{ lineHeight: 1.05, fontSize: 'clamp(3rem, 10vw, 7.5rem)', marginBottom: 0 }}
+                style={{ lineHeight: 1.05, fontSize: 'clamp(2.2rem, 10vw, 8rem)', marginBottom: 0 }}
                 initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 transition={{ duration: 1.1, delay: 1.1, ease: EASE_OUT }}

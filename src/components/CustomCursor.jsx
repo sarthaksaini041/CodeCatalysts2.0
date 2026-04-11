@@ -14,14 +14,19 @@ const CustomCursor = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [magneticTarget, setMagneticTarget] = useState(null);
 
-  // Motion values for smooth tracking
+  // Motion values for tracking
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // Physics-based spring for the trailing circle
-  const springConfig = { damping: 25, stiffness: 250, mass: 0.5 };
-  const trailX = useSpring(mouseX, springConfig);
-  const trailY = useSpring(mouseY, springConfig);
+  // 1. High-stiffness spring for the main dot (removes input jitter)
+  const dotSpringConfig = { damping: 35, stiffness: 450, mass: 0.1 };
+  const dotX = useSpring(mouseX, dotSpringConfig);
+  const dotY = useSpring(mouseY, dotSpringConfig);
+
+  // 2. Physics-based spring for the trailing circle (liquid/floaty feel)
+  const trailSpringConfig = { damping: 20, stiffness: 150, mass: 0.6 };
+  const trailX = useSpring(mouseX, trailSpringConfig);
+  const trailY = useSpring(mouseY, trailSpringConfig);
 
   useEffect(() => {
     // Disable on touch devices
@@ -52,7 +57,7 @@ const CustomCursor = () => {
     };
 
     const handleHoverStart = (e) => {
-      const target = e.target.closest('a, button, .pill-card, [role="button"]');
+      const target = e.target.closest('a, button, [role="button"]');
       if (target) {
         setIsHovered(true);
         if (target.classList.contains('magnetic')) {
@@ -85,8 +90,8 @@ const CustomCursor = () => {
       <motion.div
         className="cursor-dot"
         style={{
-          x: mouseX,
-          y: mouseY,
+          x: dotX,
+          y: dotY,
           translateX: '-50%',
           translateY: '-50%',
         }}
@@ -100,7 +105,7 @@ const CustomCursor = () => {
           opacity: isHovered ? 0.3 : 0.6,
           borderWidth: isHovered ? '1px' : '2px',
         }}
-        transition={{ type: 'spring', ...springConfig }}
+        transition={{ type: 'spring', ...trailSpringConfig }}
         style={{
           x: trailX,
           y: trailY,

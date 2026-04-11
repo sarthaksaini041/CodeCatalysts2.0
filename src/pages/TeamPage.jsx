@@ -131,8 +131,6 @@ const VisionaryCard = ({ person, onClick }) => (
   <motion.div 
     className="visionary-card-wrap"
     variants={cardVariant}
-    whileHover={{ scale: 1.01, boxShadow: '0 20px 40px rgba(123, 97, 255, 0.1)' }}
-    whileTap={{ scale: 0.99 }}
     onClick={() => onClick(person)}
   >
     <div className="visionary-card">
@@ -157,7 +155,6 @@ const BuilderCard = ({ person, onClick }) => (
   <motion.div 
     className="builder-card"
     variants={cardVariant}
-    whileTap={{ scale: 0.98 }}
     onClick={() => onClick(person)}
   >
     <div className="builder-image-area">
@@ -180,13 +177,6 @@ const CatalystCard = ({ person, onClick }) => (
   <motion.div 
     className="catalyst-card"
     variants={cardVariant}
-    whileHover={{ 
-      backgroundColor: 'rgba(255,255,255,0.05)', 
-      scale: 1.03,
-      borderColor: 'rgba(255,255,255,0.2)',
-      boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
-    }}
-    whileTap={{ scale: 0.98 }}
     onClick={() => onClick(person)}
   >
     <div className="catalyst-header-row">

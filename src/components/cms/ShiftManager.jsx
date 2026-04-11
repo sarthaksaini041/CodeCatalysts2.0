@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '../../lib/supabase-browser';
-import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, Zap } from 'lucide-react';
+import { Plus, Trash2, ArrowUp, ArrowDown, Save, Edit3, X, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ShiftManager = () => {
@@ -124,69 +124,70 @@ const ShiftManager = () => {
         fetchShiftData();
     };
 
-    if (loading) return <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div></div>;
+    if (loading) return <div className="flex justify-center p-20"><Zap className="animate-spin text-indigo-500" size={32} /></div>;
 
     return (
-        <div className="space-y-10 pb-20 text-left">
+        <div className="space-y-12 pb-20 text-left">
             {/* Header / Title Editor */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900 mb-6">Section Settings</h3>
-                <div className="flex gap-4 items-end">
-                    <div className="flex-1 space-y-2">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Chapter Title</label>
-                        <input value={chapterTitle} onChange={(e) => setChapterTitle(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" />
+            <div className="bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-[32px] p-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full group-hover:bg-indigo-500/10 transition-colors" />
+                
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+                        <Sparkles size={16} />
                     </div>
-                    <button onClick={handleSaveTitle} disabled={isSaving} className="px-6 py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100">Save Title</button>
+                    <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Sector Identification</h3>
+                </div>
+
+                <div className="flex gap-4 items-end relative z-10">
+                    <div className="flex-1 space-y-3">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/20 ml-1">Chapter Identity</label>
+                        <input 
+                            value={chapterTitle} 
+                            onChange={(e) => setChapterTitle(e.target.value)} 
+                            className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-3 text-[13px] font-black uppercase tracking-widest focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-white/10 shadow-inner" 
+                        />
+                    </div>
+                    <button 
+                        onClick={handleSaveTitle} 
+                        disabled={isSaving} 
+                        className="px-8 py-3.5 bg-indigo-600 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50"
+                    >
+                        {isSaving ? 'Syncing...' : 'Update Title'}
+                    </button>
                 </div>
             </div>
 
             {/* Principle Cards */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center px-1">
-                    <h3 className="text-sm font-bold text-slate-400">Key Principles</h3>
-                    <button onClick={() => setEditingCard({})} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 transition-all shadow-sm">
-                        <Plus size={16} /> Add New Card
+            <div className="space-y-6">
+                <div className="flex justify-between items-center px-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                        <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Foundational Logic</h3>
+                    </div>
+                    <button 
+                        onClick={() => setEditingCard({})} 
+                        className="flex items-center gap-2 px-6 py-3 bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white transition-all shadow-xl active:scale-95 group"
+                    >
+                        <Plus size={16} className="text-indigo-400 group-hover:rotate-90 transition-transform" /> Add Logic Unit
                     </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {cards.map((card, i) => (
-                        <div key={card.id} className="group flex items-center gap-6 bg-white border border-slate-200 hover:border-indigo-200 hover:shadow-md rounded-2xl p-6 transition-all">
-                            <div className="flex-1">
-                                <h4 className="text-sm font-bold text-slate-900">{card.title}</h4>
-                                <p className="text-xs text-slate-500 font-medium">{card.subtitle}</p>
+                        <div key={card.id} className="group flex items-center gap-6 bg-white/[0.02] backdrop-blur-md border border-white/5 hover:border-indigo-500/30 hover:bg-white/[0.05] rounded-[32px] p-8 transition-all duration-500 shadow-xl relative overflow-hidden">
+                             <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full group-hover:bg-indigo-500/10 transition-colors" />
+                             
+                            <div className="flex-1 relative z-10">
+                                <h4 className="text-[13px] font-black text-white uppercase tracking-widest mb-1 group-hover:text-indigo-400 transition-colors">{card.title}</h4>
+                                <p className="text-[11px] font-bold text-white/30 tracking-tight">{card.subtitle}</p>
                             </div>
-                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                                <button onClick={() => moveCard(i, -1)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all" title="Move Up"><ArrowUp size={16} /></button>
-                                <button onClick={() => moveCard(i, 1)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all" title="Move Down"><ArrowDown size={16} /></button>
-                                <button onClick={() => setEditingCard(card)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all" title="Edit"><Edit3 size={16} /></button>
-                                <button onClick={() => handleDeleteCard(card.id)} className="p-2 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-600 transition-all" title="Delete"><Trash2 size={16} /></button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Stats Editor */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center px-1">
-                    <h3 className="text-sm font-bold text-slate-400">Analytics</h3>
-                    <button onClick={() => setEditingStat({})} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 transition-all shadow-sm">
-                        <Plus size={16} /> Add Stat
-                    </button>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {stats.map((stat, i) => (
-                        <div key={stat.id} className="bg-white border border-slate-200 rounded-2xl p-6 text-center space-y-2 relative group hover:border-indigo-200 hover:shadow-md transition-all">
-                            <span className="text-2xl font-bold text-indigo-600 block">{stat.value}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{stat.label}</span>
-                            <p className="text-[10px] text-slate-400 line-clamp-1 italic">{stat.description || 'No sub-text'}</p>
-                            
-                            <div className="absolute inset-x-0 -bottom-2 flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                                <div className="bg-white border border-slate-200 rounded-lg shadow-xl flex p-1">
-                                    <button onClick={() => moveStat(i, -1)} className="p-1.5 hover:bg-slate-50 rounded-md text-slate-400 hover:text-indigo-600 transition-all"><ArrowUp size={12} /></button>
-                                    <button onClick={() => moveStat(i, 1)} className="p-1.5 hover:bg-slate-50 rounded-md text-slate-400 hover:text-indigo-600 transition-all"><ArrowDown size={12} /></button>
-                                    <button onClick={() => setEditingStat(stat)} className="p-1.5 hover:bg-slate-50 rounded-md text-slate-400 hover:text-indigo-600 transition-all"><Edit3 size={12} /></button>
-                                    <button onClick={() => handleDeleteStat(stat.id)} className="p-1.5 hover:bg-rose-50 rounded-md text-slate-400 hover:text-rose-600 transition-all"><Trash2 size={12} /></button>
+                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-500 relative z-10">
+                                <div className="flex bg-black/40 backdrop-blur-xl rounded-2xl p-1.5 border border-white/5 shadow-2xl">
+                                    <button onClick={() => moveCard(i, -1)} className="p-2.5 hover:bg-white/10 rounded-xl text-white/40 hover:text-indigo-400 transition-all" title="Shift Up"><ArrowUp size={16} /></button>
+                                    <button onClick={() => moveCard(i, 1)} className="p-2.5 hover:bg-white/10 rounded-xl text-white/40 hover:text-indigo-400 transition-all" title="Shift Down"><ArrowDown size={16} /></button>
+                                    <div className="w-px h-8 bg-white/5 self-center mx-1" />
+                                    <button onClick={() => setEditingCard(card)} className="p-2.5 hover:bg-white/10 rounded-xl text-white/40 hover:text-indigo-400 transition-all" title="Modify"><Edit3 size={16} /></button>
+                                    <button onClick={() => handleDeleteCard(card.id)} className="p-2.5 hover:bg-rose-500/10 rounded-xl text-white/40 hover:text-rose-400 transition-all" title="Purge"><Trash2 size={16} /></button>
                                 </div>
                             </div>
                         </div>
@@ -194,36 +195,110 @@ const ShiftManager = () => {
                 </div>
             </div>
 
-            {/* Modals */}
+            {/* Stats Editor */}
+            <div className="space-y-6">
+                <div className="flex justify-between items-center px-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                        <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Quantum Analytics</h3>
+                    </div>
+                    <button 
+                        onClick={() => setEditingStat({})} 
+                        className="flex items-center gap-2 px-6 py-3 bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white transition-all shadow-xl active:scale-95 group"
+                    >
+                        <Plus size={16} className="text-emerald-400 group-hover:rotate-90 transition-transform" /> Deploy Monitor
+                    </button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {stats.map((stat, i) => (
+                        <div key={stat.id} className="bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-[32px] p-8 text-center space-y-3 relative group hover:border-emerald-500/30 hover:bg-white/[0.05] transition-all duration-500 shadow-xl overflow-hidden">
+                            <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-emerald-500/5 blur-[50px] rounded-full group-hover:bg-emerald-500/10 transition-colors" />
+                            
+                            <span className="text-3xl font-black text-white tabular-nums block group-hover:text-emerald-400 transition-colors relative z-10">{stat.value}</span>
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40 block relative z-10">{stat.label}</span>
+                            <p className="text-[10px] text-white/20 font-bold uppercase tracking-tighter line-clamp-1 relative z-10">{stat.description || 'N/A'}</p>
+                            
+                            <div className="absolute inset-x-0 -bottom-2 flex justify-center gap-1 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 z-20">
+                                <div className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex p-1.5">
+                                    <button onClick={() => moveStat(i, -1)} className="p-2 hover:bg-white/10 rounded-xl text-white/40 hover:text-emerald-400 transition-all"><ArrowUp size={14} /></button>
+                                    <button onClick={() => moveStat(i, 1)} className="p-2 hover:bg-white/10 rounded-xl text-white/40 hover:text-emerald-400 transition-all"><ArrowDown size={14} /></button>
+                                    <button onClick={() => setEditingStat(stat)} className="p-2 hover:bg-white/10 rounded-xl text-white/40 hover:text-emerald-400 transition-all"><Edit3 size={14} /></button>
+                                    <button onClick={() => handleDeleteStat(stat.id)} className="p-2 hover:bg-rose-500/10 rounded-xl text-white/40 hover:text-rose-400 transition-all"><Trash2 size={14} /></button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Modals via Portals */}
             {createPortal(
                 <AnimatePresence>
                     {editingCard && (
-                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
-                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
-                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-lg p-8 shadow-2xl relative my-8">
-                                <form onSubmit={handleSaveCard} className="space-y-6 text-slate-900">
-                                    <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                                        <h3 className="text-lg font-bold text-slate-900">Edit Principle Card</h3>
-                                        <button type="button" onClick={() => setEditingCard(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"><X size={20} /></button>
-                                    </div>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2 text-left">
-                                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Title</label>
-                                            <input name="title" defaultValue={editingCard.title} required className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="e.g. Innovation" />
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12 overflow-hidden">
+                            <motion.div 
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                onClick={() => setEditingCard(null)}
+                                className="absolute inset-0 bg-black/80 backdrop-blur-2xl"
+                            />
+
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.95, y: 30 }} 
+                                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                                exit={{ opacity: 0, scale: 0.95, y: 30 }} 
+                                className="relative bg-black/40 border border-white/5 rounded-[40px] w-full max-w-lg overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)]"
+                            >
+                                <form onSubmit={handleSaveCard} className="text-white">
+                                    <div className="p-10 flex justify-between items-center border-b border-white/5 bg-white/[0.02]">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+                                                <Zap size={20} />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-black uppercase tracking-widest">Logic Interface</h3>
+                                                <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-1">Foundational Unit Definition</p>
+                                            </div>
                                         </div>
-                                        <div className="space-y-2 text-left">
-                                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Subtitle</label>
-                                            <input name="subtitle" defaultValue={editingCard.subtitle} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" placeholder="e.g. Pushing boundaries" />
+                                        <button type="button" onClick={() => setEditingCard(null)} className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-all flex items-center justify-center border border-white/5 group">
+                                            <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+                                        </button>
+                                    </div>
+
+                                    <div className="p-10 space-y-8">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Universal Title</label>
+                                            <input 
+                                                name="title" 
+                                                defaultValue={editingCard.title} 
+                                                required 
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-[13px] font-black uppercase tracking-widest focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-white/10" 
+                                                placeholder="e.g. CORE INNOVATION..." 
+                                            />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Contextual Subtitle</label>
+                                            <input 
+                                                name="subtitle" 
+                                                defaultValue={editingCard.subtitle} 
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-[13px] font-black uppercase tracking-widest focus:outline-none focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-white/10" 
+                                                placeholder="e.g. EVOLVING ARCHITECTURES..." 
+                                            />
                                         </div>
                                     </div>
-                                    <div className="flex gap-4 pt-6 mt-4 border-t border-slate-100">
-                                        <button type="button" onClick={() => setEditingCard(null)} className="flex-1 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Save Principle</button>
+
+                                    <div className="p-10 bg-white/[0.02] border-t border-white/5 flex gap-6">
+                                        <button type="button" onClick={() => setEditingCard(null)} className="flex-1 py-4.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-white/40 transition-all active:scale-95">Abstain</button>
+                                        <button 
+                                            type="submit" 
+                                            disabled={isSaving} 
+                                            className="flex-[2] py-4.5 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_0_40px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_60px_rgba(79,70,229,0.5)] transition-all active:scale-95 disabled:opacity-50 transform hover:-translate-y-1"
+                                        >
+                                            {isSaving ? 'Synching...' : 'Commit Unit'}
+                                        </button>
                                     </div>
                                 </form>
                             </motion.div>
                         </div>
-                    </div>
                     )}
                 </AnimatePresence>,
                 document.body
@@ -232,36 +307,80 @@ const ShiftManager = () => {
             {createPortal(
                 <AnimatePresence>
                     {editingStat && (
-                        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-900/20 backdrop-blur-sm">
-                            <div className="min-h-full flex items-center justify-center p-4 md:p-6">
-                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white border border-slate-200 rounded-[32px] w-full max-w-sm p-8 shadow-2xl relative my-8">
-                                <form onSubmit={handleSaveStat} className="space-y-6 text-slate-900">
-                                    <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                                        <h3 className="text-lg font-bold text-slate-900">Edit Analytic Stat</h3>
-                                        <button type="button" onClick={() => setEditingStat(null)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 p-2 rounded-xl transition-all"><X size={20} /></button>
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12 overflow-hidden">
+                            <motion.div 
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                onClick={() => setEditingStat(null)}
+                                className="absolute inset-0 bg-black/80 backdrop-blur-2xl"
+                            />
+
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.95, y: 30 }} 
+                                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                                exit={{ opacity: 0, scale: 0.95, y: 30 }} 
+                                className="relative bg-black/40 border border-white/5 rounded-[40px] w-full max-w-md overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)]"
+                            >
+                                <form onSubmit={handleSaveStat} className="text-white">
+                                    <div className="p-10 flex justify-between items-center border-b border-white/5 bg-white/[0.02]">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                                                <Zap size={20} />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-black uppercase tracking-widest">Metric Config</h3>
+                                                <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-1">Analytic Data Definition</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" onClick={() => setEditingStat(null)} className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-all flex items-center justify-center border border-white/5 group">
+                                            <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+                                        </button>
                                     </div>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2 text-left">
-                                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Value (e.g. 50+)</label>
-                                            <input name="value" defaultValue={editingStat.value} required className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" />
+
+                                    <div className="p-10 space-y-8">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Quantum Value</label>
+                                            <input 
+                                                name="value" 
+                                                defaultValue={editingStat.value} 
+                                                required 
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-[13px] font-black uppercase tracking-widest focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-white/10" 
+                                                placeholder="e.g. 500+..." 
+                                            />
                                         </div>
-                                        <div className="space-y-2 text-left">
-                                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Label</label>
-                                            <input name="label" defaultValue={editingStat.label} required className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" />
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Metric Identity</label>
+                                            <input 
+                                                name="label" 
+                                                defaultValue={editingStat.label} 
+                                                required 
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-[13px] font-black uppercase tracking-widest focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-white/10" 
+                                                placeholder="e.g. RESEARCH NODES..." 
+                                            />
                                         </div>
-                                        <div className="space-y-2 text-left">
-                                            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 ml-1">Sub-text</label>
-                                            <input name="description" defaultValue={editingStat.description} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-indigo-500 transition-all text-slate-900" />
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Sub-context</label>
+                                            <input 
+                                                name="description" 
+                                                defaultValue={editingStat.description} 
+                                                className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-[13px] font-black uppercase tracking-widest focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.05] transition-all text-white placeholder:text-white/10" 
+                                                placeholder="Brief contextual detail..." 
+                                            />
                                         </div>
                                     </div>
-                                    <div className="flex gap-4 pt-6 mt-4 border-t border-slate-100">
-                                        <button type="button" onClick={() => setEditingStat(null)} className="flex-1 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                                        <button type="submit" disabled={isSaving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">Save Stat</button>
+
+                                    <div className="p-10 bg-white/[0.02] border-t border-white/5 flex gap-6">
+                                        <button type="button" onClick={() => setEditingStat(null)} className="flex-1 py-4.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-white/40 transition-all active:scale-95">Discard</button>
+                                        <button 
+                                            type="submit" 
+                                            disabled={isSaving} 
+                                            className="flex-[2] py-4.5 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:bg-emerald-500 hover:shadow-[0_0_60px_rgba(16,185,129,0.5)] transition-all active:scale-95 disabled:opacity-50 transform hover:-translate-y-1"
+                                        >
+                                            {isSaving ? 'Compiling...' : 'Commit Metric'}
+                                        </button>
                                     </div>
                                 </form>
                             </motion.div>
                         </div>
-                    </div>
                     )}
                 </AnimatePresence>,
                 document.body

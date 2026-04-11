@@ -36,8 +36,8 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
   }));
 
   return (
-    <section id="chapter-03" className="chapter-section journey-scroll" style={{ padding: '20vh 0' }}>
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+    <section id="chapter-03" className="chapter-section journey-scroll">
+      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
 
         {/* Header */}
         <ParallaxLayer offset={20}>
@@ -98,13 +98,11 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
             return (
               <ParallaxLayer key={i} offset={35}>
                 <div
-                  className="journey-step-row"
+                  className={`zig-zag-row ${isImageLeft ? '' : 'reverse'}`}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '5rem',
-                    flexDirection: isImageLeft ? 'row' : 'row-reverse',
-                    textAlign: isImageLeft ? 'left' : 'right',
+                    marginBottom: 'clamp(5rem, 12vh, 15rem)',
                   }}
                 >
                   {/* Text panel — slides from its side */}
@@ -113,9 +111,10 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                     delay={0}
                     duration={1}
                     amount={0.15}
+                    className="zig-zag-content"
                     style={{
                       flex: 1,
-                      padding: '4rem',
+                      padding: 'clamp(1.5rem, 4vw, 4rem)',
                       background: 'rgba(255,255,255,0.015)',
                       borderRadius: '40px',
                       border: '1px solid rgba(255,255,255,0.055)',
@@ -187,15 +186,8 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                     delay={0.12}
                     duration={1.2}
                     amount={0.15}
-                    style={{
-                      flex: 1.2,
-                      position: 'relative',
-                      borderRadius: '40px',
-                      overflow: 'hidden',
-                      aspectRatio: '16/10',
-                      boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
-                      border: '1px solid rgba(255,255,255,0.055)',
-                    }}
+                    className="zig-zag-image-wrapper"
+                    style={{ flex: 1.2 }}
                   >
                     <img
                       src={step.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'}

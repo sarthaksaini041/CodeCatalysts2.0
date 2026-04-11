@@ -112,7 +112,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                     boxShadow: `0 20px 50px -15px ${color}55`,
                   }}
                   style={{
-                    padding: '4rem 2rem',
+                    padding: 'clamp(2rem, 8vw, 4rem) 1.5rem',
                     textAlign: 'center',
                     background: 'rgba(255, 255, 255, 0.015)',
                     borderRadius: '32px',
@@ -200,7 +200,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   }}
                   whileHover={{ y: -8, backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
                   style={{
-                    padding: '3.5rem 2rem',
+                    padding: 'clamp(2rem, 8vw, 3.5rem) 1.5rem',
                     background: 'rgba(255,255,255,0.02)',
                     border: '1px solid rgba(255,255,255,0.05)',
                     borderRadius: '32px',
@@ -211,7 +211,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    minHeight: '240px',
+                    minHeight: '200px',
                     transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
                 >
@@ -221,7 +221,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                     transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
                     style={{
                       position: 'absolute', top: '10%', left: '10%',
-                      fontSize: '8rem', fontWeight: 950,
+                      fontSize: 'clamp(4rem, 20vw, 8rem)', fontWeight: 950,
                       pointerEvents: 'none', lineHeight: 1,
                       userSelect: 'none', fontFamily: 'var(--font-heading)',
                       color: '#fff',
@@ -237,7 +237,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                     viewport={{ once: true }}
                     transition={{ duration: 0.7, delay: 0.15 + i * 0.08, ease: [0.34, 1.56, 0.64, 1] }}
                     style={{
-                      fontSize: '4rem', fontWeight: 950, color: '#fff',
+                      fontSize: 'clamp(2.5rem, 12vw, 4rem)', fontWeight: 950, color: '#fff',
                       margin: '0 0 1rem 0', letterSpacing: '-0.02em',
                       position: 'relative', lineHeight: 1,
                     }}

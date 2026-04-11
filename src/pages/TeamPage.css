@@ -100,12 +100,6 @@
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
-.visionary-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--primary);
-  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 30px rgba(123, 97, 255, 0.1);
-}
-
 .visionary-avatar-box {
   flex: 0 0 280px;
   height: 280px;
@@ -118,10 +112,6 @@
   position: relative;
   box-shadow: 0 0 40px rgba(123,97,255,0.12), inset 0 0 0 1px rgba(123,97,255,0.12);
   transition: box-shadow 0.4s ease;
-}
-
-.visionary-avatar-box:hover {
-  box-shadow: 0 0 60px rgba(123,97,255,0.22), inset 0 0 0 1px rgba(123,97,255,0.25);
 }
 
 .visionary-initials {
@@ -187,14 +177,10 @@
   display: flex;
   flex-direction: column;
   text-align: left; /* Left align for cinematic look */
-  cursor: pointer;
+  cursor: default;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   margin: 0 auto;
   position: relative; /* Base for overlay */
-}
-
-.builder-card:hover {
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .builder-image-area {
@@ -290,12 +276,8 @@
   gap: 0.7rem;
   transition: var(--transition-cinematic);
   position: relative;
-  cursor: pointer;
+  cursor: default;
   margin: 0 auto; /* Center within its grid cell */
-}
-
-.catalyst-card:hover {
-  background: rgba(255, 255, 255, 0.07);
 }
 
 .catalyst-header-row {

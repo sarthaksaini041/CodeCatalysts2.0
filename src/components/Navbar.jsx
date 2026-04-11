@@ -21,19 +21,34 @@ const PRIMARY_ACTIONS = [
 /* ─────────────────────────────────────────────
    Smooth-scroll helper — respects Lenis
 ───────────────────────────────────────────── */
-const scrollToSection = (sectionId, immediate = false) => {
+const scrollToSection = (sectionId, immediate = false, attempts = 0) => {
   const el = document.getElementById(sectionId);
-  if (!el) return false;
-
-  if (window.lenis) {
-    window.lenis.scrollTo(el, {
-      offset: -20,
-      duration: immediate ? 0 : 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-  } else {
-    el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth', block: 'start' });
+  
+  if (!el) {
+    if (attempts < 10) {
+      setTimeout(() => scrollToSection(sectionId, immediate, attempts + 1), 100);
+    }
+    return false;
   }
+
+  const doScroll = () => {
+    if (window.lenis) {
+      window.lenis.scrollTo(el, {
+        offset: -40,
+        duration: immediate ? 0 : 0.85,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth', block: 'start' });
+    }
+  };
+
+  if (!window.lenis && attempts < 5) {
+      setTimeout(() => scrollToSection(sectionId, immediate, attempts + 1), 50);
+      return true;
+  }
+
+  doScroll();
   return true;
 };
 
@@ -60,7 +75,6 @@ const Navbar = () => {
   const [scrolled,       setScrolled]       = useState(false);
   const [activeSection,  setActiveSection]  = useState(null);
   const [mobileOpen,     setMobileOpen]     = useState(false);
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const [hoveredIdx,     setHoveredIdx]     = useState(null);
 
   const linkRefs     = useRef([]);
@@ -138,11 +152,11 @@ const Navbar = () => {
             bestId = id;
           }
         }
-        setActiveSection(bestRatio > 0.05 ? bestId : null);
+        setActiveSection(bestRatio > 0.1 ? bestId : null);
       },
       {
-        threshold: [0, 0.05, 0.1, 0.25, 0.5, 0.75, 1.0],
-        rootMargin: '-10% 0px -20% 0px',
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        rootMargin: '-15% 0px -25% 0px',
       }
     );
 
@@ -155,24 +169,6 @@ const Navbar = () => {
     return () => observer.disconnect();
   }, [isLanding]);
 
-  /* ── Floating indicator (pill glider) ── */
-  const updateIndicator = useCallback((idx) => {
-    const ref  = linkRefs.current[idx];
-    const wrap = linksWrapRef.current;
-    if (!ref || !wrap) return;
-    const rRect = ref.getBoundingClientRect();
-    const wRect = wrap.getBoundingClientRect();
-    setIndicatorStyle({
-      left:    rRect.left - wRect.left,
-      width:   rRect.width,
-      opacity: 1,
-    });
-  }, []);
-
-  const clearIndicator = useCallback(() => {
-    setIndicatorStyle(prev => ({ ...prev, opacity: 0 }));
-  }, []);
-
   const getActiveIdx = useCallback(() => {
     if (!isLanding) {
       if (router.pathname === '/team') return LANDING_LINKS.findIndex(l => l.href === '/team');
@@ -182,32 +178,12 @@ const Navbar = () => {
     return LANDING_LINKS.findIndex(l => l.sectionId === activeSection);
   }, [isLanding, router.pathname, activeSection]);
 
-  /* ── Indicator positioning ── */
-  useEffect(() => {
-    const idx = hoveredIdx !== null ? hoveredIdx : getActiveIdx();
-    if (idx >= 0) updateIndicator(idx);
-    else clearIndicator();
-  }, [hoveredIdx, activeSection, router.pathname, getActiveIdx, updateIndicator, clearIndicator]);
-
-  /* ── Resize ── */
-  useEffect(() => {
-    const handleResize = () => {
-      const ai = getActiveIdx();
-      if (ai >= 0) updateIndicator(ai);
-      else clearIndicator();
-    };
-    window.addEventListener('resize', handleResize);
-    const t = setTimeout(handleResize, 500);
-    return () => { window.removeEventListener('resize', handleResize); clearTimeout(t); };
-  }, [getActiveIdx, updateIndicator, clearIndicator]);
-
-  /* ── Click handler ── */
+  /* ── Close mobile menu on route change ── */
   const handleNavClick = useCallback(async (link, e) => {
     e.preventDefault();
     setMobileOpen(false);
 
     if (link.route) {
-      // Clear saved scroll for destination so it opens fresh
       if (link.href !== router.asPath) {
         sessionStorage.removeItem(`scroll-pos:${link.href}`);
       }
@@ -217,24 +193,48 @@ const Navbar = () => {
 
     if (link.sectionId) {
       if (isLanding) {
-        // Already on landing — just scroll
         scrollToSection(link.sectionId);
       } else {
-        // Navigate to landing, then scroll to section
-        // Clear any saved scroll position for home so it doesn't fight us
+        // Aggressively clear scroll cache for home to prevent Lenis from hijacking the transition
         sessionStorage.removeItem('scroll-pos:/');
-
-        await router.push('/');
-
-        // Wait for the section element to appear in the DOM after navigation
-        const found = await waitForElement(link.sectionId, 3000);
-        if (found) {
-          // Small delay for Lenis to initialize on new page
-          setTimeout(() => scrollToSection(link.sectionId), 150);
-        }
+        sessionStorage.removeItem('scroll-pos:/#chapter-01');
+        sessionStorage.removeItem('scroll-pos:/#chapter-02');
+        sessionStorage.removeItem('scroll-pos:/#chapter-03');
+        sessionStorage.removeItem('scroll-pos:/#chapter-04');
+        
+        // Let the URL hash drive the destination
+        router.push(`/${link.href}`);
       }
     }
   }, [isLanding, router]);
+
+  /* ── Handle external navigation to a specific section via hash ── */
+  useEffect(() => {
+    if (!isLanding) return;
+    
+    // Check if there's a hash in the URL on landing page mount/navigation
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash.startsWith('chapter-')) {
+      // FIX: If we have a saved scroll position for this path, DON'T force a jump to the section start.
+      // This allows SmoothScroll.jsx to restore the exact pixel position on reload.
+      const savedPos = sessionStorage.getItem(`scroll-pos:${router.asPath}`);
+      if (savedPos !== null) return;
+
+      const waitAndScroll = async () => {
+        // Wait for element but also wait for Lenis to be ready
+        const found = await waitForElement(hash, 4000);
+        if (found) {
+          // Allow page layout and Lenis to fully initialize
+          setTimeout(() => {
+            const success = scrollToSection(hash);
+            // If scroll failed (maybe element removed/moved), try one more time
+            if (!success) setTimeout(() => scrollToSection(hash), 300);
+          }, 250);
+        }
+      };
+      waitAndScroll();
+    }
+  }, [isLanding, router.asPath]);
 
   /* ── Mobile backdrop close ── */
   useEffect(() => {
@@ -287,21 +287,7 @@ const Navbar = () => {
 
           {/* Nav links area with glider */}
           <div className="navbar-links-wrap" ref={linksWrapRef}>
-            {/* Floating indicator */}
-            <motion.div
-              className="navbar-indicator"
-              animate={{
-                left:    indicatorStyle.left,
-                width:   indicatorStyle.width,
-                opacity: indicatorStyle.opacity,
-              }}
-              transition={{
-                left:    { type: 'spring', stiffness: 420, damping: 38, mass: 0.8 },
-                width:   { type: 'spring', stiffness: 420, damping: 38, mass: 0.8 },
-                opacity: { duration: 0.18, ease: 'easeInOut' },
-              }}
-              aria-hidden="true"
-            />
+
 
             {LANDING_LINKS.map((link, idx) => (
               <a

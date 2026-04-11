@@ -13,13 +13,13 @@ import {
 
 const StatusBadge = memo(({ status }) => {
   const styles = {
-    pending: 'bg-amber-50 text-amber-600 border-amber-100',
-    approved: 'bg-emerald-50 text-emerald-600 border-emerald-100',
-    rejected: 'bg-rose-50 text-rose-600 border-rose-100',
+    pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]',
+    approved: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]',
+    rejected: 'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.1)]',
   };
 
   return (
-    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${styles[status] || styles.pending}`}>
+    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.15em] border ${styles[status] || styles.pending} backdrop-blur-md`}>
       {status || 'pending'}
     </span>
   );
@@ -43,17 +43,17 @@ const ApplicationTable = memo(({
   const years = useMemo(() => ['All Years', ...new Set(applications.map(a => a.year))], [applications]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Controls Overlay */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between relative z-20">
         <div className="relative w-full md:w-96 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-indigo-400 transition-colors" size={18} />
           <input 
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search applicants..."
-            className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-12 pr-4 text-slate-900 text-sm outline-none focus:border-indigo-500 transition-all font-medium shadow-sm"
+            className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-3 pl-12 pr-4 text-white text-[11px] font-bold uppercase tracking-widest outline-none focus:bg-white/[0.06] focus:border-indigo-500/50 transition-all backdrop-blur-xl shadow-2xl"
           />
         </div>
 
@@ -62,95 +62,103 @@ const ApplicationTable = memo(({
             <select 
               value={filterDomain}
               onChange={(e) => setFilterDomain(e.target.value)}
-              className="appearance-none w-full md:w-48 bg-white border border-slate-200 rounded-xl py-2.5 pl-4 pr-10 text-slate-700 text-sm outline-none cursor-pointer focus:border-indigo-500 shadow-sm"
+              className="appearance-none w-full md:w-48 bg-white/[0.03] border border-white/5 rounded-2xl py-3 pl-5 pr-12 text-white/60 text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer focus:border-indigo-500/50 backdrop-blur-xl transition-all"
             >
-              {domains.map(d => <option key={d} value={d} className="bg-white">{d}</option>)}
+              {domains.map(d => <option key={d} value={d} className="bg-[#0a0a0b] text-white">{d}</option>)}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" size={16} />
           </div>
 
           <div className="relative flex-1 md:flex-none">
             <select 
               value={filterYear}
               onChange={(e) => setFilterYear(e.target.value)}
-              className="appearance-none w-full md:w-32 bg-white border border-slate-200 rounded-xl py-2.5 pl-4 pr-10 text-slate-700 text-sm outline-none cursor-pointer focus:border-indigo-500 shadow-sm"
+              className="appearance-none w-full md:w-36 bg-white/[0.03] border border-white/5 rounded-2xl py-3 pl-5 pr-12 text-white/60 text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer focus:border-indigo-500/50 backdrop-blur-xl transition-all"
             >
-              {years.map(y => <option key={y} value={y} className="bg-white">{y}</option>)}
+              {years.map(y => <option key={y} value={y} className="bg-[#0a0a0b] text-white">{y}</option>)}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" size={16} />
           </div>
         </div>
       </div>
 
       {/* Table Container */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+      <div className="bg-white/[0.02] backdrop-blur-2xl border border-white/5 rounded-[32px] overflow-hidden shadow-2xl relative">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Applicant</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Domain</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Year</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Date</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500">Status</th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-500 text-right">Actions</th>
+              <tr className="bg-white/[0.03] border-b border-white/5">
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Identity</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Specialization</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Cycle</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Timestamp</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Registry Status</th>
+                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white/20 text-right">Operations</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/5">
               <AnimatePresence mode="popLayout">
                 {applications.map((app, idx) => (
                   <motion.tr 
                     key={app.id} 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="group hover:bg-slate-50 transition-colors"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ delay: idx * 0.03 }}
+                    className="group hover:bg-white/[0.03] transition-all duration-300 cursor-default"
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-slate-900 font-semibold text-sm">{app.name}</span>
-                        <span className="text-slate-400 text-xs">{app.email}</span>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center text-indigo-400 font-bold text-xs">
+                          {app.name.charAt(0)}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-white font-black text-[13px] tracking-tight group-hover:text-indigo-400 transition-colors uppercase">{app.name}</span>
+                          <span className="text-white/30 text-[10px] font-bold tracking-widest">{app.email}</span>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                      {app.domain}
+                    <td className="px-8 py-5">
+                       <span className="px-2 py-1 bg-indigo-500/5 border border-indigo-500/10 rounded text-[9px] font-black uppercase tracking-widest text-indigo-400/80">
+                        {app.domain}
+                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-600">
+                    <td className="px-8 py-5 text-[11px] font-black text-white/40 tabular-nums">
                       {app.year}
                     </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-400 tabular-nums">
-                      {new Date(app.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    <td className="px-8 py-5 text-[10px] font-bold text-white/20 tabular-nums uppercase tracking-tighter">
+                      {new Date(app.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-5">
                       <StatusBadge status={app.status} />
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2 transition-opacity">
+                    <td className="px-8 py-5 text-right">
+                      <div className="flex items-center justify-end gap-3 opacity-20 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => onView(app)}
-                          className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors flex items-center justify-center border-none cursor-pointer"
-                          title="View Details"
+                          className="w-10 h-10 rounded-xl bg-white/5 hover:bg-indigo-500 text-white transition-all flex items-center justify-center border border-white/5 cursor-pointer shadow-lg active:scale-95"
+                          title="Decrypt Profile"
                         >
                           <Eye size={16} />
                         </button>
                         <button 
                           onClick={() => onUpdateStatus(app.id, 'approved')}
-                          className="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-600 transition-colors flex items-center justify-center border-none cursor-pointer"
-                          title="Approve"
+                          className="w-10 h-10 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white transition-all flex items-center justify-center border border-emerald-500/20 cursor-pointer shadow-lg active:scale-95"
+                          title="Authorize"
                         >
                           <CheckCircle size={16} />
                         </button>
                         <button 
                           onClick={() => onUpdateStatus(app.id, 'rejected')}
-                          className="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition-colors flex items-center justify-center border-none cursor-pointer"
-                          title="Reject"
+                          className="w-10 h-10 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white transition-all flex items-center justify-center border border-rose-500/20 cursor-pointer shadow-lg active:scale-95"
+                          title="Terminate"
                         >
                           <XCircle size={16} />
                         </button>
                         <button 
                           onClick={() => onDelete(app.id)}
-                          className="w-8 h-8 rounded-lg bg-slate-50 hover:bg-rose-600 hover:text-white text-slate-400 transition-all flex items-center justify-center border-none cursor-pointer"
-                          title="Delete"
+                          className="w-10 h-10 rounded-xl bg-white/5 hover:bg-red-600 text-white/40 hover:text-white transition-all flex items-center justify-center border border-white/5 cursor-pointer shadow-lg active:scale-95"
+                          title="Purge Record"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -164,11 +172,11 @@ const ApplicationTable = memo(({
         </div>
 
         {!loading && applications.length === 0 && (
-          <div className="py-20 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
-              <Search className="text-slate-300" size={24} />
+          <div className="py-32 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6 animate-pulse">
+              <Search className="text-white/10" size={32} />
             </div>
-            <p className="font-bold text-sm text-slate-400">No applications found</p>
+            <p className="font-black text-[10px] uppercase tracking-[0.3em] text-white/30">No active signals found in this sector</p>
           </div>
         )}
       </div>

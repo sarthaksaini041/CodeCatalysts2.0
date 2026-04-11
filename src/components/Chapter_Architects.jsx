@@ -5,7 +5,7 @@ import { fadeUpVariant, staggerContainer, SplitWords } from '../utils/animations
 import ParallaxLayer from './ParallaxLayer';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
-const EASE_OUT  = [0.16, 1, 0.3, 1];
+const EASE_OUT = [0.16, 1, 0.3, 1];
 
 const MemberCard = ({ person, accent }) => {
   let displayRole = person.role?.toUpperCase() || '';
@@ -17,14 +17,8 @@ const MemberCard = ({ person, accent }) => {
 
   return (
     <motion.div
-      className="pill-card magnetic"
-      style={{ width: '380px', flexShrink: 0, background: 'rgba(255,255,255,0.02)', cursor: 'none' }}
-      whileHover={{
-        scale: 1.03,
-        borderColor: accent || 'var(--secondary)',
-        background: 'rgba(255,255,255,0.05)',
-        boxShadow: `0 0 30px ${accent}22`,
-      }}
+      className="pill-card"
+      style={{ width: 'min(380px, 85vw)', flexShrink: 0, background: 'rgba(255,255,255,0.02)' }}
       transition={{ duration: 0.35, ease: EASE_OUT }}
     >
       <div className="pill-avatar-wrap" style={{
@@ -73,7 +67,7 @@ const ScrollingTrack = ({ items, duration, reverse = false, accent }) => {
   );
 };
 
-const Chapter_Architects = ({ teamMembers = [] }) => {
+const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
   const router = useRouter();
 
   const leads = teamMembers.filter(m => m.role === 'Lead' || m.role === 'Rep');
@@ -97,8 +91,8 @@ const Chapter_Architects = ({ teamMembers = [] }) => {
     <section className="chapter-section architects-scan" id="chapter-05" style={{ position: 'relative', overflow: 'hidden', padding: '10vh 0' }}>
 
       {/* Ghost background text */}
-      <div className="bg-text-scrolling" style={{ top: '20%', opacity: 0.02, fontSize: '20rem' }}>
-        NETWORK • CORE • NODES • SYSTEM • ARCHITECTS • NETWORK •
+      <div className="bg-text-scrolling" style={{ top: '20%', opacity: 0.02, fontSize: 'clamp(8rem, 25vw, 20rem)' }}>
+        ARCHITECTS • CORE • NODES • SYSTEM • ARCHITECTS • NETWORK •
       </div>
 
       {/* Header */}
@@ -136,13 +130,13 @@ const Chapter_Architects = ({ teamMembers = [] }) => {
               <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
               <motion.h2
                 variants={{
-                  hidden:  { opacity: 0, y: 50, filter: 'blur(10px)' },
-                  visible: { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 1, ease: EASE_OUT } },
+                  hidden: { opacity: 0, y: 50, filter: 'blur(10px)' },
+                  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1, ease: EASE_OUT } },
                 }}
                 className="title-main"
                 style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--accent), var(--primary))' }}
               >
-                NETWORK
+                {(siteContent.chapter5_title || 'ARCHITECTS').replace(/^THE\s+/i, '')}
               </motion.h2>
             </div>
           </motion.div>
@@ -194,8 +188,7 @@ const Chapter_Architects = ({ teamMembers = [] }) => {
               whileHover={{ scale: 1.06, boxShadow: '0 0 40px rgba(123,97,255,0.4)', y: -4 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push('/team')}
-              className="btn-catalyst-large magnetic"
-              style={{ cursor: 'none' }}
+              className="btn-catalyst-large"
             >
               MEET THE CATALYSTS
             </motion.button>

@@ -25,7 +25,7 @@ const Footer = ({ footerSettings = {}, siteContent = {} }) => {
         { name: 'The Shift', id: 'chapter-02' },
         { name: 'The Journey', id: 'chapter-03' },
         { name: 'The Forge', id: 'chapter-04' },
-        { name: 'The Network', id: 'chapter-05' }
+        { name: 'The Architects', id: 'chapter-05' }
     ];
 
     const contactLinks = [
@@ -96,12 +96,12 @@ const Footer = ({ footerSettings = {}, siteContent = {} }) => {
                         </motion.div>
 
                         {/* Title & Tagline */}
-                        <div className="text-center space-y-6">
-                            <h2 className="text-5xl sm:text-8xl font-[1000] tracking-tighter leading-none uppercase">
+                        <div className="text-center space-y-4 sm:space-y-6">
+                            <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-[1000] tracking-tighter leading-[0.9] uppercase flex flex-col sm:block">
                                 <span className="text-cyan-400">CODE</span>
-                                <span className="text-white ml-2">CATALYSTS</span>
+                                <span className="text-white sm:ml-2">CATALYSTS</span>
                             </h2>
-                            <p className="text-xs sm:text-base text-slate-500 font-bold max-w-md mx-auto leading-relaxed px-4 opacity-80 italic">
+                            <p className="text-[10px] sm:text-base text-slate-500 font-bold max-w-md mx-auto leading-relaxed px-4 opacity-80 italic">
                                 &quot;{footerSettings.footer_text || "Building, learning, and shipping together since 2025."}&quot;
                             </p>
                         </div>

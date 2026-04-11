@@ -10,16 +10,16 @@ const SmoothScroll = ({ children }) => {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.5,
+      duration: 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.0,
+      wheelMultiplier: 1.1,
       smoothTouch: true,
       touchMultiplier: 2.5,
       infinite: false,
-      lerp: 0.08,
+      lerp: 0.05,
     });
 
     lenisRef.current = lenis;
@@ -86,6 +86,13 @@ const SmoothScroll = ({ children }) => {
         // Check if there's a saved position for the destination
         const savedPosition = sessionStorage.getItem(`scroll-pos:${url}`);
 
+        if (window.location.hash) {
+          // If there's a hash, let the page's own hash listener handle the scroll.
+          // We don't want to fight it with a scroll-to-top or restoration.
+          isNavigatingRef.current = false;
+          return;
+        }
+
         if (savedPosition !== null && isNavigatingRef.current) {
           // Navigating back to a previously visited page — restore position
           const targetY = parseInt(savedPosition, 10);
@@ -101,7 +108,7 @@ const SmoothScroll = ({ children }) => {
           };
           setTimeout(tryRestore, 80);
         } else {
-          // Fresh navigation to a new page — scroll to top
+          // Fresh navigation to a new page (no hash) — scroll to top
           lenisRef.current.scrollTo(0, { immediate: true });
         }
       }

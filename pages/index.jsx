@@ -130,7 +130,7 @@ export default function HomePage({
         <Chapter_Forge projects={projects} siteContent={siteContent} />
 
         {/* CHAPTER 05: THE ARCHITECTS */}
-        <Chapter_Architects teamMembers={teamMembers} />
+        <Chapter_Architects teamMembers={teamMembers} siteContent={siteContent} />
 
         <section className="chapter-section final-cta" style={finalCtaStyle}>
           <div className="container" style={finalContainerStyle}>

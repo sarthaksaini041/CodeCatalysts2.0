@@ -36,51 +36,59 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-slate-200 flex flex-col p-6 fixed left-0 top-0 z-20">
+    <div className="w-64 h-screen bg-black/40 backdrop-blur-2xl border-r border-white/5 flex flex-col p-6 fixed left-0 top-0 z-[60] shadow-2xl">
       {/* Brand */}
       <div className="flex items-center gap-3 mb-10 px-2">
-        <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm flex-shrink-0">
-          <ShieldCheck size={20} className="text-white" />
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)] flex-shrink-0">
+          <ShieldCheck size={22} className="text-white" />
         </div>
         <div>
-          <h2 className="text-slate-900 font-bold text-sm tracking-tight leading-none mb-1">Admin Panel</h2>
-          <p className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Code Catalysts</p>
+          <h2 className="text-white font-black text-[13px] tracking-tight leading-none mb-1 uppercase">Control Center</h2>
+          <p className="text-[9px] text-white/30 font-black tracking-[0.2em] uppercase">Code Catalysts</p>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
         {NAV_ITEMS.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-150 text-left ${
+              className={`w-full group flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-left relative overflow-hidden ${
                 isActive
-                  ? 'bg-indigo-50 text-indigo-700 font-bold'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-indigo-500/10 text-indigo-400 font-black'
+                  : 'text-white/40 hover:text-white hover:bg-white/5'
               }`}
             >
+              {isActive && (
+                <motion.div 
+                  layoutId="activeTab"
+                  className="absolute left-0 top-0 w-1 h-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.8)]" 
+                />
+              )}
               <item.icon
-                size={17}
-                className={`flex-shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'} transition-colors`}
+                size={18}
+                className={`flex-shrink-0 ${isActive ? 'text-indigo-400' : 'text-white/20 group-hover:text-white/60'} transition-all duration-300`}
               />
-              <span className="text-xs font-semibold truncate">{item.label}</span>
-              {isActive && <ChevronRight size={13} className="ml-auto text-indigo-300 flex-shrink-0" />}
+              <span className="text-[11px] font-bold uppercase tracking-wider truncate">{item.label}</span>
+              {isActive && <ChevronRight size={14} className="ml-auto text-indigo-500/50 flex-shrink-0" />}
             </button>
           );
         })}
       </nav>
 
       {/* Log out */}
-      <button
-        onClick={handleLogout}
-        className="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all text-xs font-bold group"
-      >
-        <LogOut size={17} className="group-hover:-translate-x-1 transition-transform flex-shrink-0" />
-        <span>Log Out</span>
-      </button>
+      <div className="mt-4 pt-4 border-t border-white/5">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-white/30 hover:text-rose-400 hover:bg-rose-500/10 transition-all text-[11px] font-black uppercase tracking-widest group"
+        >
+          <LogOut size={18} className="group-hover:-translate-x-1 transition-transform flex-shrink-0" />
+          <span>Exit System</span>
+        </button>
+      </div>
     </div>
   );
 };
