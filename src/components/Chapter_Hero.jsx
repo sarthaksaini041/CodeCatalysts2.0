@@ -40,9 +40,9 @@ const Chapter_Hero = ({ siteContent = {} }) => {
               <motion.h1
                 className="hero-headline"
                 style={{ lineHeight: 1.05, fontSize: 'clamp(2.2rem, 10vw, 8rem)', marginBottom: 0 }}
-                initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.1, delay: 0.55, ease: EASE_OUT }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: EASE_OUT }}
               >
                 WE DIDN&apos;T FIND A PATH.
               </motion.h1>
@@ -53,9 +53,9 @@ const Chapter_Hero = ({ siteContent = {} }) => {
               <motion.h1
                 className="hero-headline"
                 style={{ lineHeight: 1.05, fontSize: 'clamp(2.2rem, 10vw, 8rem)', marginBottom: 0 }}
-                initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.1, delay: 1.1, ease: EASE_OUT }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8, ease: EASE_OUT }}
               >
                 <span className="text-gradient">WE BUILT ONE.</span>
               </motion.h1>
@@ -100,9 +100,9 @@ const Chapter_Hero = ({ siteContent = {} }) => {
       {/* Background Logo — develops in slowly like a photographic print */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.85, filter: 'blur(30px)' }}
+          initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
           animate={{ opacity: 0.28, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 3, delay: 0.5, ease: EASE_OUT }}
+          transition={{ duration: 1.5, delay: 0.2, ease: EASE_OUT }}
           style={{
             width: '120vh',
             height: '120vh',
@@ -113,6 +113,8 @@ const Chapter_Hero = ({ siteContent = {} }) => {
           <img
             src="/logo.svg"
             alt="Code Catalysts Logo"
+            fetchPriority="high"
+            loading="eager"
             style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(1.1) contrast(1.1)' }}
           />
         </motion.div>

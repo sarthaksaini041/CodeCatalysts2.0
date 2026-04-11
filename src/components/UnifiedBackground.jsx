@@ -26,7 +26,7 @@ const UnifiedBackground = () => {
         <div style={{
           position: 'absolute', inset: 0,
           background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(124, 58, 237, 0.04) 0%, transparent 70%)',
-          filter: 'blur(100px)',
+          filter: 'blur(80px)',
         }} />
       </motion.div>
 
@@ -35,7 +35,7 @@ const UnifiedBackground = () => {
         <div style={{
           position: 'absolute', inset: 0,
           background: 'radial-gradient(ellipse 70% 55% at 25% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 70%)',
-          filter: 'blur(120px)',
+          filter: 'blur(80px)',
         }} />
       </motion.div>
 
@@ -46,7 +46,7 @@ const UnifiedBackground = () => {
           background:
             'radial-gradient(ellipse 65% 50% at 75% 40%, rgba(124, 58, 237, 0.04) 0%, transparent 65%),' +
             'radial-gradient(ellipse 50% 40% at 30% 70%, rgba(16, 245, 160, 0.02) 0%, transparent 60%)',
-          filter: 'blur(100px)',
+          filter: 'blur(80px)',
         }} />
       </motion.div>
 
@@ -55,7 +55,7 @@ const UnifiedBackground = () => {
         <div style={{
           position: 'absolute', inset: 0,
           background: 'radial-gradient(ellipse 90% 60% at 50% 80%, rgba(124, 58, 237, 0.03) 0%, transparent 65%)',
-          filter: 'blur(120px)',
+          filter: 'blur(80px)',
         }} />
       </motion.div>
 
@@ -69,7 +69,7 @@ const UnifiedBackground = () => {
             background:
               'radial-gradient(ellipse 60% 50% at 40% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 60%),' +
               'radial-gradient(ellipse 50% 45% at 70% 55%, rgba(124, 58, 237, 0.03) 0%, transparent 60%)',
-            filter: 'blur(150px)',
+            filter: 'blur(100px)',
           }}
         />
       </motion.div>
