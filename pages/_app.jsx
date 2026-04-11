@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Styles
 import '../src/index.css';
@@ -49,6 +51,10 @@ export default function App({ Component, pageProps }) {
           <Component {...pageProps} />
         </div>
       </SmoothScroll>
+
+      {/* Vercel Monitoring */}
+      <Analytics />
+      <SpeedInsights />
     </>
   );
 }
