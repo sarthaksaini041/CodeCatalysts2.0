@@ -10,6 +10,20 @@ import Footer from '../components/Footer';
 import { fadeUpVariant, staggerContainer, cardVariant } from '../utils/animations.jsx';
 import './TeamPage.css';
 
+// ── College colour lookup (simple keyword match) ───────────────────────
+function getCollegeColor(university) {
+  const name = (university || '').toLowerCase();
+  if (name.includes('vit')) return '#00c853'; // green
+  if (name.includes('gla')) return '#ff6b35'; // orange
+  if (name.includes('iet')) return '#64d8ff'; // light blue
+  if (name.includes('srm')) return '#b066ff'; // purple
+  // fallback colours for any other college
+  const FALLBACKS = ['#f72585','#4cc9f0','#ffd166','#06d6a0','#ff4d6d','#3a86ff'];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return FALLBACKS[Math.abs(hash) % FALLBACKS.length];
+}
+
 // ── Shared Components ──────────────────────────────────────────────────
 
 const SocialLinks = ({ github, linkedin, size = 18 }) => (
@@ -160,12 +174,17 @@ const VisionaryCard = ({ person, onClick }) => (
   </motion.div>
 );
 
-const BuilderCard = ({ person, onClick }) => (
+const BuilderCard = ({ person, onClick, collegeColor }) => (
   <motion.div 
     className="builder-card"
     variants={cardVariant}
     onClick={() => onClick(person)}
+    style={{ '--college-color': collegeColor }}
+    whileHover="hover"
   >
+    {/* Glow overlay */}
+    <div className="builder-hover-glow" />
+
     <div className="builder-image-area">
       <div className="builder-initials-bg">{person.name.split(' ').map(n => n[0]).join('')}</div>
       {person.image_url && (
@@ -184,7 +203,9 @@ const BuilderCard = ({ person, onClick }) => (
     <div className="builder-info-area">
       <div className="builder-site">REPRESENTATIVE</div>
       <h3 className="builder-name">{person.name}</h3>
-      <span className="builder-uni-label-small">{person.university || "Code Catalysts"}</span>
+      <span className="builder-uni-label-small" style={{ color: collegeColor, opacity: 1 }}>
+        {person.university || "Code Catalysts"}
+      </span>
       <div className="builder-social-wrap">
         <SocialLinks github={person.github} linkedin={person.linkedin} size={14} />
       </div>
@@ -192,14 +213,19 @@ const BuilderCard = ({ person, onClick }) => (
   </motion.div>
 );
 
-const CatalystCard = ({ person, onClick }) => (
+const CatalystCard = ({ person, onClick, collegeColor }) => (
   <motion.div 
     className="catalyst-card"
     variants={cardVariant}
     onClick={() => onClick(person)}
+    style={{ '--college-color': collegeColor }}
+    whileHover="hover"
   >
+    {/* Shine sweep overlay */}
+    <div className="catalyst-hover-shine" />
+
     <div className="catalyst-header-row">
-      <div className="catalyst-avatar-circle">
+      <div className="catalyst-avatar-circle" style={{ borderColor: collegeColor }}>
           {person.image_url ? (
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 <Image 
@@ -211,7 +237,9 @@ const CatalystCard = ({ person, onClick }) => (
                 />
               </div>
           ) : (
-            <span className="catalyst-initials">{person.name.split(' ').map(n => n[0]).join('')}</span>
+            <span className="catalyst-initials" style={{ color: collegeColor }}>
+              {person.name.split(' ').map(n => n[0]).join('')}
+            </span>
           )}
       </div>
       <div className="catalyst-title-wrap">
@@ -225,7 +253,9 @@ const CatalystCard = ({ person, onClick }) => (
     </div>
 
     <div className="catalyst-card-footer">
-      <span className="catalyst-uni-label">{person.university || "Code Catalysts"}</span>
+      <span className="catalyst-uni-label" style={{ color: collegeColor, opacity: 1 }}>
+        {person.university || "Code Catalysts"}
+      </span>
       <div className="catalyst-socials-minimal">
         <SocialLinks github={person.github} linkedin={person.linkedin} size={14} />
       </div>
@@ -249,6 +279,8 @@ export default function TeamPage() {
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>
   );
+
+  const getColor = (university) => getCollegeColor(university);
 
   const visionary = teamMembers.find(m => m.role === 'Lead');
   const builders = teamMembers.filter(m => m.role === 'Rep');
@@ -309,7 +341,12 @@ export default function TeamPage() {
           <SectionHeader title="The Builders" />
           <div className="builders-grid">
             {builders.map(builder => (
-              <BuilderCard key={builder.id} person={builder} onClick={setActiveMember} />
+              <BuilderCard
+                key={builder.id}
+                person={builder}
+                onClick={setActiveMember}
+                collegeColor={getColor(builder.university)}
+              />
             ))}
           </div>
         </motion.div>
@@ -327,7 +364,8 @@ export default function TeamPage() {
                 <CatalystCard 
                     key={member.id} 
                     person={member} 
-                    onClick={setActiveMember} 
+                    onClick={setActiveMember}
+                    collegeColor={getColor(member.university)}
                 />
             ))}
           </div>

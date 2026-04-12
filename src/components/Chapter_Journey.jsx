@@ -193,6 +193,7 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       style={{ objectFit: 'cover' }}
+                      className="zig-zag-image"
                     />
                     <div style={{
                       position: 'absolute', inset: 0,

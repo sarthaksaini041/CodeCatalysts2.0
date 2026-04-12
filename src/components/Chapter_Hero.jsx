@@ -5,8 +5,8 @@ import { SplitWords } from '../utils/animations.jsx';
 import Image from 'next/image';
 
 /* Stagger timings for the hero entrance sequence */
-const EASE_OUT   = [0.16, 1, 0.3, 1];
-const EASE_EXPO  = [0.87, 0, 0.13, 1];
+const EASE_OUT = [0.16, 1, 0.3, 1];
+const EASE_EXPO = [0.87, 0, 0.13, 1];
 
 const Chapter_Hero = ({ siteContent = {} }) => {
   return (

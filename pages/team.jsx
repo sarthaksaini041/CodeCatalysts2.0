@@ -209,6 +209,10 @@ const VisionaryCard = ({ person, onClick }) => (
     transition={{ duration: 0.6, ease: EASE_OUT }}
     whileTap={{ scale: 0.99 }}
     onClick={() => onClick(person)}
+    role="button"
+    tabIndex={0}
+    aria-label={`View profile: ${person.name}, Leader / Founder`}
+    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick(person)}
   >
     <div className="visionary-card">
       {/* Avatar — develops photo style */}
@@ -292,6 +296,10 @@ const BuilderCard = ({ person, onClick, index = 0 }) => (
     whileTap={{ scale: 0.98 }}
     onClick={() => onClick(person)}
     style={{ perspective: 800 }}
+    role="button"
+    tabIndex={0}
+    aria-label={`View profile: ${person.name}, Representative`}
+    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick(person)}
   >
     <motion.div 
       className="builder-image-area"
@@ -344,6 +352,10 @@ const CatalystCard = ({ person, onClick, index = 0 }) => {
       transition={{ duration: 0.55, delay: (index % 6) * 0.06, ease: EASE_OUT }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(person)}
+      role="button"
+      tabIndex={0}
+      aria-label={`View profile: ${person.name}, Member`}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick(person)}
     >
       <div className="catalyst-header-row">
         {/* Avatar circle */}

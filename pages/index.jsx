@@ -7,27 +7,61 @@ import { Sparkles } from 'lucide-react';
 
 import { supabaseServer } from '../src/lib/supabase-server';
 
-// Import chapter components
-import Chapter_Hero from '../src/components/Chapter_Hero';
+// ── Above-the-fold chapters (eagerly loaded) ──────────────────
+import Chapter_Hero    from '../src/components/Chapter_Hero';
 import Chapter_Genesis from '../src/components/Chapter_Genesis';
-import Chapter_Shift from '../src/components/Chapter_Shift';
-import Chapter_Journey from '../src/components/Chapter_Journey';
-import Chapter_Forge from '../src/components/Chapter_Forge';
-import Chapter_Architects from '../src/components/Chapter_Architects';
-import Footer from '../src/components/Footer';
 
-// Static Background for performance
-const StaticBackground = dynamic(() => import('../src/components/StaticBackground'), { ssr: false });
+// ── Below-the-fold chapters (lazy loaded after hydration) ─────
+// These reduce initial JS bundle and only parse when needed.
+const Chapter_Shift = dynamic(() => import('../src/components/Chapter_Shift'), {
+  ssr: true,
+});
+const Chapter_Journey = dynamic(() => import('../src/components/Chapter_Journey'), {
+  ssr: true,
+});
+const Chapter_Forge = dynamic(() => import('../src/components/Chapter_Forge'), {
+  ssr: true,
+});
+const Chapter_Architects = dynamic(() => import('../src/components/Chapter_Architects'), {
+  ssr: true,
+});
+const Footer = dynamic(() => import('../src/components/Footer'), {
+  ssr: true,
+});
 
+// ── Static styles (defined outside component to avoid recreating) ──
 const landingWrapperStyle = { background: 'transparent', color: 'white' };
-const finalCtaStyle = { minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' };
+const finalCtaStyle = {
+  minHeight: '90vh',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
 const finalContainerStyle = { textAlign: 'center' };
-const heroHeadlineStyle = { fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', marginBottom: '2rem', lineHeight: 0.9 };
-const p1Style = { fontSize: '1.6rem', color: 'var(--text-dim)', maxWidth: '700px', margin: '0 auto 1.5rem auto', lineHeight: 1.6 };
-const p2Style = { fontSize: '1.6rem', color: 'white', maxWidth: '700px', margin: '0 auto 4rem auto', lineHeight: 1.6, fontWeight: 700 };
+const heroHeadlineStyle = {
+  fontSize: 'clamp(3.5rem, 11vw, 7.5rem)',
+  marginBottom: '2rem',
+  lineHeight: 0.9,
+};
+const p1Style = {
+  fontSize: 'clamp(1rem, 2vw, 1.6rem)',
+  color: 'var(--text-dim)',
+  maxWidth: '700px',
+  margin: '0 auto 1.5rem auto',
+  lineHeight: 1.6,
+};
+const p2Style = {
+  fontSize: 'clamp(1rem, 2vw, 1.6rem)',
+  color: 'white',
+  maxWidth: '700px',
+  margin: '0 auto 4rem auto',
+  lineHeight: 1.6,
+  fontWeight: 700,
+};
 
 /**
- * Fetch ALL CMS data at build time.
+ * Fetch ALL CMS data at build time via ISR.
  * Zero runtime API calls for visitors.
  */
 export async function getStaticProps() {
@@ -71,7 +105,7 @@ export async function getStaticProps() {
       teamMembers: teamMembers || [],
       footerSettings: footerSettings || {},
     },
-    revalidate: 60, // ISR: Regenerate page every 60 seconds in background
+    revalidate: 60, // ISR: regenerate page every 60 seconds in background
   };
 }
 
@@ -89,7 +123,7 @@ export default function HomePage({
   const router = useRouter();
   const containerRef = useRef(null);
 
-  // Prefetch high-priority pages for "zero" loading time
+  // Prefetch high-priority pages for instant navigation
   React.useEffect(() => {
     router.prefetch('/team');
     router.prefetch('/apply');
@@ -99,6 +133,7 @@ export default function HomePage({
     <>
       <Head>
         <title>Code Catalysts</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Code Catalysts is a community of passionate builders, developers, and innovators. Join us to learn, build, and ship together." />
         <meta property="og:title" content="Code Catalysts" />
         <meta property="og:description" content="A community of passionate builders, developers, and innovators." />
@@ -115,7 +150,6 @@ export default function HomePage({
         ref={containerRef}
         style={landingWrapperStyle}
       >
-
         {/* CHAPTER 00: THE SPARK */}
         <Chapter_Hero siteContent={siteContent} />
 
@@ -134,12 +168,13 @@ export default function HomePage({
         {/* CHAPTER 05: THE ARCHITECTS */}
         <Chapter_Architects teamMembers={teamMembers} siteContent={siteContent} />
 
+        {/* FINAL CTA */}
         <section className="chapter-section final-cta" style={finalCtaStyle}>
           <div className="container" style={finalContainerStyle}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               viewport={{ once: true, amount: 0.8 }}
             >
               <h2 className="hero-headline" style={heroHeadlineStyle}>
@@ -149,7 +184,7 @@ export default function HomePage({
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 0.5 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
                 style={p1Style}
               >
                 You don&apos;t need to be the best.
@@ -157,20 +192,20 @@ export default function HomePage({
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 1.5 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
                 style={p2Style}
               >
                 Just someone who starts.
               </motion.p>
 
               <motion.button
-                whileHover={{ scale: 1.05, y: -5 }}
+                whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push('/apply')}
                 className="btn-catalyst-large magnetic"
                 style={{ cursor: 'pointer' }}
               >
-                BECOME A CATALYST <Sparkles size={28} />
+                BECOME A CATALYST <Sparkles size={24} />
               </motion.button>
             </motion.div>
           </div>

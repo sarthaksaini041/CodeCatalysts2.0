@@ -67,24 +67,13 @@ const Navbar = () => {
   const linksWrapRef = useRef(null);
   /* ── Scroll shadow ── */
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    // Immediately sync state with current scroll position
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    
-    let rafId;
-    const poll = () => {
-      setScrolled(window.scrollY > 40);
-      rafId = requestAnimationFrame(poll);
-    };
-    if (isLanding) rafId = requestAnimationFrame(poll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [isLanding]);
 
   /* ── Active section via Intersection Observer (more reliable than scroll listener) ── */
   useEffect(() => {
@@ -237,7 +226,6 @@ const Navbar = () => {
               <Link
                 key={link.label}
                 href={link.href.startsWith('#') ? '/' + link.href : link.href}
-                prefetch={true}
                 className={`navbar-link ${isLinkActive(link) ? 'navbar-link--active' : ''}`}
                 onClick={(e) => handleNavClick(link, e)}
                 aria-current={isLinkActive(link) ? 'page' : undefined}

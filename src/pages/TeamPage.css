@@ -97,6 +97,19 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.4s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.4s ease;
+  cursor: pointer;
+}
+
+.visionary-card:hover {
+  transform: translateY(-6px) scale(1.012);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.55),
+    0 0 40px rgba(123,97,255,0.18),
+    inset 0 0 0 1px rgba(123,97,255,0.25);
+  border-color: rgba(123,97,255,0.35);
 }
 
 .visionary-avatar-box {
@@ -174,10 +187,45 @@
   display: flex;
   flex-direction: column;
   text-align: left; /* Left align for cinematic look */
-  cursor: default;
+  cursor: pointer;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   margin: 0 auto;
   position: relative; /* Base for overlay */
+  transition:
+    transform 0.45s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.45s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.45s ease;
+  will-change: transform;
+}
+
+/* College-coloured bottom-border glow on hover */
+.builder-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.55),
+    0 0 0 1.5px var(--college-color, #7b61ff),
+    0 0 40px color-mix(in srgb, var(--college-color, #7b61ff) 30%, transparent);
+  border-color: var(--college-color, #7b61ff);
+}
+
+/* Glow sweep overlay */
+.builder-hover-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse 80% 55% at 50% 100%,
+    color-mix(in srgb, var(--college-color, #7b61ff) 22%, transparent),
+    transparent 70%
+  );
+  transition: opacity 0.45s ease;
+}
+
+.builder-card:hover .builder-hover-glow {
+  opacity: 1;
 }
 
 .builder-image-area {
@@ -218,9 +266,9 @@
   flex-direction: column;
   align-items: flex-start; /* Left align */
   justify-content: flex-end;
-  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
-  padding: 2.5rem 1.8rem 1.8rem;
-  gap: 0.25rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+  padding: 1.2rem 1.5rem 1.2rem;
+  gap: 0.15rem;
 }
 
 .builder-site {
@@ -229,24 +277,25 @@
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;
 }
 
 .builder-name {
-  font-size: 1.6rem; /* Bigger, bolder */
+  font-size: 1.5rem; /* Slightly smaller for better fit */
   font-weight: 950;
   text-transform: uppercase;
   line-height: 1;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
   letter-spacing: -0.02em;
 }
 
 .builder-uni-label-small {
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  font-weight: 700;
-  opacity: 0.8;
-  margin-bottom: 1rem;
+  font-size: 0.65rem;
+  /* color is set per-card via inline style (college color) */
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
 }
 
 /* --- Card: Catalyst (Compact) --- */
@@ -271,10 +320,49 @@
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  transition: none;
   position: relative;
-  cursor: default;
+  overflow: hidden;
+  cursor: pointer;
   margin: 0 auto; /* Center within its grid cell */
+  transition:
+    transform 0.4s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.4s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.4s ease;
+  will-change: transform;
+}
+
+.catalyst-card:hover {
+  transform: translateY(-6px) scale(1.025);
+  box-shadow:
+    0 16px 48px rgba(0,0,0,0.5),
+    0 0 0 1px var(--college-color, #7b61ff),
+    0 0 30px color-mix(in srgb, var(--college-color, #7b61ff) 20%, transparent);
+  border-color: var(--college-color, #7b61ff);
+}
+
+/* Diagonal shine sweep */
+.catalyst-hover-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    color-mix(in srgb, var(--college-color, #7b61ff) 12%, transparent) 45%,
+    rgba(255,255,255,0.04) 50%,
+    transparent 55%
+  );
+  transform: translateX(-100%);
+  transition: opacity 0.35s ease, transform 0s;
+}
+
+.catalyst-card:hover .catalyst-hover-shine {
+  opacity: 1;
+  transform: translateX(100%);
+  transition: opacity 0.1s ease, transform 0.55s cubic-bezier(0.22,1,0.36,1);
 }
 
 .catalyst-header-row {
@@ -347,11 +435,10 @@
 
 .catalyst-uni-label {
   font-size: 0.6rem;
-  color: var(--primary);
+  /* color is set per-card via inline style (college color) */
   font-weight: 900;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  opacity: 0.6;
 }
 
 /* --- Shared Social Icons --- */

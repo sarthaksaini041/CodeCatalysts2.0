@@ -60,12 +60,22 @@ const ScrollingTrack = ({ items, duration, reverse = false, accent }) => {
   if (items.length === 0) return null;
 
   return (
-    <div className="infinite-scroll-container" style={{ overflow: 'hidden', width: '100vw', margin: '1rem 0' }}>
+    <div
+      className="infinite-scroll-container"
+      style={{ overflow: 'hidden', width: '100vw', margin: '1rem 0' }}
+      aria-hidden="true"  // decorative — screen readers skip this
+    >
       <motion.div
         className="infinite-scroll-track"
         animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
         transition={{ duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }}
-        style={{ display: 'flex', gap: '1rem', width: 'max-content', cursor: 'default' }}
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          width: 'max-content',
+          cursor: 'default',
+          willChange: 'transform',
+        }}
       >
         {displayItems.map((member, i) => (
           <MemberCard key={i} person={member} accent={accent} />
@@ -98,10 +108,6 @@ const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
   return (
     <section className="chapter-section architects-scan" id="chapter-05" style={{ position: 'relative', overflow: 'hidden', padding: '10vh 0' }}>
 
-      {/* Ghost background text */}
-      <div className="bg-text-scrolling" style={{ top: '20%', opacity: 0.02, fontSize: 'clamp(5rem, 25vw, 20rem)' }}>
-        ARCHITECTS • CORE • NODES • SYSTEM • ARCHITECTS • NETWORK •
-      </div>
 
       {/* Header */}
       <div className="container" style={{ position: 'relative', zIndex: 1, marginBottom: '5rem', textAlign: 'center' }}>

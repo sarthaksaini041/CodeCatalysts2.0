@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { Zap, Rocket, Trophy, Users, Star, Target, Shield, Cpu } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
 
-const EASE_EXPO  = [0.87, 0, 0.13, 1];
-const EASE_OUT   = [0.16, 1, 0.3, 1];
+const EASE_EXPO = [0.87, 0, 0.13, 1];
+const EASE_OUT  = [0.16, 1, 0.3, 1];
 
+/* ── Chapter label w/ expanding lines ───────────────────────── */
 const ChapterLabel = ({ label, color }) => (
   <motion.div
     variants={staggerContainer(0.12, 0)}
@@ -47,8 +48,8 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
               <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
               <motion.h2
                 variants={{
-                  hidden:  { opacity: 0, y: 30 }, // Removed blur filter
-                  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE_OUT } },
+                  hidden:  { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE_OUT } },
                 }}
                 className="title-main"
                 style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--secondary), var(--primary))' }}
@@ -58,7 +59,6 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
             </div>
           </motion.div>
 
-          {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
           </motion.p>
         </div>
 
-        {/* PROTOCOL CARDS — staggered materialisation with glow burst */}
+        {/* PROTOCOL CARDS */}
         <motion.div
           className="protocol-grid"
           style={{ display: 'grid', gap: '2rem', marginBottom: '8rem' }}
@@ -85,37 +85,34 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
           viewport={{ once: true, amount: 0.15 }}
           variants={{
             hidden: { opacity: 0 },
-            show:   { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+            show:   { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
           }}
         >
           {chapter2Cards.map((card, i) => {
             const color = i % 2 === 0 ? 'var(--primary)' : 'var(--secondary)';
             const IconComponent = defaultIcons[i % defaultIcons.length];
+            // Stagger the CSS float animation per card
+            const floatDelay = `${i * 0.3}s`;
 
             return (
               <motion.div
                 key={card.id}
-                className="magnetic"
                 variants={{
-                  hidden: { opacity: 0, y: 30, scale: 0.96 },
-                  show:   {
-                    opacity: 1, y: 0, scale: 1,
-                    transition: { duration: 0.85, ease: EASE_OUT },
-                  },
+                  hidden: { opacity: 0, y: 28, scale: 0.97 },
+                  show:   { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: EASE_OUT } },
                 }}
                 whileHover={{
-                  y: -10,
+                  y: -8,
                   backgroundColor: 'rgba(255, 255, 255, 0.04)',
                   borderColor: color,
-                  boxShadow: `0 20px 50px -15px ${color}55`,
+                  boxShadow: `0 16px 40px -12px ${color}44`,
                 }}
                 style={{
                   padding: 'clamp(2rem, 8vw, 4rem) 1.5rem',
                   textAlign: 'center',
                   background: 'rgba(255, 255, 255, 0.015)',
-                  borderRadius: '32px',
+                  borderRadius: '28px',
                   border: '1px solid rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(8px)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -125,35 +122,29 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   overflow: 'hidden',
                 }}
               >
-                {/* Background radial glow */}
-                <motion.div 
-                  animate={{ opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut' }}
+                {/* Subtle radial background tint — static, not animated */}
+                <div
                   style={{
                     position: 'absolute', inset: 0,
-                    background: `radial-gradient(circle at 50% 0%, ${color}14 0%, transparent 70%)`,
+                    background: `radial-gradient(circle at 50% 0%, ${color}10 0%, transparent 70%)`,
                     pointerEvents: 'none',
-                  }} 
+                  }}
                 />
 
-                {/* Icon */}
+                {/* Icon — entry animation only, then CSS float */}
                 <motion.div
-                  initial={{ scale: 0.5, opacity: 0, y: 0 }}
-                  whileInView={{ scale: 1, opacity: 1, y: 0 }}
-                  animate={{ y: [0, -8, 0] }}
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ 
-                    scale: { duration: 0.5, delay: 0.1 + i * 0.07, ease: [0.34, 1.56, 0.64, 1] },
-                    opacity: { duration: 0.5, delay: 0.1 + i * 0.07 },
-                    y: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }
-                  }}
-                  style={{ color, filter: `drop-shadow(0 0 12px ${color}66)`, position: 'relative' }}
+                  transition={{ duration: 0.45, delay: 0.1 + i * 0.07, ease: [0.34, 1.56, 0.64, 1] }}
+                  className="animate-float"
+                  style={{ color, filter: `drop-shadow(0 0 10px ${color}55)`, animationDelay: floatDelay }}
                 >
-                  <IconComponent size={34} />
+                  <IconComponent size={32} />
                 </motion.div>
 
                 <h3 style={{
-                  fontSize: '1.55rem',
+                  fontSize: '1.45rem',
                   fontWeight: 950,
                   color: '#fff',
                   letterSpacing: '0.01em',
@@ -168,7 +159,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
           })}
         </motion.div>
 
-        {/* STAT CARDS — drop in from slightly above like data loading */}
+        {/* STAT CARDS */}
         <motion.div
           className="stats-grid"
           style={{ display: 'grid', gap: '1.5rem' }}
@@ -177,7 +168,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
           viewport={{ once: true, amount: 0.15 }}
           variants={{
             hidden: { opacity: 0 },
-            show:   { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+            show:   { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
           }}
         >
           {chapter2Stats.map((stat, i) => {
@@ -186,21 +177,16 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
             return (
               <motion.div
                 key={stat.id}
-                className="magnetic"
                 variants={{
-                  hidden: { opacity: 0, y: -20, scale: 0.94 }, // Removed blur filter
-                  show:   {
-                    opacity: 1, y: 0, scale: 1,
-                    transition: { duration: 0.75, ease: EASE_OUT },
-                  },
+                  hidden: { opacity: 0, y: -16, scale: 0.95 },
+                  show:   { opacity: 1, y: 0, scale: 1, transition: { duration: 0.65, ease: EASE_OUT } },
                 }}
-                whileHover={{ y: -8, backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
+                whileHover={{ y: -6, backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
                 style={{
                   padding: 'clamp(2rem, 8vw, 3.5rem) 1.5rem',
                   background: 'rgba(255,255,255,0.02)',
                   border: '1px solid rgba(255,255,255,0.05)',
-                  borderRadius: '32px',
-                  backdropFilter: 'blur(10px)', // Reduced from 30px
+                  borderRadius: '28px',
                   position: 'relative',
                   overflow: 'hidden',
                   display: 'flex',
@@ -211,27 +197,23 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
               >
-                {/* Ghost number bg */}
-                <motion.div 
-                  animate={{ y: [0, 10, 0], opacity: [0.015, 0.04, 0.015] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}
-                  style={{
-                    position: 'absolute', top: '10%', left: '10%',
-                    fontSize: 'clamp(4rem, 20vw, 8rem)', fontWeight: 950,
-                    pointerEvents: 'none', lineHeight: 1,
-                    userSelect: 'none', fontFamily: 'var(--font-heading)',
-                    color: '#fff',
-                  }}
-                >
+                {/* Ghost number — static, low opacity */}
+                <div style={{
+                  position: 'absolute', top: '10%', left: '10%',
+                  fontSize: 'clamp(4rem, 20vw, 8rem)', fontWeight: 950,
+                  pointerEvents: 'none', lineHeight: 1,
+                  userSelect: 'none', fontFamily: 'var(--font-heading)',
+                  color: '#fff', opacity: 0.025,
+                }}>
                   {i + 1}
-                </motion.div>
+                </div>
 
-                {/* Stat value — scales in */}
+                {/* Stat value */}
                 <motion.h4
-                  initial={{ opacity: 0, scale: 0.7, filter: 'blur(6px)' }}
-                  whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                  initial={{ opacity: 0, scale: 0.75 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.15 + i * 0.08, ease: [0.34, 1.56, 0.64, 1] }}
+                  transition={{ duration: 0.6, delay: 0.15 + i * 0.08, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{
                     fontSize: 'clamp(2.5rem, 12vw, 4rem)', fontWeight: 950, color: '#fff',
                     margin: '0 0 1rem 0', letterSpacing: '-0.02em',
@@ -241,7 +223,7 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   {stat.value}
                 </motion.h4>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'relative', zIndex: 1 }}>
+                <div style={{ position: 'relative', zIndex: 1 }}>
                   <p style={{
                     fontSize: '0.75rem', fontWeight: 900,
                     letterSpacing: '0.25em', color: accentColor,
@@ -249,32 +231,24 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   }}>
                     {stat.label}
                   </p>
-                  <p style={{
-                    fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)',
-                    fontWeight: 600, margin: 0, maxWidth: '180px',
-                  }}>
-                    {stat.description || 'Building the core.'}
-                  </p>
                 </div>
 
-                {/* Bottom accent line */}
+                {/* Bottom accent line — CSS pulse instead of FM infinite */}
                 <motion.div
                   initial={{ scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
-                  animate={{ opacity: [0.5, 1, 0.5] }}
                   viewport={{ once: true }}
-                  transition={{ 
-                    scaleX: { duration: 0.6, delay: 0.3 + i * 0.08, ease: EASE_EXPO },
-                    opacity: { duration: 2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }
-                  }}
+                  transition={{ scaleX: { duration: 0.5, delay: 0.3 + i * 0.08, ease: EASE_EXPO } }}
+                  className="animate-pulse-opacity"
                   style={{
                     position: 'absolute', bottom: 0,
                     left: '50%', transform: 'translateX(-50%)',
                     width: '60px', height: '2px',
                     background: accentColor,
-                    boxShadow: `0 0 20px ${accentColor}`,
+                    boxShadow: `0 0 16px ${accentColor}`,
                     borderRadius: '10px 10px 0 0',
                     transformOrigin: 'center',
+                    animationDelay: `${i * 0.25}s`,
                   }}
                 />
               </motion.div>
