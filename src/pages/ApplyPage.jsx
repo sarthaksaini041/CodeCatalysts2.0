@@ -224,7 +224,7 @@ const ApplyPage = () => {
         animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? 20 : 0 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
       >
-        <div className="noise-overlay" />
+
         <motion.div 
           initial={{ opacity: 0, scale: 0.9, y: 30 }} 
           animate={{ opacity: 1, scale: 1, y: 0 }} 
@@ -276,8 +276,6 @@ const ApplyPage = () => {
       animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? 20 : 0 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
-      <div className="noise-overlay" />
-      
       <div className="apply-content">
         {/* Back to Main Button */}
         <motion.button
@@ -540,15 +538,7 @@ const ApplyPage = () => {
           overflow-x: hidden;
         }
         
-        .noise-overlay {
-          position: fixed;
-          inset: 0;
-          background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-          opacity: 0.05;
-          pointer-events: none;
-          z-index: 1;
-        }
-        
+
         .apply-content {
           position: relative;
           z-index: 5;

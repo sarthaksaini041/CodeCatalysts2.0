@@ -20,7 +20,7 @@ const TeamBackground = () => {
       position: 'fixed',
       inset: 0,
       zIndex: -1,
-      backgroundColor: '#000000',
+      background: 'transparent',
       overflow: 'hidden',
       pointerEvents: 'none'
     }}>

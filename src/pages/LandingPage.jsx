@@ -11,7 +11,6 @@ import Chapter_Shift from '../components/Chapter_Shift';
 import Chapter_Journey from '../components/Chapter_Journey';
 import Chapter_Forge from '../components/Chapter_Forge';
 import Chapter_Architects from '../components/Chapter_Architects';
-import StaticBackground from '../components/StaticBackground';
 import Footer from '../components/Footer';
 
 const landingWrapperStyle = { background: 'transparent', color: 'white' };
@@ -36,7 +35,6 @@ const LandingPage = () => {
           transition={{ duration: 0.8, ease: "easeInOut" }}
           className="min-h-screen bg-black flex items-center justify-center fixed inset-0 z-[1000]"
         >
-          <StaticBackground />
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -62,8 +60,7 @@ const LandingPage = () => {
           ref={containerRef} 
           style={landingWrapperStyle}
         >
-          {/* Static Neon Background */}
-          <StaticBackground />
+
 
           {/* CHAPTER 00: THE SPARK */}
           <Chapter_Hero />

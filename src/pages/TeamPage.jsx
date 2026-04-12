@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCMS } from '../hooks/useCMS';
 import { GitHubIcon, LinkedInIcon } from '../components/icons/TechnicalIcons';
 import Footer from '../components/Footer';
-import StaticBackground from '../components/StaticBackground';
 import { fadeUpVariant, staggerContainer, cardVariant } from '../utils/animations.jsx';
 import './TeamPage.css';
 
@@ -98,7 +98,16 @@ const ExpandedProfile = ({ person, onClose }) => {
 
         <div className="modal-avatar">
           {person.image_url ? (
-            <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+              <Image 
+                src={person.image_url} 
+                alt={person.name} 
+                fill
+                sizes="(max-width: 768px) 100vw, 400px"
+                style={{ objectFit: 'cover' }}
+                priority
+              />
+            </div>
           ) : (
             <div className="modal-initials">{person.name.split(' ').map(n => n[0]).join('')}</div>
           )}
@@ -159,7 +168,17 @@ const BuilderCard = ({ person, onClick }) => (
   >
     <div className="builder-image-area">
       <div className="builder-initials-bg">{person.name.split(' ').map(n => n[0]).join('')}</div>
-      {person.image_url && <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />}
+      {person.image_url && (
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <Image 
+            src={person.image_url} 
+            alt={person.name} 
+            fill
+            sizes="(max-width: 768px) 100vw, 280px"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+      )}
     </div>
     
     <div className="builder-info-area">
@@ -182,7 +201,15 @@ const CatalystCard = ({ person, onClick }) => (
     <div className="catalyst-header-row">
       <div className="catalyst-avatar-circle">
           {person.image_url ? (
-              <img src={person.image_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
+              <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                <Image 
+                  src={person.image_url} 
+                  alt="" 
+                  fill
+                  sizes="48px"
+                  style={{ borderRadius: '50%', objectFit: 'cover'}} 
+                />
+              </div>
           ) : (
             <span className="catalyst-initials">{person.name.split(' ').map(n => n[0]).join('')}</span>
           )}
@@ -229,7 +256,7 @@ export default function TeamPage() {
 
   return (
     <div className="team-system-page">
-      <StaticBackground />
+
 
       <AnimatePresence>
         {activeMember && (
