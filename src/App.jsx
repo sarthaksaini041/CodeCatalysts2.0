@@ -1,9 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import SmoothScroll from './components/SmoothScroll';
-import GlobalBackground from './components/GlobalBackground';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import StaticBackground from './components/StaticBackground';
 
 import './App.css';
 
@@ -32,33 +31,26 @@ const AppContent = () => {
 
   return (
     <>
-      <GlobalBackground />
-
-      {/* ── Floating glow orbs ── */}
-      <div className="world-orb world-orb-purple"  aria-hidden="true" />
-      <div className="world-orb world-orb-orange"  aria-hidden="true" />
-      <div className="world-orb world-orb-cyan"    aria-hidden="true" />
+      <StaticBackground />
 
       {/* ── Navbar (hidden on admin pages) ── */}
       {!isAdminRoute && <Navbar />}
 
-      <SmoothScroll>
-        <div className="app-container">
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/team" element={<TeamPage />} />
-              <Route path="/apply" element={<ApplyPage />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/*" element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </Suspense>
-        </div>
-      </SmoothScroll>
+      <div className="app-container">
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/apply" element={<ApplyPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/*" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </Suspense>
+      </div>
     </>
   );
 };

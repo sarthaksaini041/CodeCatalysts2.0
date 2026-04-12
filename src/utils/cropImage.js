@@ -28,9 +28,21 @@ export default async function getCroppedImg(imageSrc, pixelCrop, filters = {}) {
     return null
   }
 
-  // set canvas size to match the crop area
-  canvas.width = pixelCrop.width
-  canvas.height = pixelCrop.height
+  // Define max dimensions for optimized storage (1200px)
+  const MAX_SIZE = 1200;
+  let targetWidth = pixelCrop.width;
+  let targetHeight = pixelCrop.height;
+
+  // Scale down if exceeding max size while maintaining aspect ratio
+  if (targetWidth > MAX_SIZE || targetHeight > MAX_SIZE) {
+    const ratio = Math.min(MAX_SIZE / targetWidth, MAX_SIZE / targetHeight);
+    targetWidth = Math.round(targetWidth * ratio);
+    targetHeight = Math.round(targetHeight * ratio);
+  }
+
+  // set canvas size to match the optimized dimensions
+  canvas.width = targetWidth
+  canvas.height = targetHeight
 
   // Apply filters if provided
   if (filters) {
@@ -38,7 +50,7 @@ export default async function getCroppedImg(imageSrc, pixelCrop, filters = {}) {
     ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) blur(${blur}px) ${preset}`;
   }
 
-  // draw the cropped image onto the canvas
+  // draw the cropped and potentially downscaled image onto the canvas
   ctx.drawImage(
     image,
     pixelCrop.x,
@@ -47,14 +59,18 @@ export default async function getCroppedImg(imageSrc, pixelCrop, filters = {}) {
     pixelCrop.height,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    targetWidth,
+    targetHeight
   )
 
-  // As a blob
+  // As a blob — compressed WebP for best performance
   return new Promise((resolve, reject) => {
     canvas.toBlob((file) => {
+      if (!file) {
+        reject(new Error('Canvas is empty'));
+        return;
+      }
       resolve(file)
-    }, 'image/jpeg')
+    }, 'image/webp', 0.8) // 0.8 quality is the sweet spot for web
   })
 }

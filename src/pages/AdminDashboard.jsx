@@ -22,14 +22,18 @@ import ShiftManager    from '../components/cms/ShiftManager';
 import JourneyManager  from '../components/cms/JourneyManager';
 import ForgeManager    from '../components/cms/ForgeManager';
 import TeamManager     from '../components/cms/TeamManager';
+import ArchitectsManager from '../components/cms/ArchitectsManager';
+import HeroManager from '../components/cms/HeroManager';
 import FooterSettings  from '../components/cms/FooterSettings';
 
 /* ── Tab → Component map (CMS sections) ─────────────────── */
 const CMS_TABS = {
   chapter1: GenesisManager,
+  hero: HeroManager,
   chapter2: ShiftManager,
   chapter3: JourneyManager,
   chapter4: ForgeManager,
+  chapter5: ArchitectsManager,
   team:     TeamManager,
   footer:   FooterSettings,
 };
@@ -38,10 +42,12 @@ const CMS_TABS = {
 const TAB_LABELS = {
   dashboard:    'Overview',
   applications: 'Applications',
+  hero:         'The Spark (Hero)',
   chapter1:     'Genesis',
   chapter2:     'Shift',
   chapter3:     'Journey',
   chapter4:     'Forge / Projects',
+  chapter5:     'Architects',
   team:         'Team Members',
   footer:       'Footer Settings',
 };

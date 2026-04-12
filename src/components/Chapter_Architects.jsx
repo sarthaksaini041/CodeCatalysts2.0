@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { fadeUpVariant, staggerContainer, SplitWords } from '../utils/animations.jsx';
-import ParallaxLayer from './ParallaxLayer';
+import Image from 'next/image';
+import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 const EASE_OUT = [0.16, 1, 0.3, 1];
@@ -18,7 +18,7 @@ const MemberCard = ({ person, accent }) => {
   return (
     <motion.div
       className="pill-card"
-      style={{ width: 'min(380px, 85vw)', flexShrink: 0, background: 'rgba(255,255,255,0.02)' }}
+      style={{ width: 'min(300px, 85vw)', flexShrink: 0, background: 'rgba(255,255,255,0.02)' }}
       transition={{ duration: 0.35, ease: EASE_OUT }}
     >
       <div className="pill-avatar-wrap" style={{
@@ -27,7 +27,15 @@ const MemberCard = ({ person, accent }) => {
       }}>
         <div className="pill-avatar">
           {person.image ? (
-            <img src={person.image} alt={person.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+              <Image
+                src={person.image}
+                alt={person.name ?? 'Team Member'}
+                fill
+                sizes="56px"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
           ) : (
             <div style={{
               width: '100%', height: '100%', background: '#111',
@@ -57,7 +65,7 @@ const ScrollingTrack = ({ items, duration, reverse = false, accent }) => {
         className="infinite-scroll-track"
         animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
         transition={{ duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }}
-        style={{ display: 'flex', gap: '2rem', width: 'max-content', cursor: 'default' }}
+        style={{ display: 'flex', gap: '1rem', width: 'max-content', cursor: 'default' }}
       >
         {displayItems.map((member, i) => (
           <MemberCard key={i} person={member} accent={accent} />
@@ -91,14 +99,13 @@ const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
     <section className="chapter-section architects-scan" id="chapter-05" style={{ position: 'relative', overflow: 'hidden', padding: '10vh 0' }}>
 
       {/* Ghost background text */}
-      <div className="bg-text-scrolling" style={{ top: '20%', opacity: 0.02, fontSize: 'clamp(8rem, 25vw, 20rem)' }}>
+      <div className="bg-text-scrolling" style={{ top: '20%', opacity: 0.02, fontSize: 'clamp(5rem, 25vw, 20rem)' }}>
         ARCHITECTS • CORE • NODES • SYSTEM • ARCHITECTS • NETWORK •
       </div>
 
       {/* Header */}
       <div className="container" style={{ position: 'relative', zIndex: 1, marginBottom: '5rem', textAlign: 'center' }}>
-        <ParallaxLayer offset={20}>
-
+        <div style={{ marginBottom: '2rem' }}>
           {/* Chapter label */}
           <motion.div
             variants={staggerContainer(0.12, 0)}
@@ -130,8 +137,8 @@ const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
               <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
               <motion.h2
                 variants={{
-                  hidden: { opacity: 0, y: 50, filter: 'blur(10px)' },
-                  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1, ease: EASE_OUT } },
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE_OUT } },
                 }}
                 className="title-main"
                 style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--accent), var(--primary))' }}
@@ -157,16 +164,15 @@ const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
           >
             The humans behind the code. Every idea started here.
           </motion.p>
-
-        </ParallaxLayer>
+        </div>
       </div>
 
       {/* Scrolling member tracks — stagger their appearance */}
       <motion.div
         className="scrolling-rows-container"
-        style={{ margin: '3rem 0', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
-        initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
-        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        style={{ margin: '3rem 0', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1, ease: EASE_OUT }}
       >
@@ -176,24 +182,22 @@ const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
       </motion.div>
 
       {/* CTA */}
-      <div className="container" style={{ marginTop: '4rem', position: 'relative', zIndex: 1, textAlign: 'center' }}>
-        <ParallaxLayer offset={40}>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, filter: 'blur(6px)' }}
-            whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.85, ease: EASE_OUT }}
+      <div className="container" style={{ marginTop: '3rem', position: 'relative', zIndex: 1, textAlign: 'center' }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.85, ease: EASE_OUT }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.06, boxShadow: '0 0 40px rgba(123,97,255,0.4)', y: -4 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push('/team')}
+            className="btn-catalyst-large"
           >
-            <motion.button
-              whileHover={{ scale: 1.06, boxShadow: '0 0 40px rgba(123,97,255,0.4)', y: -4 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => router.push('/team')}
-              className="btn-catalyst-large"
-            >
-              MEET THE CATALYSTS
-            </motion.button>
-          </motion.div>
-        </ParallaxLayer>
+            MEET THE CATALYSTS
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   );

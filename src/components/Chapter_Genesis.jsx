@@ -1,12 +1,9 @@
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import ParallaxLayer from './ParallaxLayer';
 import ScrollReveal from './ScrollReveal';
 import {
   fadeUpVariant,
   staggerContainer,
-  slideInLeftVariant,
-  slideInRightVariant,
-  photoRevealVariant,
   SplitWords,
 } from '../utils/animations.jsx';
 
@@ -53,7 +50,7 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
 
         {/* Chapter header */}
-        <ParallaxLayer offset={20}>
+        <div style={{ marginBottom: '5rem' }}>
           <ChapterLabel label="CHAPTER 01" color="var(--primary)" />
 
           <motion.div
@@ -67,8 +64,8 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
               <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
               <motion.h2
                 variants={{
-                  hidden:  { opacity: 0, y: 50, filter: 'blur(10px)' },
-                  visible: { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
+                  hidden:  { opacity: 0, y: 30 }, // Removed blur filter
+                  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
                 }}
                 className="title-main"
                 style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--primary), var(--accent))' }}
@@ -77,18 +74,17 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
               </motion.h2>
             </div>
           </motion.div>
-        </ParallaxLayer>
+        </div>
 
         {/* Zig-zag story rows */}
         <div className="zig-zag-container" style={{ position: 'relative' }}>
           {points.map((point, index) => (
-            <ParallaxLayer key={index} offset={35}>
+            <div key={index} style={{ marginBottom: 'clamp(5rem, 10vh, 10rem)' }}>
               <div
                 className={`zig-zag-row ${point.reverse ? 'reverse' : ''}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  marginBottom: 'clamp(5rem, 10vh, 10rem)',
                 }}
               >
                 {/* Text block — slides in from its side */}
@@ -116,7 +112,7 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                       fontWeight: 900,
                     }}
                   >
-                    0{index + 1} // MEMORY_LOG
+                    0{index + 1}
                   </motion.span>
 
                   {/* Title — word by word */}
@@ -129,9 +125,7 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                         fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
                         fontWeight: 950,
                         color: index % 2 === 0 ? 'var(--primary)' : 'var(--secondary)',
-                        textShadow: index % 2 === 0
-                          ? '0 0 40px rgba(123,97,255,0.35)'
-                          : '0 0 40px rgba(255,138,23,0.35)',
+                        // Removed 40px blur textShadow for performance
                         letterSpacing: '-0.02em',
                         display: 'block',
                       }}
@@ -163,23 +157,27 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                   duration={1.3}
                   amount={0.15}
                   className="zig-zag-image-wrapper"
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, position: 'relative' }}
                 >
-                  <motion.img
-                    whileHover={{ scale: 1.06 }}
-                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                    src={point.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'}
-                    alt={point.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <Image
+                      src={point.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'}
+                      alt={point.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{ objectFit: 'cover' }}
+                      className="zig-zag-image"
+                    />
+                  </div>
                   <div style={{
                     position: 'absolute', inset: 0,
                     background: index % 2 === 0
                       ? 'rgba(123, 97, 255, 0.08)'
                       : 'rgba(255, 138, 23, 0.08)',
                     mixBlendMode: 'overlay',
+                    pointerEvents: 'none',
                   }} />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,5,5,0.55), transparent)' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,5,5,0.55), transparent)', pointerEvents: 'none' }} />
 
                   {/* Corner index label */}
                   <div style={{
@@ -191,7 +189,7 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
                   </div>
                 </ScrollReveal>
               </div>
-            </ParallaxLayer>
+            </div>
           ))}
         </div>
       </div>

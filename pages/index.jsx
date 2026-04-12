@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
 import { supabaseServer } from '../src/lib/supabase-server';
@@ -15,12 +15,10 @@ import Chapter_Journey from '../src/components/Chapter_Journey';
 import Chapter_Forge from '../src/components/Chapter_Forge';
 import Chapter_Architects from '../src/components/Chapter_Architects';
 import Footer from '../src/components/Footer';
-import ParallaxLayer from '../src/components/ParallaxLayer';
 
-// Dynamic import for Three.js / heavy visual components
-const UnifiedBackground = dynamic(() => import('../src/components/UnifiedBackground'), { ssr: false });
+// Static Background for performance
+const StaticBackground = dynamic(() => import('../src/components/StaticBackground'), { ssr: false });
 
-const scrollOffset = ["start start", "end end"];
 const landingWrapperStyle = { background: 'transparent', color: 'white' };
 const finalCtaStyle = { minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' };
 const finalContainerStyle = { textAlign: 'center' };
@@ -91,6 +89,12 @@ export default function HomePage({
   const router = useRouter();
   const containerRef = useRef(null);
 
+  // Prefetch high-priority pages for "zero" loading time
+  React.useEffect(() => {
+    router.prefetch('/team');
+    router.prefetch('/apply');
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -106,13 +110,11 @@ export default function HomePage({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, delay: 0.1 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
         className="landing-page"
         ref={containerRef}
         style={landingWrapperStyle}
       >
-        {/* Dynamic Evolution Background */}
-        <UnifiedBackground />
 
         {/* CHAPTER 00: THE SPARK */}
         <Chapter_Hero siteContent={siteContent} />
@@ -134,45 +136,43 @@ export default function HomePage({
 
         <section className="chapter-section final-cta" style={finalCtaStyle}>
           <div className="container" style={finalContainerStyle}>
-            <ParallaxLayer offset={50}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                viewport={{ once: true, amount: 0.8 }}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+              viewport={{ once: true, amount: 0.8 }}
+            >
+              <h2 className="hero-headline" style={heroHeadlineStyle}>
+                JOIN THE <br />
+                <span className="text-gradient">BUILDERS.</span>
+              </h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                style={p1Style}
               >
-                <h2 className="hero-headline" style={heroHeadlineStyle}>
-                  JOIN THE <br />
-                  <span className="text-gradient">BUILDERS.</span>
-                </h2>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                  style={p1Style}
-                >
-                  You don&apos;t need to be the best.
-                </motion.p>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 1.5 }}
-                  style={p2Style}
-                >
-                  Just someone who starts.
-                </motion.p>
-  
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => router.push('/apply')}
-                  className="btn-catalyst-large magnetic"
-                  style={{ cursor: 'none' }}
-                >
-                  BECOME A CATALYST <Sparkles size={28} />
-                </motion.button>
-              </motion.div>
-            </ParallaxLayer>
+                You don&apos;t need to be the best.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 1.5 }}
+                style={p2Style}
+              >
+                Just someone who starts.
+              </motion.p>
+
+              <motion.button
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => router.push('/apply')}
+                className="btn-catalyst-large magnetic"
+                style={{ cursor: 'pointer' }}
+              >
+                BECOME A CATALYST <Sparkles size={28} />
+              </motion.button>
+            </motion.div>
           </div>
         </section>
 

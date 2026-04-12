@@ -6,6 +6,7 @@ import { LinkedInIcon, GitHubIcon } from '../icons/TechnicalIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageUpload from './ImageUpload';
 import { triggerRevalidation } from '../../utils/revalidate';
+import Image from 'next/image';
 
 const TeamManager = () => {
     const [members, setMembers] = useState([]);
@@ -168,7 +169,13 @@ const TeamManager = () => {
                                             
                                             <div className="w-20 h-20 rounded-full bg-black/40 border border-white/5 flex items-center justify-center overflow-hidden flex-shrink-0 relative z-10 group-hover:scale-105 transition-transform duration-500 shadow-2xl">
                                                 {member.image_url ? (
-                                                    <img src={member.image_url} alt="" className="w-full h-full object-cover" />
+                                                    <Image 
+                                                        src={member.image_url} 
+                                                        alt="" 
+                                                        fill
+                                                        sizes="80px"
+                                                        style={{ objectFit: 'cover' }}
+                                                    />
                                                 ) : (
                                                     <Users size={28} className="text-white/10" />
                                                 )}

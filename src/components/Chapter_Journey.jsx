@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer, SplitWords } from '../utils/animations.jsx';
-import ParallaxLayer from './ParallaxLayer';
 import ScrollReveal from './ScrollReveal';
+import Image from 'next/image';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 const EASE_OUT  = [0.16, 1, 0.3, 1];
@@ -40,7 +40,7 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
 
         {/* Header */}
-        <ParallaxLayer offset={20}>
+        <div style={{ marginBottom: '5rem' }}>
           <ChapterLabel label="CHAPTER 03" color="#60A5FA" />
 
           <motion.div
@@ -75,10 +75,9 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
               fontSize: '1.15rem',
               color: 'rgba(255,255,255,0.38)',
               maxWidth: '680px',
-              margin: '3rem auto 10vh',
+              margin: '3rem auto 0',
               lineHeight: 1.85,
               fontWeight: 500,
-              textAlign: 'center',
               fontStyle: 'italic',
               borderLeft: '2px solid rgba(96, 165, 250, 0.3)',
               paddingLeft: '1.5rem',
@@ -87,7 +86,7 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
           >
             &ldquo;It didn&apos;t happen in one moment&hellip; It was a thousand moments of choosing to stay when we could have left.&rdquo;
           </motion.div>
-        </ParallaxLayer>
+        </div>
 
         {/* Journey steps */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15vh' }}>
@@ -96,13 +95,12 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
             const accentColor = i % 2 === 0 ? 'var(--primary)' : '#60A5FA';
 
             return (
-              <ParallaxLayer key={i} offset={35}>
+              <div key={i} style={{ marginBottom: 'clamp(5rem, 12vh, 15rem)' }}>
                 <div
                   className={`zig-zag-row ${isImageLeft ? '' : 'reverse'}`}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    marginBottom: 'clamp(5rem, 12vh, 15rem)',
                   }}
                 >
                   {/* Text panel — slides from its side */}
@@ -187,12 +185,14 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                     duration={1.2}
                     amount={0.15}
                     className="zig-zag-image-wrapper"
-                    style={{ flex: 1.2 }}
+                    style={{ flex: 1.2, position: 'relative', height: '100%', minHeight: '300px' }}
                   >
-                    <img
+                    <Image
                       src={step.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'}
                       alt={step.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{ objectFit: 'cover' }}
                     />
                     <div style={{
                       position: 'absolute', inset: 0,
@@ -209,7 +209,7 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                     </div>
                   </ScrollReveal>
                 </div>
-              </ParallaxLayer>
+              </div>
             );
           })}
         </div>

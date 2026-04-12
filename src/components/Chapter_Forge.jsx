@@ -1,8 +1,8 @@
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { GitHubIcon } from './icons/TechnicalIcons';
-import { fadeUpVariant, staggerContainer, SplitWords } from '../utils/animations.jsx';
-import ParallaxLayer from './ParallaxLayer';
+import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 const EASE_OUT  = [0.16, 1, 0.3, 1];
@@ -38,11 +38,11 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
   }));
 
   return (
-    <section id="chapter-04" className="chapter-section forge-dev" style={{ padding: '20vh 0', position: 'relative', overflow: 'hidden' }}>
+    <section id="chapter-04" className="chapter-section forge-dev" style={{ position: 'relative', overflow: 'hidden' }}>
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', position: 'relative', zIndex: 2 }}>
 
         {/* Header */}
-        <ParallaxLayer offset={20}>
+        <div style={{ marginBottom: '6rem' }}>
           <ChapterLabel label="CHAPTER 04" color="var(--primary)" />
 
           <motion.div
@@ -56,8 +56,8 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
               <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
               <motion.h2
                 variants={{
-                  hidden:  { opacity: 0, y: 50, filter: 'blur(10px)' },
-                  visible: { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 1, ease: EASE_OUT } },
+                  hidden:  { opacity: 0, y: 30 }, // Removed blur filter
+                  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE_OUT } },
                 }}
                 className="title-main"
                 style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--primary), var(--accent))' }}
@@ -77,22 +77,22 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
               fontSize: '1.05rem',
               color: 'rgba(255,255,255,0.32)',
               maxWidth: '540px',
-              margin: '1.5rem auto 6rem',
+              margin: '1.5rem auto 0',
               lineHeight: 1.75,
               textAlign: 'center',
             }}
           >
             Where ideas meet execution. Every project shipped is proof we mean it.
           </motion.p>
-        </ParallaxLayer>
+        </div>
 
         {/* Project cards — drop in sequentially like files placed on a desk */}
         <div className="forge-grid">
           {projects.map((project, index) => (
-            <ParallaxLayer key={index} offset={25}>
+            <div key={index} style={{ marginBottom: '2rem' }}>
               <motion.div
-                initial={{ opacity: 0, y: -24, scale: 0.96, filter: 'blur(6px)', rotateX: 5 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', rotateX: 0 }}
+                initial={{ opacity: 0, y: -24, scale: 0.96, rotateX: 5 }} // Removed blur filter
+                whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
                 transition={{ duration: 0.85, delay: index * 0.1, ease: EASE_OUT }}
                 viewport={{ once: true, amount: 0.15 }}
                 className="forge-card magnetic"
@@ -123,17 +123,15 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
                   border: '1px solid rgba(255,255,255,0.05)',
                   background: '#0a0a0a',
                 }}>
-                  <motion.img
-                    initial={{ scale: 1.1, filter: 'brightness(0.5)' }}
-                    whileInView={{ scale: 1, filter: 'brightness(0.72)' }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.2, delay: index * 0.08, ease: EASE_OUT }}
-                    whileHover={{ scale: 1.08 }}
+                  <Image
                     src={project.image || 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop'}
                     alt={project.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: 'cover', opacity: 0.72 }}
+                    className="zig-zag-image"
                   />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,5,5,0.85), transparent)' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,5,5,0.85), transparent)', pointerEvents: 'none' }} />
 
                   {/* Tech tags */}
                   <div style={{ position: 'absolute', bottom: '1.2rem', left: '1.2rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
@@ -147,7 +145,6 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
                         style={{
                           padding: '0.3rem 0.8rem',
                           background: 'rgba(255,255,255,0.07)',
-                          backdropFilter: 'blur(10px)',
                           border: '1px solid rgba(255,255,255,0.12)',
                           borderRadius: '100px',
                           fontSize: '0.62rem',
@@ -202,7 +199,7 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
                       fontSize: '0.8rem', textTransform: 'uppercase',
                       letterSpacing: '0.15em',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      gap: '0.6rem', border: 'none', cursor: 'none', textDecoration: 'none',
+                      gap: '0.6rem', border: 'none', cursor: 'pointer', textDecoration: 'none',
                     }}
                   >
                     LIVE <ArrowUpRight size={18} />
@@ -220,14 +217,14 @@ const Chapter_Forge = ({ projects: cmsProjects = [], siteContent = {} }) => {
                       color: '#fff', borderRadius: '100px',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       border: '1px solid rgba(255,255,255,0.1)',
-                      cursor: 'none', textDecoration: 'none',
+                      cursor: 'pointer', textDecoration: 'none',
                     }}
                   >
                     <GitHubIcon size={20} />
                   </motion.a>
                 </div>
               </motion.div>
-            </ParallaxLayer>
+            </div>
           ))}
         </div>
       </div>

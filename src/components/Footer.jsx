@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
 
 const Footer = ({ footerSettings = {}, siteContent = {} }) => {
@@ -86,11 +87,12 @@ const Footer = ({ footerSettings = {}, siteContent = {} }) => {
                             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                             className="w-16 h-16 bg-[#0a0a0c] border border-white/5 rounded-full flex items-center justify-center shadow-2xl relative z-10 group overflow-hidden cursor-pointer"
                         >
-                            <img 
+                            <Image 
                                 src="/logo.svg" 
                                 alt="Code Catalysts Logo" 
+                                width={32}
+                                height={32}
                                 className="w-8 h-8 object-contain transition-transform duration-500"
-                                onError={(e) => { e.target.src = '/logo.png'; }}
                             />
                             <div className="absolute inset-0 rounded-full bg-cyan-500/5 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </motion.div>

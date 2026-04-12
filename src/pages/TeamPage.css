@@ -42,7 +42,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 30px rgba(123, 97, 255, 0.3));
+  /* Removed expensive drop-shadow */
 }
 
 /* --- Return Button --- */
@@ -61,7 +61,7 @@
   gap: 0.6rem;
   font-size: 0.75rem;
   font-weight: 900;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(2px); /* Reduced for performance */
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
@@ -89,14 +89,13 @@
   flex-direction: row; /* Horizontal */
   align-items: center;
   gap: 4rem; /* Wide gap for cinematic feel */
-  background: rgba(255, 255, 255, 0.03); 
-  backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 20, 0.92); /* More opaque for reduced blur */
+  backdrop-filter: blur(4px) saturate(120%); /* Reduced for performance */
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 40px;
   padding: 4rem; 
   position: relative;
   overflow: hidden;
-  transition: var(--transition-cinematic);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
@@ -111,14 +110,13 @@
   overflow: hidden;
   position: relative;
   box-shadow: 0 0 40px rgba(123,97,255,0.12), inset 0 0 0 1px rgba(123,97,255,0.12);
-  transition: box-shadow 0.4s ease;
 }
 
 .visionary-initials {
   font-size: 5rem;
   font-weight: 950;
   color: var(--primary);
-  filter: drop-shadow(0 0 20px rgba(123, 97, 255, 0.4));
+  /* Removed drop-shadow */
 }
 
 .visionary-content {
@@ -168,12 +166,11 @@
   width: 100%;
   max-width: 380px;
   aspect-ratio: 0.85; /* Reduced height: standard portrait ratio */
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px) saturate(180%);
+  background: rgba(15, 15, 20, 0.9);
+  backdrop-filter: blur(3px) saturate(120%); /* Reduced for performance */
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 25px;
   overflow: hidden;
-  transition: var(--transition-cinematic);
   display: flex;
   flex-direction: column;
   text-align: left; /* Left align for cinematic look */
@@ -266,15 +263,15 @@
   width: 100%;
   max-width: 450px;
   min-height: 175px;
-  background: rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(30px) saturate(180%);
+  background: rgba(25, 25, 30, 0.85);
+  backdrop-filter: blur(2px) saturate(110%); /* Reduced for performance */
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 1.3rem 1.4rem;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  transition: var(--transition-cinematic);
+  transition: none;
   position: relative;
   cursor: default;
   margin: 0 auto; /* Center within its grid cell */
@@ -298,6 +295,7 @@
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  position: relative; /* Added to contain Next.js Image fill */
 }
 
 .catalyst-initials {
@@ -403,14 +401,24 @@
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
   .team-hero-title { font-size: 4rem; }
+  
+  /* Disable expensive blurs on mobile/tablet */
+  .visionary-card, .builder-card, .catalyst-card, .profile-modal-backdrop, .return-root-btn {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+  }
+  
+  .visionary-card { background: rgba(10, 10, 15, 0.98); }
+  .builder-card { background: rgba(10, 10, 15, 0.96); }
+  .catalyst-card { background: rgba(20, 20, 25, 0.95); }
 }
 
 /* --- Expanded Profile Modal --- */
 .profile-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(25px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px); /* Reduced for performance */
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -421,7 +429,7 @@
 .profile-modal-card {
   width: 100%;
   max-width: 600px;
-  background: rgba(15, 15, 25, 0.8);
+  background: rgba(10, 10, 20, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 40px;
   padding: 4rem 3rem;
@@ -466,6 +474,7 @@
   justify-content: center;
   overflow: hidden;
   box-shadow: 0 0 30px rgba(123, 97, 255, 0.2);
+  position: relative; /* Added to contain Next.js Image fill */
 }
 
 .modal-avatar img {

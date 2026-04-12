@@ -20,10 +20,12 @@ const NAV_ITEMS = [
   { id: 'dashboard',    label: 'Dashboard',          icon: LayoutDashboard },
   { id: 'applications', label: 'Applications',        icon: FileText },
   { id: 'team',         label: 'Team Members',         icon: Users },
+  { id: 'hero',         label: 'The Spark (Hero)',     icon: Sparkles },
   { id: 'chapter1',     label: 'Genesis',              icon: Sparkles },
   { id: 'chapter2',     label: 'Shift',                icon: Zap },
   { id: 'chapter3',     label: 'Journey',              icon: Rocket },
   { id: 'chapter4',     label: 'Forge / Projects',     icon: Code2 },
+  { id: 'chapter5',     label: 'Architects',           icon: Users },
   { id: 'footer',       label: 'Footer Settings',      icon: MousePointer2 },
 ];
 

@@ -1,22 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { supabase } from '../lib/supabase-browser';
 
-export const useCMS = () => {
+const CMSContext = createContext({
+    siteContent: {},
+    chapter1Items: [],
+    chapter2Cards: [],
+    chapter2Stats: [],
+    chapter3Steps: [],
+    projects: [],
+    chapter5Showcase: [],
+    teamMembers: [],
+    footerSettings: {},
+    loading: true,
+    error: null,
+    refresh: () => {}
+});
+
+export const CMSProvider = ({ children, initialData = {} }) => {
     const [data, setData] = useState({
-        siteContent: {},
-        chapter1Items: [],
-        chapter2Cards: [],
-        chapter2Stats: [],
-        chapter3Steps: [],
-        projects: [],
-        chapter5Showcase: [],
-        teamMembers: [],
-        footerSettings: {},
-        loading: true,
+        siteContent: initialData.siteContent || {},
+        chapter1Items: initialData.chapter1Items || [],
+        chapter2Cards: initialData.chapter2Cards || [],
+        chapter2Stats: initialData.chapter2Stats || [],
+        chapter3Steps: initialData.chapter3Steps || [],
+        projects: initialData.projects || [],
+        chapter5Showcase: initialData.chapter5Showcase || [],
+        teamMembers: initialData.teamMembers || [],
+        footerSettings: initialData.footerSettings || {},
+        loading: !initialData.siteContent, // Don't show loading if we have initial data
         error: null
     });
 
-    const fetchAllContent = async () => {
+    const fetchAllContent = useCallback(async (isInitial = false) => {
+        // If it's the initial call and we already have data, skip the fetch to stay "static"
+        if (isInitial && Object.keys(data.siteContent).length > 0) return;
+
         try {
             const [
                 { data: siteContent },
@@ -40,7 +58,6 @@ export const useCMS = () => {
                 supabase.from('footer_settings').select('*').maybeSingle()
             ]);
 
-            // Transform site_content array into an object for easier access
             const contentMap = siteContent?.reduce((acc, curr) => {
                 acc[curr.key] = curr.content;
                 return acc;
@@ -63,11 +80,24 @@ export const useCMS = () => {
             console.error('CMS: Fetch error:', err);
             setData(prev => ({ ...prev, loading: false, error: err.message }));
         }
-    };
-
-    useEffect(() => {
-        fetchAllContent();
     }, []);
 
-    return { ...data, refresh: fetchAllContent };
+    useEffect(() => {
+        fetchAllContent(true);
+    }, [fetchAllContent]);
+
+    return (
+        <CMSContext.Provider value={{ ...data, refresh: fetchAllContent }}>
+            {children}
+        </CMSContext.Provider>
+    );
 };
+
+export const useCMS = () => {
+    const context = useContext(CMSContext);
+    if (!context) {
+        throw new Error('useCMS must be used within a CMSProvider');
+    }
+    return context;
+};
+

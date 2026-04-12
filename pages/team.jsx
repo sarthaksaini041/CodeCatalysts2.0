@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, X, ArrowUpRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import { supabaseServer } from '../src/lib/supabase-server';
 import { GitHubIcon, LinkedInIcon } from '../src/components/icons/TechnicalIcons';
@@ -19,7 +20,7 @@ import {
 const TeamBackground = dynamic(() => import('../src/components/TeamBackground'), { ssr: false });
 
 /* ─── Shared easing ─────────────────────────────────────── */
-const EASE_OUT  = [0.16, 1, 0.3, 1];
+const EASE_OUT = [0.16, 1, 0.3, 1];
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 
 /* ─── Animated Section Divider with expanding lines ──────── */
@@ -34,7 +35,7 @@ const SectionHeader = ({ title, color = 'var(--primary)', delay = 0 }) => (
   >
     <motion.div
       variants={{
-        hidden:  { scaleX: 0, opacity: 0 },
+        hidden: { scaleX: 0, opacity: 0 },
         visible: { scaleX: 1, opacity: 1, transition: { duration: 0.7, ease: EASE_EXPO } },
       }}
       style={{ background: color, transformOrigin: 'left', flex: 1, height: '1px', maxWidth: '140px' }}
@@ -42,7 +43,7 @@ const SectionHeader = ({ title, color = 'var(--primary)', delay = 0 }) => (
     <motion.span variants={fadeUpVariant} className="text">{title}</motion.span>
     <motion.div
       variants={{
-        hidden:  { scaleX: 0, opacity: 0 },
+        hidden: { scaleX: 0, opacity: 0 },
         visible: { scaleX: 1, opacity: 1, transition: { duration: 0.7, ease: EASE_EXPO, delay: 0.15 } },
       }}
       style={{ background: color, transformOrigin: 'right', flex: 1, height: '1px', maxWidth: '140px' }}
@@ -88,8 +89,8 @@ const ExpandedProfile = ({ person, onClose }) => {
   if (!person) return null;
 
   const roleLabel = {
-    Lead:   'LEADER / FOUNDER',
-    Rep:    'REPRESENTATIVE',
+    Lead: 'LEADER / FOUNDER',
+    Rep: 'REPRESENTATIVE',
     Member: 'MEMBER',
   }[person.role] || person.role;
 
@@ -105,10 +106,10 @@ const ExpandedProfile = ({ person, onClose }) => {
     >
       <motion.div
         className="profile-modal-card"
-        initial={{ scale: 0.88, opacity: 0, y: 30, filter: 'blur(8px)' }}
-        animate={{ scale: 1,    opacity: 1, y: 0,  filter: 'blur(0px)' }}
-        exit={{   scale: 0.92, opacity: 0, y: 16, filter: 'blur(4px)' }}
-        transition={{ duration: 0.45, ease: EASE_OUT }}
+        initial={{ scale: 0.95, opacity: 0, y: 15 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.98, opacity: 0, y: 10 }}
+        transition={{ duration: 0.35, ease: EASE_OUT }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
@@ -125,12 +126,19 @@ const ExpandedProfile = ({ person, onClose }) => {
         {/* Avatar — photo reveal */}
         <motion.div
           className="modal-avatar"
-          initial={{ scale: 0.75, opacity: 0, filter: 'blur(10px)' }}
-          animate={{ scale: 1,    opacity: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 0.5, delay: 0.1, ease: EASE_OUT }}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: EASE_OUT }}
         >
           {person.image_url ? (
-            <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />
+            <Image 
+              src={person.image_url} 
+              alt={person.name} 
+              fill
+              sizes="(max-width: 768px) 100vw, 400px"
+              style={{ objectFit: 'cover' }}
+              priority
+            />
           ) : (
             <div className="modal-initials">{person.name.split(' ').map(n => n[0]).join('')}</div>
           )}
@@ -149,9 +157,9 @@ const ExpandedProfile = ({ person, onClose }) => {
 
           <motion.h2
             className="modal-name"
-            initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, y: 0,  filter: 'blur(0px)' }}
-            transition={{ duration: 0.5, delay: 0.25, ease: EASE_OUT }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.25, ease: EASE_OUT }}
           >
             {person.name}
           </motion.h2>
@@ -195,11 +203,10 @@ const ExpandedProfile = ({ person, onClose }) => {
 const VisionaryCard = ({ person, onClick }) => (
   <motion.div
     className="visionary-card-wrap"
-    initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
-    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 1.1, ease: EASE_OUT }}
-    whileHover={{ scale: 1.01, boxShadow: '0 30px 80px rgba(123,97,255,0.18)' }}
+    initial={{ opacity: 0, y: 10 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.1 }}
+    transition={{ duration: 0.6, ease: EASE_OUT }}
     whileTap={{ scale: 0.99 }}
     onClick={() => onClick(person)}
   >
@@ -207,18 +214,25 @@ const VisionaryCard = ({ person, onClick }) => (
       {/* Avatar — develops photo style */}
       <motion.div
         className="visionary-avatar-box"
-        initial={{ scale: 1.1, filter: 'brightness(0.5) blur(8px)' }}
-        whileInView={{ scale: 1, filter: 'brightness(1) blur(0px)' }}
+        initial={{ scale: 1.05, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 1.3, delay: 0.15, ease: EASE_OUT }}
+        transition={{ duration: 1, delay: 0.1, ease: EASE_OUT }}
       >
         {person.image_url ? (
-          <img src={person.image_url} alt={person.name} loading="lazy" decoding="async" />
+          <Image 
+            src={person.image_url} 
+            alt={person.name} 
+            fill
+            sizes="(max-width: 768px) 100vw, 400px"
+            style={{ objectFit: 'cover' }}
+            priority
+          />
         ) : (
           <div className="visionary-initials">{person.name.split(' ').map(n => n[0]).join('')}</div>
         )}
         {/* Subtle gradient overlay */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(123,97,255,0.08), transparent)', borderRadius: '25px' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(123,97,255,0.08), transparent)', borderRadius: '25px', zIndex: 1 }} />
       </motion.div>
 
       <div className="visionary-content">
@@ -271,30 +285,32 @@ const VisionaryCard = ({ person, onClick }) => (
 const BuilderCard = ({ person, onClick, index = 0 }) => (
   <motion.div
     className="builder-card"
-    initial={{ opacity: 0, y: -20, scale: 0.95, filter: 'blur(6px)', rotateX: 5 }}
-    whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', rotateX: 0 }}
+    initial={{ opacity: 0, y: -10, scale: 0.98 }}
+    whileInView={{ opacity: 1, y: 0, scale: 1 }}
     viewport={{ once: true, amount: 0.2 }}
-    transition={{ duration: 0.8, delay: index * 0.1, ease: EASE_OUT }}
-    whileHover={{ y: -10, borderColor: 'var(--primary)', boxShadow: '0 30px 60px rgba(0,0,0,0.5), 0 0 20px rgba(123,97,255,0.12)' }}
+    transition={{ duration: 0.6, delay: index * 0.08, ease: EASE_OUT }}
     whileTap={{ scale: 0.98 }}
     onClick={() => onClick(person)}
     style={{ perspective: 800 }}
   >
-    <div className="builder-image-area">
+    <motion.div 
+      className="builder-image-area"
+      initial={{ scale: 1.05, opacity: 0.5 }}
+      whileInView={{ scale: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.9, delay: 0.1 + index * 0.07, ease: EASE_OUT }}
+    >
       <div className="builder-initials-bg">{person.name.split(' ').map(n => n[0]).join('')}</div>
       {person.image_url && (
-        <motion.img
+        <Image
           src={person.image_url}
           alt={person.name}
-          loading="lazy"
-          decoding="async"
-          initial={{ scale: 1.12, filter: 'brightness(0.5)' }}
-          whileInView={{ scale: 1, filter: 'brightness(1)' }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, delay: 0.1 + index * 0.08, ease: EASE_OUT }}
+          fill
+          sizes="(max-width: 768px) 100vw, 280px"
+          style={{ objectFit: 'cover' }}
         />
       )}
-    </div>
+    </motion.div>
 
     <div className="builder-info-area">
       <motion.div
@@ -322,17 +338,10 @@ const CatalystCard = ({ person, onClick, index = 0 }) => {
   return (
     <motion.div
       className="catalyst-card"
-      initial={{ opacity: 0, y: 30, filter: 'blur(4px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.65, delay: (index % 6) * 0.07, ease: EASE_OUT }}
-      whileHover={{
-        backgroundColor: 'rgba(255,255,255,0.055)',
-        scale: 1.025,
-        borderColor: `${accentColor}55`,
-        boxShadow: `0 12px 40px rgba(0,0,0,0.35), 0 0 20px ${accentColor}18`,
-        y: -4,
-      }}
+      transition={{ duration: 0.55, delay: (index % 6) * 0.06, ease: EASE_OUT }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(person)}
     >
@@ -340,11 +349,16 @@ const CatalystCard = ({ person, onClick, index = 0 }) => {
         {/* Avatar circle */}
         <motion.div
           className="catalyst-avatar-circle"
-          style={{ borderColor: `${accentColor}33` }}
-          whileHover={{ borderColor: accentColor, boxShadow: `0 0 16px ${accentColor}33` }}
+          style={{ borderColor: `rgba(255,255,255,0.1)` }}
         >
           {person.image_url ? (
-            <img src={person.image_url} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+            <Image 
+              src={person.image_url} 
+              alt={person.name}
+              fill
+              sizes="48px"
+              style={{ borderRadius: '50%', objectFit: 'cover' }}
+            />
           ) : (
             <span className="catalyst-initials" style={{ color: accentColor }}>
               {person.name.split(' ').map(n => n[0]).join('')}
@@ -404,31 +418,32 @@ export async function getStaticProps() {
 /* ─── Main Page ──────────────────────────────────────────── */
 export default function TeamPage({ teamMembers, footerSettings, siteContent }) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [activeMember, setActiveMember] = useState(null);
-  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    setMounted(true);
   }, []);
 
   const visionary = teamMembers.find(m => m.role === 'Lead');
-  const builders  = teamMembers.filter(m => m.role === 'Rep');
+  const builders = teamMembers.filter(m => m.role === 'Rep');
   const catalysts = teamMembers.filter(m => m.role === 'Member');
 
   return (
     <>
       <Head>
-        <title>Code Catalysts — The Team</title>
+        <title>Code Catalysts</title>
         <meta name="description" content="Meet the people behind Code Catalysts — our leaders, representatives, and members who are building the future together." />
-        <meta property="og:title"       content="Code Catalysts — The Team" />
+        <meta property="og:title" content="Code Catalysts" />
         <meta property="og:description" content="Meet the people behind Code Catalysts." />
-        <meta property="og:type"        content="website" />
+        <meta property="og:type" content="website" />
       </Head>
 
       <motion.div
         className="team-system-page"
-        animate={{ opacity: isExiting ? 0 : 1, y: isExiting ? 20 : 0 }}
-        transition={{ duration: 0.4, ease: 'easeInOut' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
       >
         <TeamBackground />
 
@@ -445,8 +460,8 @@ export default function TeamPage({ teamMembers, footerSettings, siteContent }) {
           <motion.span
             className="team-hero-label"
             initial={{ opacity: 0, y: 12, letterSpacing: '0.2em' }}
-            animate={{ opacity: 0.8, y: 0,  letterSpacing: '0.8em' }}
-            transition={{ duration: 1.2, delay: 0.2, ease: EASE_OUT }}
+            animate={{ opacity: 0.8, y: 0, letterSpacing: '0.8em' }}
+            transition={{ duration: 0.8, delay: 0.05, ease: EASE_OUT }}
           >
             The Architect of Code
           </motion.span>
@@ -455,9 +470,9 @@ export default function TeamPage({ teamMembers, footerSettings, siteContent }) {
           <div style={{ overflow: 'hidden' }}>
             <motion.h1
               className="team-hero-title"
-              initial={{ opacity: 0, y: 70, filter: 'blur(12px)' }}
-              animate={{ opacity: 1, y: 0,  filter: 'blur(0px)' }}
-              transition={{ duration: 1.1, delay: 0.55, ease: EASE_OUT }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: EASE_OUT }}
             >
               The Catalysts.
             </motion.h1>
@@ -467,7 +482,7 @@ export default function TeamPage({ teamMembers, footerSettings, siteContent }) {
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.4, ease: EASE_EXPO }}
+            transition={{ duration: 0.6, delay: 0.25, ease: EASE_EXPO }}
             style={{
               marginTop: '2rem',
               height: '2px',
@@ -483,7 +498,7 @@ export default function TeamPage({ teamMembers, footerSettings, siteContent }) {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 2.0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             style={{
               marginTop: '2.5rem',
               fontSize: '0.65rem',
@@ -539,21 +554,25 @@ export default function TeamPage({ teamMembers, footerSettings, siteContent }) {
         <Footer footerSettings={footerSettings} siteContent={siteContent} />
       </motion.div>
 
-      {/* Return Button */}
-      <motion.button
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: isExiting ? 0 : 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-        whileHover={{ x: -6, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'var(--primary)', boxShadow: '0 0 20px rgba(123,97,255,0.2)' }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          setIsExiting(true);
-          setTimeout(() => router.push('/'), 400);
-        }}
-        className="return-root-btn"
-      >
-        <ChevronLeft size={16} /> RETURN
-      </motion.button>
+      {/* Return Button (Portaled to body to maintain fixed position regardless of parent transforms) */}
+      {mounted && createPortal(
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          whileHover={{ x: -6, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'var(--primary)', boxShadow: '0 0 20px rgba(123,97,255,0.2)' }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            router.push('/');
+          }}
+          className="return-root-btn"
+          style={{ zIndex: 9999 }}
+        >
+          <ChevronLeft size={16} /> RETURN
+        </motion.button>,
+        document.body
+      )}
     </>
   );
 }
+

@@ -21,12 +21,11 @@ export const fadeInVariant = {
 };
 
 export const fadeUpVariant = {
-  hidden:  { opacity: 0, y: 36, filter: 'blur(4px)' },
+  hidden:  { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.85, ease: ease.spring },
+    transition: { duration: 0.6, ease: ease.spring },
   },
 };
 
@@ -44,13 +43,12 @@ export const staggerContainer = (staggerChildren = 0.12, delayChildren = 0) => (
 });
 
 export const cardVariant = {
-  hidden:  { opacity: 0, y: 40, scale: 0.97, filter: 'blur(6px)' },
+  hidden:  { opacity: 0, y: 30, scale: 0.98 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: 'blur(0px)',
-    transition: { duration: 0.75, ease: ease.spring },
+    transition: { duration: 0.6, ease: ease.spring },
   },
 };
 
@@ -70,47 +68,44 @@ export const clipRevealVariant = {
 
 /** Scale up from slightly smaller — photo developing feel */
 export const photoRevealVariant = {
-  hidden:  { opacity: 0, scale: 1.08, filter: 'blur(12px) brightness(0.6)' },
+  hidden:  { opacity: 0, scale: 1.05, brightness: 0.8 },
   visible: {
     opacity: 1,
     scale: 1,
-    filter: 'blur(0px) brightness(1)',
-    transition: { duration: 1.2, ease: ease.out },
+    brightness: 1,
+    transition: { duration: 0.8, ease: ease.out },
   },
 };
 
 /** Slide from left with a blur trail */
 export const slideInLeftVariant = {
-  hidden:  { opacity: 0, x: -60, filter: 'blur(8px)' },
+  hidden:  { opacity: 0, x: -40 },
   visible: {
     opacity: 1,
     x: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.95, ease: ease.spring },
+    transition: { duration: 0.7, ease: ease.spring },
   },
 };
 
 /** Slide from right with a blur trail */
 export const slideInRightVariant = {
-  hidden:  { opacity: 0, x: 60, filter: 'blur(8px)' },
+  hidden:  { opacity: 0, x: 40 },
   visible: {
     opacity: 1,
     x: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.95, ease: ease.spring },
+    transition: { duration: 0.7, ease: ease.spring },
   },
 };
 
 /** Card drops from above — "file being placed on desk" */
 export const dropInVariant = {
-  hidden:  { opacity: 0, y: -30, rotateX: 8, scale: 0.95, filter: 'blur(4px)' },
+  hidden:  { opacity: 0, y: -20, rotateX: 5, scale: 0.98 },
   visible: {
     opacity: 1,
     y: 0,
     rotateX: 0,
     scale: 1,
-    filter: 'blur(0px)',
-    transition: { duration: 0.8, ease: ease.spring },
+    transition: { duration: 0.6, ease: ease.spring },
   },
 };
 
@@ -126,12 +121,11 @@ export const lineExpandVariant = {
 
 /** Chapter heading — each word reveals individually */
 export const wordRevealVariant = {
-  hidden:  { opacity: 0, y: 30, filter: 'blur(6px)' },
+  hidden:  { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.7, ease: ease.spring },
+    transition: { duration: 0.5, ease: ease.spring },
   },
 };
 

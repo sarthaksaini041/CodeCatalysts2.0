@@ -39,8 +39,9 @@ const ImageUpload = ({ folder, onUpload, currentImageUrl, label = "UPLOAD_IMAGE"
         setIsUploading(true);
         setUploadProgress(10);
 
-        // Convert blob to file
-        const file = new File([croppedBlob], selectedFileName, { type: 'image/jpeg' });
+        // Convert blob to file with .webp extension
+        const fileName = selectedFileName.replace(/\.[^/.]+$/, "") + ".webp";
+        const file = new File([croppedBlob], fileName, { type: 'image/webp' });
         
         const { url, error } = await uploadFile(file, folder);
         

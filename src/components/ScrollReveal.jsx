@@ -47,8 +47,29 @@ const ScrollReveal = ({
   amount     = 0.18,
   blur       = true,
 }) => {
-  const from = directionMap[direction] || directionMap.up;
-  const blurStart = blur ? (blurMap[direction] || 'blur(6px)') : 'blur(0px)';
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia('(max-width: 1024px)').matches || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const fromRaw = directionMap[direction] || directionMap.up;
+  
+  // Simplify for mobile: no blurs, reduced distance
+  const from = isMobile ? {
+    ...fromRaw,
+    y: fromRaw.y !== 0 ? (fromRaw.y > 0 ? 15 : -15) : 0,
+    x: fromRaw.x !== 0 ? (fromRaw.x > 0 ? 20 : -20) : 0,
+    scale: fromRaw.scale < 1 ? 0.98 : (fromRaw.scale > 1 ? 1.02 : 1),
+    rotateX: 0, // No 3D on mobile
+  } : fromRaw;
+
+  const blurStart = isMobile ? 'blur(0px)' : (blur ? (blurMap[direction] || 'blur(6px)') : 'blur(0px)');
 
   const hidden = {
     opacity: 0,

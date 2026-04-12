@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCMS } from '../hooks/useCMS';
 import { GitHubIcon, LinkedInIcon } from '../components/icons/TechnicalIcons';
 import Footer from '../components/Footer';
-import TeamBackground from '../components/TeamBackground';
+import StaticBackground from '../components/StaticBackground';
 import { fadeUpVariant, staggerContainer, cardVariant } from '../utils/animations.jsx';
 import './TeamPage.css';
 
@@ -229,7 +229,7 @@ export default function TeamPage() {
 
   return (
     <div className="team-system-page">
-      <TeamBackground />
+      <StaticBackground />
 
       <AnimatePresence>
         {activeMember && (

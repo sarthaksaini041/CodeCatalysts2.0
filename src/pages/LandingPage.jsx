@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { useCMS } from '../hooks/useCMS';
@@ -11,10 +11,9 @@ import Chapter_Shift from '../components/Chapter_Shift';
 import Chapter_Journey from '../components/Chapter_Journey';
 import Chapter_Forge from '../components/Chapter_Forge';
 import Chapter_Architects from '../components/Chapter_Architects';
-import UnifiedBackground from '../components/UnifiedBackground';
+import StaticBackground from '../components/StaticBackground';
 import Footer from '../components/Footer';
 
-const scrollOffset = ["start start", "end end"];
 const landingWrapperStyle = { background: 'transparent', color: 'white' };
 const finalCtaStyle = { minHeight: '90vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' };
 const finalContainerStyle = { textAlign: 'center' };
@@ -27,11 +26,6 @@ const LandingPage = () => {
   const containerRef = useRef(null);
   const { loading } = useCMS();
   
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: scrollOffset
-  });
-
   return (
     <AnimatePresence mode="wait">
       {loading ? (
@@ -42,7 +36,7 @@ const LandingPage = () => {
           transition={{ duration: 0.8, ease: "easeInOut" }}
           className="min-h-screen bg-black flex items-center justify-center fixed inset-0 z-[1000]"
         >
-          <UnifiedBackground />
+          <StaticBackground />
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -68,8 +62,8 @@ const LandingPage = () => {
           ref={containerRef} 
           style={landingWrapperStyle}
         >
-          {/* Dynamic Evolution Background */}
-          <UnifiedBackground />
+          {/* Static Neon Background */}
+          <StaticBackground />
 
           {/* CHAPTER 00: THE SPARK */}
           <Chapter_Hero />
