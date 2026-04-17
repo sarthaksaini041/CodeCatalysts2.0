@@ -26,9 +26,7 @@ export const triggerRevalidation = async (path = '') => {
 
     const result = await response.json();
     
-    if (response.ok) {
-      console.log(`Revalidation successful:`, result);
-    } else {
+    if (!response.ok) {
       console.error(`Revalidation failed:`, result);
     }
   } catch (error) {

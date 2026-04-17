@@ -35,7 +35,7 @@
     box-shadow   0.35s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: 900px;
-  width: 100%;
+  width: auto;
 }
 
 .navbar-pill--scrolled {

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Menu, X } from 'lucide-react';
+import Button from './Button';
+import { useCMS } from '../hooks/useCMS';
 
 /* ─────────────────────────────────────────────
    Nav link definitions for the Landing page
@@ -17,7 +19,7 @@ const LANDING_LINKS = [
 ];
 
 const PRIMARY_ACTIONS = [
-  { label: 'Apply Now', href: '/apply', route: true, accent: true },
+  { label: 'Apply Now', href: '/apply', route: true, accent: true, key: 'applyPageEnabled' },
 ];
 
 /* ─────────────────────────────────────────────
@@ -55,6 +57,7 @@ const waitForElement = (id, timeout = 3000) =>
 
 const Navbar = () => {
   const router = useRouter();
+  const { siteContent, loading: cmsLoading } = useCMS();
   const isLanding = router.pathname === '/';
 
   const [scrolled,       setScrolled]       = useState(false);
@@ -65,6 +68,14 @@ const Navbar = () => {
   const linkRefs     = useRef([]);
   const navbarRef    = useRef(null);
   const linksWrapRef = useRef(null);
+
+  // Filter actions based on feature flags — hide if explicitly 'false' or while loading
+  const visibleActions = PRIMARY_ACTIONS.filter(action => {
+    if (cmsLoading) return false;
+    if (action.key && siteContent[action.key] === 'false') return false;
+    return true;
+  });
+
   /* ── Scroll shadow ── */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -242,28 +253,23 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Divider */}
-          <div className="navbar-divider" aria-hidden="true" />
-
-          {/* CTA */}
-          {PRIMARY_ACTIONS.map(action => (
-            <Link
-              key={action.label}
-              href={action.href}
-              prefetch={true}
-              className="navbar-cta"
-              style={{ textDecoration: 'none' }}
-            >
-              <motion.div
-                style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}
-                whileHover={{ scale: 1.04, y: -1 }}
-                whileTap={{ scale: 0.96 }}
-              >
-                <Sparkles size={14} strokeWidth={2.5} />
-                {action.label}
-              </motion.div>
-            </Link>
-          ))}
+          {/* CTA - Only show divider if we have actions */}
+          {visibleActions.length > 0 && (
+            <>
+              <div className="navbar-divider" aria-hidden="true" />
+              {visibleActions.map(action => (
+                <Button
+                  key={action.label}
+                  href={action.href}
+                  variant="default"
+                  size="sm"
+                >
+                  <Sparkles size={14} strokeWidth={2.5} />
+                  {action.label}
+                </Button>
+              ))}
+            </>
+          )}
 
           {/* Mobile toggle */}
           <button
@@ -334,16 +340,22 @@ const Navbar = () => {
               </nav>
 
               <div className="mobile-drawer-footer">
-                <motion.button
-                  className="navbar-cta mobile-cta"
-                  onClick={() => { router.push('/apply'); setMobileOpen(false); }}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35, duration: 0.32 }}
-                >
-                  <Sparkles size={16} strokeWidth={2.5} />
-                  Apply Now
-                </motion.button>
+                {!cmsLoading && siteContent.applyPageEnabled !== 'false' && (
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="w-full flex justify-center"
+                    onClick={() => { router.push('/apply'); setMobileOpen(false); }}
+                    motionProps={{
+                      initial: { opacity: 0, y: 16 },
+                      animate: { opacity: 1, y: 0 },
+                      transition: { delay: 0.35, duration: 0.32 }
+                    }}
+                  >
+                    <Sparkles size={16} strokeWidth={2.5} />
+                    Apply Now
+                  </Button>
+                )}
               </div>
             </motion.div>
           </>

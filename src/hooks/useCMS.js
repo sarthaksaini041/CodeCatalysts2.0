@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { supabase } from '../lib/supabase-browser';
 
 const CMSContext = createContext({
@@ -17,6 +17,13 @@ const CMSContext = createContext({
 });
 
 export const CMSProvider = ({ children, initialData = {} }) => {
+    // Use a ref to track whether SSR-provided data is already present.
+    // This avoids the stale-closure problem of checking data.siteContent
+    // inside a useCallback while keeping the deps array clean.
+    const hasInitialData = React.useRef(
+        !!initialData.siteContent && Object.keys(initialData.siteContent).length > 0
+    );
+
     const [data, setData] = useState({
         siteContent: initialData.siteContent || {},
         chapter1Items: initialData.chapter1Items || [],
@@ -27,13 +34,13 @@ export const CMSProvider = ({ children, initialData = {} }) => {
         chapter5Showcase: initialData.chapter5Showcase || [],
         teamMembers: initialData.teamMembers || [],
         footerSettings: initialData.footerSettings || {},
-        loading: !initialData.siteContent, // Don't show loading if we have initial data
+        loading: !initialData.siteContent,
         error: null
     });
 
     const fetchAllContent = useCallback(async (isInitial = false) => {
-        // If it's the initial call and we already have data, skip the fetch to stay "static"
-        if (isInitial && Object.keys(data.siteContent).length > 0) return;
+        // If it's the initial call and we already have SSR data, skip the fetch
+        if (isInitial && hasInitialData.current) return;
 
         try {
             const [
@@ -80,7 +87,7 @@ export const CMSProvider = ({ children, initialData = {} }) => {
             console.error('CMS: Fetch error:', err);
             setData(prev => ({ ...prev, loading: false, error: err.message }));
         }
-    }, []);
+    }, []); // hasInitialData is a ref — stable reference, no need in deps
 
     useEffect(() => {
         fetchAllContent(true);
@@ -100,4 +107,3 @@ export const useCMS = () => {
     }
     return context;
 };
-

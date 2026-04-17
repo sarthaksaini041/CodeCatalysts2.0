@@ -1,8 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
+import Button from '../components/Button';
+import { SHIMMER_1_1 } from '../utils/imageUtils';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 const EASE_OUT = [0.16, 1, 0.3, 1];
@@ -34,6 +36,8 @@ const MemberCard = ({ person, accent }) => {
                 fill
                 sizes="56px"
                 style={{ objectFit: 'cover' }}
+                placeholder="blur"
+                blurDataURL={SHIMMER_1_1}
               />
             </div>
           ) : (
@@ -57,24 +61,26 @@ const MemberCard = ({ person, accent }) => {
 
 const ScrollingTrack = ({ items, duration, reverse = false, accent }) => {
   const displayItems = React.useMemo(() => (items.length > 0 ? [...items, ...items] : []), [items]);
+  const shouldReduceMotion = useReducedMotion();
+
   if (items.length === 0) return null;
 
   return (
     <div
       className="infinite-scroll-container"
       style={{ overflow: 'hidden', width: '100vw', margin: '1rem 0' }}
-      aria-hidden="true"  // decorative — screen readers skip this
+      aria-hidden="true"  /* decorative — screen readers skip this */
     >
       <motion.div
         className="infinite-scroll-track"
-        animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
+        animate={shouldReduceMotion ? { x: 0 } : { x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
         transition={{ duration, ease: 'linear', repeat: Infinity, repeatType: 'loop' }}
         style={{
           display: 'flex',
           gap: '1rem',
           width: 'max-content',
           cursor: 'default',
-          willChange: 'transform',
+          willChange: shouldReduceMotion ? 'auto' : 'transform',
         }}
       >
         {displayItems.map((member, i) => (
@@ -195,14 +201,17 @@ const Chapter_Architects = ({ teamMembers = [], siteContent = {} }) => {
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.85, ease: EASE_OUT }}
         >
-          <motion.button
-            whileHover={{ scale: 1.06, boxShadow: '0 0 40px rgba(123,97,255,0.4)', y: -4 }}
-            whileTap={{ scale: 0.95 }}
+          <Button
+            variant="default"
+            size="lg"
+            motionProps={{
+              whileHover: { scale: 1.06, boxShadow: '0 0 40px rgba(123,97,255,0.4)', y: -4 },
+              whileTap: { scale: 0.95 }
+            }}
             onClick={() => router.push('/team')}
-            className="btn-catalyst-large"
           >
             MEET THE CATALYSTS
-          </motion.button>
+          </Button>
         </motion.div>
       </div>
     </section>

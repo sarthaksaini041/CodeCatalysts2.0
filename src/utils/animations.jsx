@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, { useEffect, useState } from 'react';
 import { useInView, motion } from 'framer-motion';
 
@@ -166,9 +165,20 @@ export const sectionReveal = {
    SPLIT TEXT COMPONENT
    Wraps each word in its own motion.span
 ────────────────────────────────────────── */
-export const SplitWords = ({ text, className, style, delay = 0, as: Tag = 'span' }) => {
+export const SplitWords = ({ text, className, style, delay = 0, as: Tag = 'span', disable = false }) => {
   const words = text.split(' ');
   const MotionTag = motion[Tag] || motion.span;
+  const shouldReduceMotion = React.useMemo(() => 
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  , []);
+
+  if (disable || shouldReduceMotion) {
+    return (
+      <Tag className={className} style={style}>
+        {text}
+      </Tag>
+    );
+  }
 
   return (
     <MotionTag
@@ -182,7 +192,7 @@ export const SplitWords = ({ text, className, style, delay = 0, as: Tag = 'span'
       {words.map((word, i) => (
         <span key={i} style={{ display: 'inline-block', marginRight: '0.28em' }}>
           <motion.span
-            style={{ display: 'inline-block' }}
+            style={{ display: 'inline-block', willChange: 'transform, opacity' }}
             variants={wordRevealVariant}
           >
             {word}

@@ -101,25 +101,9 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   hidden: { opacity: 0, y: 28, scale: 0.97 },
                   show:   { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: EASE_OUT } },
                 }}
-                whileHover={{
-                  y: -8,
-                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                  borderColor: color,
-                  boxShadow: `0 16px 40px -12px ${color}44`,
-                }}
+                className="protocol-card"
                 style={{
-                  padding: 'clamp(2rem, 8vw, 4rem) 1.5rem',
-                  textAlign: 'center',
-                  background: 'rgba(255, 255, 255, 0.015)',
-                  borderRadius: '28px',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '2rem',
-                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-                  position: 'relative',
-                  overflow: 'hidden',
+                  '--card-color': color,
                 }}
               >
                 {/* Subtle radial background tint — static, not animated */}
@@ -181,20 +165,9 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   hidden: { opacity: 0, y: -16, scale: 0.95 },
                   show:   { opacity: 1, y: 0, scale: 1, transition: { duration: 0.65, ease: EASE_OUT } },
                 }}
-                whileHover={{ y: -6, backgroundColor: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
+                className="shift-stat-card"
                 style={{
-                  padding: 'clamp(2rem, 8vw, 3.5rem) 1.5rem',
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  borderRadius: '28px',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minHeight: '200px',
-                  transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                  '--accent-color': accentColor
                 }}
               >
                 {/* Ghost number — static, low opacity */}
@@ -233,13 +206,8 @@ const Chapter_Shift = ({ chapter2Cards = [], chapter2Stats = [], siteContent = {
                   </p>
                 </div>
 
-                {/* Bottom accent line — CSS pulse instead of FM infinite */}
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ scaleX: { duration: 0.5, delay: 0.3 + i * 0.08, ease: EASE_EXPO } }}
-                  className="animate-pulse-opacity"
+                {/* Bottom accent line - Static instead of pulse */}
+                <div 
                   style={{
                     position: 'absolute', bottom: 0,
                     left: '50%', transform: 'translateX(-50%)',

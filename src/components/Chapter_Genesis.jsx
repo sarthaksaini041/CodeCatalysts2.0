@@ -1,15 +1,79 @@
-import Image from 'next/image';
 import { motion } from 'framer-motion';
-import ScrollReveal from './ScrollReveal';
-import {
-  fadeUpVariant,
-  staggerContainer,
-  SplitWords,
-} from '../utils/animations.jsx';
+import { fadeUpVariant, staggerContainer } from '../utils/animations.jsx';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 
-/* Chapter label with animated expanding lines */
+// Custom, High-fidelity Animated SVGs for Genesis Story
+const ScanLineOverlay = () => (
+  <div
+    className="absolute inset-0 pointer-events-none z-20 opacity-[0.05]"
+    style={{
+      background: `linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03))`,
+      backgroundSize: '100% 3px, 3px 100%',
+    }}
+  />
+);
+
+// Metadata component removed
+
+
+const LoopSVG = () => (
+  <svg viewBox="0 0 240 240" className="w-full h-full max-w-[320px] opacity-40">
+    <path
+      d="M120,60 A60,60 0 1,1 119.9,60"
+      fill="none"
+      stroke="var(--dash-cyan)"
+      strokeWidth="1.5"
+      opacity="0.5"
+    />
+    <circle cx="120" cy="120" r="80" fill="none" stroke="white" strokeWidth="0.1" strokeDasharray="4 8" opacity="0.1" />
+    <circle cx="120" cy="40" r="2" fill="var(--dash-cyan)" />
+    <circle cx="120" cy="200" r="2" fill="var(--dash-cyan)" opacity="0.3" />
+  </svg>
+);
+
+const GrowthSVG = () => (
+  <svg viewBox="0 0 240 240" className="w-full h-full max-w-[280px] opacity-50">
+    <line x1="40" y1="180" x2="200" y2="180" stroke="white" strokeWidth="0.5" opacity="0.2" />
+    <path
+      d="M60,180 Q100,180 120,130 T180,60"
+      fill="none"
+      stroke="var(--dash-magenta)"
+      strokeWidth="1.5"
+    />
+    <circle cx="180" cy="60" r="4" fill="var(--dash-magenta)" />
+  </svg>
+);
+
+const ConnectionSVG = () => (
+  <svg viewBox="0 0 240 240" className="w-full h-full max-w-[260px] opacity-45">
+    <path d="M70,70 L170,170 M70,170 L170,70" stroke="white" strokeWidth="0.2" strokeDasharray="1 4" />
+    {[{ x: 70, y: 70 }, { x: 170, y: 170 }, { x: 120, y: 120 }].map((pos, i) => (
+      <circle key={i} cx={pos.x} cy={pos.y} r={i === 2 ? 5 : 3} fill={i === 2 ? "var(--dash-cyan)" : "white"} />
+    ))}
+  </svg>
+);
+
+const ExpansionSVG = () => (
+  <svg viewBox="0 0 240 240" className="w-full h-full max-w-[300px] opacity-40">
+    <circle cx="120" cy="120" r="60" fill="none" stroke="var(--dash-cyan)" strokeWidth="0.5" opacity="0.3" />
+    <circle cx="120" cy="120" r="90" fill="none" stroke="var(--dash-cyan)" strokeWidth="0.2" opacity="0.1" />
+    {[0, 90, 180, 270].map((angle, i) => {
+      const rad = (angle * Math.PI) / 180;
+      return (
+        <circle
+          key={i}
+          cx={120 + Math.cos(rad) * 60}
+          cy={120 + Math.sin(rad) * 60}
+          r="1.5"
+          fill="white"
+          opacity="0.3"
+        />
+      );
+    })}
+  </svg>
+);
+
 const ChapterLabel = ({ label, color }) => (
   <motion.div
     variants={staggerContainer(0.12, 0)}
@@ -17,19 +81,19 @@ const ChapterLabel = ({ label, color }) => (
     whileInView="visible"
     viewport={{ once: true, amount: 0.6 }}
     className="chapter-label-line"
-    style={{ alignItems: 'center' }}
+    style={{ display: 'flex', alignItems: 'center' }}
   >
     <motion.div
       variants={{
-        hidden:  { scaleX: 0, opacity: 0 },
+        hidden: { scaleX: 0, opacity: 0 },
         visible: { scaleX: 1, opacity: 1, transition: { duration: 0.7, ease: EASE_EXPO } },
       }}
       style={{ background: color, transformOrigin: 'left', flex: 1, height: '1px', maxWidth: '120px' }}
     />
-    <motion.span variants={fadeUpVariant} className="text">{label}</motion.span>
+    <motion.span variants={fadeUpVariant} className="text" style={{ padding: '0 1.5rem', letterSpacing: '0.4em' }}>{label}</motion.span>
     <motion.div
       variants={{
-        hidden:  { scaleX: 0, opacity: 0 },
+        hidden: { scaleX: 0, opacity: 0 },
         visible: { scaleX: 1, opacity: 1, transition: { duration: 0.7, ease: EASE_EXPO, delay: 0.15 } },
       }}
       style={{ background: color, transformOrigin: 'right', flex: 1, height: '1px', maxWidth: '120px' }}
@@ -37,21 +101,33 @@ const ChapterLabel = ({ label, color }) => (
   </motion.div>
 );
 
-const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
-  const points = chapter1Items.map((item, index) => ({
-    title: item.title,
-    content: item.description,
-    image: item.image_url,
-    reverse: index % 2 !== 0,
-  }));
+const Chapter_Genesis = ({ chapter1Items = [] }) => {
+  // We use exactly 4 items for the dashboard layout.
+  // We merge dynamic data from Supabase with the high-fidelity hardcoded defaults
+  // so that even with partial data, the layout feels complete.
+  const defaults = [
+    { title: "Stuck in the Loop", meta: "PHASE 01", content: "Classes. Scrolling. Repeating.\nWe knew this wasn’t leading anywhere.", color: "#818cf8" },
+    { title: "Choosing Growth", meta: "PHASE 02", content: "We decided to build instead of scroll.\nStarted with just one mind.", color: "#f43f5e" },
+    { title: "Finding Our People", meta: "PHASE 03", content: "Hackathons brought us together.\nSame mindset. Same hunger.", color: "#06b6d4" },
+    { title: "Momentum", meta: "PHASE 04", content: "From one class → many classes.\nFrom one college → many colleges.", color: "#10b981" }
+  ];
+
+  const cards = [0, 1, 2, 3].map(i => {
+    const item = chapter1Items[i] || {};
+    return {
+      title: item.title || defaults[i].title,
+      meta: item.meta || defaults[i].meta,
+      content: (item.description || defaults[i].content).split('\n'),
+      color: defaults[i].color
+    };
+  });
 
   return (
     <section id="chapter-01" className="chapter-section genesis-timeline">
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
+      <div className="container">
 
-        {/* Chapter header */}
-        <div style={{ marginBottom: '5rem' }}>
-          <ChapterLabel label="CHAPTER 01" color="var(--primary)" />
+        <div style={{ marginBottom: '8vh' }}>
+          <ChapterLabel label="CHAPTER 01" color="var(--dash-cyan)" />
 
           <motion.div
             variants={staggerContainer(0.14, 0.1)}
@@ -61,14 +137,14 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
             className="chapter-header-v2"
           >
             <div className="chapter-title-v2">
-              <motion.span variants={fadeUpVariant} className="title-prefix">THE</motion.span>
+              <motion.span variants={fadeUpVariant} className="title-prefix" style={{ color: 'rgba(255,255,255,0.2)' }}>THE</motion.span>
               <motion.h2
                 variants={{
-                  hidden:  { opacity: 0, y: 30 }, // Removed blur filter
-                  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } },
                 }}
                 className="title-main"
-                style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--primary), var(--accent))' }}
+                style={{ '--chapter-gradient': 'linear-gradient(135deg, var(--dash-cyan), var(--dash-magenta))', backgroundClip: 'text' }}
               >
                 GENESIS
               </motion.h2>
@@ -76,121 +152,119 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
           </motion.div>
         </div>
 
-        {/* Zig-zag story rows */}
-        <div className="zig-zag-container" style={{ position: 'relative' }}>
-          {points.map((point, index) => (
-            <div key={index} style={{ marginBottom: 'clamp(5rem, 10vh, 10rem)' }}>
-              <div
-                className={`zig-zag-row ${point.reverse ? 'reverse' : ''}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                {/* Text block — slides in from its side */}
-                <ScrollReveal
-                  direction={point.reverse ? 'right' : 'left'}
-                  delay={0}
-                  duration={1}
-                  amount={0.15}
-                  className="zig-zag-content"
-                  style={{ flex: 1 }}
-                >
-                  {/* Index log */}
-                  <motion.span
-                    initial={{ opacity: 0, x: point.reverse ? 20 : -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    style={{
-                      fontFamily: 'JetBrains Mono',
-                      fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.25)',
-                      letterSpacing: '0.2em',
-                      display: 'block',
-                      marginBottom: '1rem',
-                      fontWeight: 900,
-                    }}
-                  >
-                    0{index + 1}
-                  </motion.span>
+        <div className="genesis-dash-grid" style={{ gap: '1rem' }}>
 
-                  {/* Title — word by word */}
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <SplitWords
-                      as="h3"
-                      text={point.title}
-                      delay={0.15}
-                      style={{
-                        fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
-                        fontWeight: 950,
-                        color: index % 2 === 0 ? 'var(--primary)' : 'var(--secondary)',
-                        // Removed 40px blur textShadow for performance
-                        letterSpacing: '-0.02em',
-                        display: 'block',
-                      }}
-                    />
-                  </div>
+          {/* Module 01: The Realization (SCAN LINE EFFECT) */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 1.2, ease: EASE_EXPO }}
+            className="dash-module mod-primary"
+            style={{
+              padding: '3rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              overflow: 'hidden'
+            }}
+          >
+            <ScanLineOverlay />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <LoopSVG />
+            </div>
+            <div className="relative z-10">
+              <h2 className="text-white text-4xl font-black tracking-tight mb-6 leading-tight">
+                {cards[0].title}
+              </h2>
+              {cards[0].content.map((line, i) => (
+                <p key={i} className="text-white/50 text-sm font-medium tracking-wide mb-2 max-w-[85%]">{line}</p>
+              ))}
+            </div>
+          </motion.div>
 
-                  {/* Body — fades up */}
-                  <motion.p
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      fontSize: '1.05rem',
-                      color: 'rgba(255,255,255,0.5)',
-                      lineHeight: 1.75,
-                      maxWidth: '480px',
-                      marginLeft: point.reverse ? 'auto' : '0',
-                    }}
-                  >
-                    {point.content}
-                  </motion.p>
-                </ScrollReveal>
+          {/* Module 02: The Shift (MAGENTA GRADIENT) */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 1.2, delay: 0.2, ease: EASE_EXPO }}
+            className="dash-module mod-tech"
+            style={{
+              padding: '2.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              overflow: 'hidden'
+            }}
+          >
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <GrowthSVG />
+            </div>
+            <div className="relative z-10 text-right">
+              <h3 className="text-white text-4xl font-black tracking-tight mb-6 leading-tight">{cards[1].title}</h3>
+              {cards[1].content.map((line, i) => (
+                <p key={i} className="text-white/50 text-sm font-medium tracking-wide mb-2">{line}</p>
+              ))}
+            </div>
+          </motion.div>
 
-                {/* Image — photo-developing reveal */}
-                <ScrollReveal
-                  direction="photo"
-                  delay={0.1}
-                  duration={1.3}
-                  amount={0.15}
-                  className="zig-zag-image-wrapper"
-                  style={{ flex: 1, position: 'relative' }}
-                >
-                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                    <Image
-                      src={point.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'}
-                      alt={point.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      style={{ objectFit: 'cover' }}
-                      className="zig-zag-image"
-                    />
-                  </div>
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    background: index % 2 === 0
-                      ? 'rgba(123, 97, 255, 0.08)'
-                      : 'rgba(255, 138, 23, 0.08)',
-                    mixBlendMode: 'overlay',
-                    pointerEvents: 'none',
-                  }} />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,5,5,0.55), transparent)', pointerEvents: 'none' }} />
+          {/* Module 03: The Connection (MESH GRADIENT) */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 1.2, delay: 0.4, ease: EASE_EXPO }}
+            className="dash-module mod-gradient"
+            style={{
+              padding: '3rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              overflow: 'hidden'
+            }}
+          >
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <ConnectionSVG />
+            </div>
+            <div className="relative z-10">
+              <h2 className="text-white text-4xl font-black mb-6 tracking-tighter leading-none">{cards[2].title}</h2>
+              {cards[2].content.map((line, i) => (
+                <p key={i} className="text-white/50 text-sm font-medium tracking-wide mb-2">{line}</p>
+              ))}
+            </div>
+          </motion.div>
 
-                  {/* Corner index label */}
-                  <div style={{
-                    position: 'absolute', top: '1.2rem', right: '1.2rem',
-                    fontFamily: 'JetBrains Mono', fontSize: '0.58rem',
-                    color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', fontWeight: 700,
-                  }}>
-                    MEM_0{index + 1}
-                  </div>
-                </ScrollReveal>
+          {/* Module 04: The Expansion (CYAN GRADIENT) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 1.2, delay: 0.6, ease: EASE_EXPO }}
+            className="dash-module mod-narrative"
+            style={{
+              padding: '3rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              overflow: 'hidden'
+            }}
+          >
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <ExpansionSVG />
+            </div>
+            <div className="relative z-10 text-center">
+              <h3 className="text-white text-4xl font-black tracking-tight mb-8 leading-tight">
+                {cards[3].title}
+              </h3>
+              <div className="space-y-2">
+                {cards[3].content.map((line, i) => (
+                  <p key={i} className="text-white/50 text-sm font-medium tracking-wide">{line}</p>
+                ))}
               </div>
             </div>
-          ))}
+          </motion.div>
+
         </div>
       </div>
     </section>
@@ -198,3 +272,6 @@ const Chapter_Genesis = ({ chapter1Items = [], siteContent = {} }) => {
 };
 
 export default Chapter_Genesis;
+
+
+

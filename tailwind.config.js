@@ -14,6 +14,8 @@ module.exports = {
       fontFamily: {
         outfit: ['Outfit', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
       },
       backdropBlur: {
         '3xl': '64px',

@@ -1,8 +1,12 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /**
  * ScrollReveal — cinematic scroll-triggered entrance.
+ * Optimized for performance:
+ * - Uses transform/opacity (GPU-accelerated)
+ * - Purely declarative (no resize listeners)
+ * - Reduced motion support built-in
  *
  * Props:
  *   direction  – 'up' | 'down' | 'left' | 'right' | 'scale' | 'photo' | 'drop' | 'none'
@@ -10,27 +14,27 @@ import { motion } from 'framer-motion';
  *   duration   – animation duration
  *   once       – only animate once
  *   amount     – viewport intersection threshold (0–1)
- *   blur       – whether to add blur at start (default true)
+ *   blur       – whether to add blur (disabled on reduced motion)
  */
 
 const directionMap = {
-  up:    { y: 40,   x: 0,   scale: 1,    rotateX: 0   },
-  down:  { y: -40,  x: 0,   scale: 1,    rotateX: 0   },
-  left:  { y: 0,    x: -60, scale: 1,    rotateX: 0   },
-  right: { y: 0,    x: 60,  scale: 1,    rotateX: 0   },
-  scale: { y: 0,    x: 0,   scale: 0.94, rotateX: 0   },
-  photo: { y: 0,    x: 0,   scale: 1.07, rotateX: 0   }, // photo developing
-  drop:  { y: -28,  x: 0,   scale: 0.96, rotateX: 6   }, // dropping onto surface
+  up:    { y: 32,   x: 0,   scale: 1,    rotateX: 0   },
+  down:  { y: -32,  x: 0,   scale: 1,    rotateX: 0   },
+  left:  { y: 0,    x: -40, scale: 1,    rotateX: 0   },
+  right: { y: 0,    x: 40,  scale: 1,    rotateX: 0   },
+  scale: { y: 0,    x: 0,   scale: 0.95, rotateX: 0   },
+  photo: { y: 0,    x: 0,   scale: 1.05, rotateX: 0   },
+  drop:  { y: -20,  x: 0,   scale: 0.96, rotateX: 6   },
   none:  { y: 0,    x: 0,   scale: 1,    rotateX: 0   },
 };
 
 const blurMap = {
-  up:    'blur(8px)',
-  down:  'blur(8px)',
-  left:  'blur(6px)',
-  right: 'blur(6px)',
+  up:    'blur(6px)',
+  down:  'blur(6px)',
+  left:  'blur(4px)',
+  right: 'blur(4px)',
   scale: 'blur(4px)',
-  photo: 'blur(14px) brightness(0.65)',
+  photo: 'blur(12px) brightness(0.7)',
   drop:  'blur(4px)',
   none:  'blur(0px)',
 };
@@ -39,55 +43,41 @@ const ScrollReveal = ({
   children,
   delay      = 0,
   direction  = 'up',
-  duration   = 0.95,
+  duration   = 0.85,
   once       = true,
   className,
   style,
   as         = 'div',
-  amount     = 0.18,
+  amount     = 0.15,
   blur       = true,
 }) => {
-  const [isMobile, setIsMobile] = React.useState(false);
+  const shouldReduceMotion = useReducedMotion();
+  const from = directionMap[direction] || directionMap.up;
+  const blurValue = blur ? (blurMap[direction] || 'blur(4px)') : 'blur(0px)';
 
-  React.useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 1024px)').matches || 'ontouchstart' in window);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const fromRaw = directionMap[direction] || directionMap.up;
-  
-  // Simplify for mobile: no blurs, reduced distance
-  const from = isMobile ? {
-    ...fromRaw,
-    y: fromRaw.y !== 0 ? (fromRaw.y > 0 ? 15 : -15) : 0,
-    x: fromRaw.x !== 0 ? (fromRaw.x > 0 ? 20 : -20) : 0,
-    scale: fromRaw.scale < 1 ? 0.98 : (fromRaw.scale > 1 ? 1.02 : 1),
-    rotateX: 0, // No 3D on mobile
-  } : fromRaw;
-
-  const blurStart = isMobile ? 'blur(0px)' : (blur ? (blurMap[direction] || 'blur(6px)') : 'blur(0px)');
-
-  const hidden = {
-    opacity: 0,
-    ...from,
-    filter: blurStart,
-  };
-
-  const visible = {
-    opacity: 1,
-    y: 0,
-    x: 0,
-    scale: 1,
-    rotateX: 0,
-    filter: 'blur(0px) brightness(1)',
-    transition: {
-      duration,
-      delay,
-      ease: [0.16, 1, 0.3, 1],
+  // Define variants
+  const variants = {
+    hidden: {
+      opacity: 0,
+      x: shouldReduceMotion ? 0 : from.x,
+      y: shouldReduceMotion ? 0 : from.y,
+      scale: shouldReduceMotion ? 1 : from.scale,
+      rotateX: shouldReduceMotion ? 0 : from.rotateX,
+      filter: shouldReduceMotion ? 'none' : blurValue,
+      transition: { duration: 0 }
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      rotateX: 0,
+      filter: 'blur(0px) brightness(1)',
+      transition: {
+        duration: shouldReduceMotion ? 0.1 : duration,
+        delay,
+        ease: [0.22, 1, 0.36, 1], // cinematic cubic-bezier
+      },
     },
   };
 
@@ -95,11 +85,17 @@ const ScrollReveal = ({
 
   return (
     <Tag
-      initial={hidden}
-      whileInView={visible}
+      initial="hidden"
+      whileInView="visible"
       viewport={{ once, amount }}
+      variants={variants}
       className={className}
-      style={style}
+      style={{
+        ...style,
+        willChange: shouldReduceMotion ? 'auto' : 'transform, opacity, filter',
+        backfaceVisibility: 'hidden',
+        WebkitFontSmoothing: 'antialiased',
+      }}
     >
       {children}
     </Tag>

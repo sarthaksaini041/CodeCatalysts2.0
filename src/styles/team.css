@@ -1,0 +1,515 @@
+.team-system-page {
+  --neon-blue: #3b82f6;
+  --neon-purple: #8b5cf6;
+  
+  background: #000000; /* Pure black */
+  color: #ffffff;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  padding-bottom: 5rem;
+}
+
+/* Typography Overrides for minimal feel */
+.team-system-page h1, 
+.team-system-page h2, 
+.team-system-page h3, 
+.team-system-page h4, 
+.team-system-page h5 {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.team-system-page p {
+  margin: 0;
+}
+
+/* 1. Hero Section */
+.team-hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 2rem;
+  background: #000000;
+  position: relative;
+}
+
+.team-hero-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.8em;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+  font-weight: 900;
+  margin-top: 0;
+}
+
+.team-hero-title {
+  font-size: clamp(3rem, 12vw, 8rem);
+  font-weight: 950;
+  line-height: 0.9;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 30%, #7b61ff 60%, #ff8a17 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Original Return Button */
+.return-root-btn {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 5001; /* Above all portaled elements */
+  background: rgba(15, 15, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 1.2rem;
+  height: 40px; /* Explicit height to prevent vertical stretching */
+  min-height: 40px;
+  max-height: 40px;
+  width: auto;
+  border-radius: 100px;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 900;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  white-space: nowrap; /* Prevent vertical text wrapping */
+}
+
+.return-root-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #7b61ff;
+  transform: translateX(-5px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(123, 97, 255, 0.25);
+}
+
+/* 2. Team Grid Section */
+.team-grid-section {
+  padding: 10vh 2rem 15vh;
+  max-width: 1600px; /* Increased to fix wrapping */
+  width: 100%;
+  margin: 0 auto;
+}
+
+.team-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem 2rem;
+  margin-bottom: 6rem;
+}
+
+.member-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+  padding: 2rem 1rem;
+  border-radius: 20px;
+  width: 100%;
+  flex: 1 1 220px; /* Allows up to 4-5 cards per line, shrinking when needed */
+  max-width: 280px; /* Slightly reduced to help fit 4 perfectly */
+  min-width: 220px; /* Will wrap if screen gets too small */
+  background: transparent;
+}
+
+.member-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  /* background: rgba(255, 255, 255, 0.01); */
+  box-shadow: 0 10px 40px rgba(139, 92, 246, 0.05); /* very soft glow */
+}
+
+.avatar-wrapper {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  position: relative;
+  transition: all 0.5s ease;
+  background: #0f0f0f;
+  z-index: 2;
+}
+
+/* Base without border, glow appears strongly on hover */
+.member-card:hover .avatar-wrapper {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), 0 0 60px rgba(139, 92, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.avatar-image {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+}
+
+.member-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.member-card:hover .member-name {
+  color: #fff;
+}
+
+.member-role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.member-vibe {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.member-socials {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 3;
+}
+
+.member-card:hover .member-socials {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.minim-social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.25s;
+}
+
+.minim-social-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+
+/* 3. Divider Section */
+.divider-section {
+  padding: 10vh 2rem;
+  text-align: center;
+  margin-top: 5vh;
+}
+
+.divider-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.divider-text {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
+.divider-text.highlight {
+  color: #ffffff;
+}
+
+/* 4. Team Roles Section */
+.roles-section {
+  padding: 10vh 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.role-block {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.role-block:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.role-block:hover {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+}
+
+.role-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-desc {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+/* 5. Culture Strip */
+.culture-strip {
+  padding: 15vh 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.culture-line {
+  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.4s ease, transform 0.4s ease;
+  cursor: default;
+}
+
+.culture-line:hover {
+  color: #ffffff;
+  transform: scale(1.02);
+}
+
+
+/* 6. Recruitment Section */
+.recruitment-section {
+  padding: 10vh 2rem 5vh;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.recruitment-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.recruitment-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.minim-btn-small {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.6rem 1.5rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.minim-btn-small:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+/* 7. Final CTA */
+.final-cta {
+  padding: 15vh 2rem 20vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 900;
+  margin-bottom: 3rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.cta-button {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 1.25rem 3rem;
+  border-radius: 100px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.cta-button:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.2), 0 0 40px rgba(139, 92, 246, 0.4);
+}
+
+.arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.cta-button:hover .arrow-icon {
+  transform: translateX(5px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .team-grid-section {
+    padding: 5vh 1rem 10vh;
+  }
+
+  .team-row {
+    flex-direction: row; /* Side by side */
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 2rem 1rem;
+    margin-bottom: 4rem;
+  }
+  
+  .member-card {
+    padding: 1rem 0.5rem;
+    max-width: calc(50% - 0.5rem); /* Force 2 per row */
+    min-width: 140px; /* Allow cards to shrink */
+    flex: 1 1 calc(50% - 0.5rem);
+  }
+
+  .avatar-wrapper {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 1rem;
+  }
+  
+  .member-socials {
+    top: 0.5rem;
+    right: 0.5rem;
+    gap: 0.25rem;
+  }
+
+  .minim-social-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .team-hero-title { 
+    font-size: 2.2rem; 
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .team-hero-label {
+    font-size: 0.65rem;
+    margin-bottom: 1rem;
+  }
+  
+  .member-name {
+    font-size: 1rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .member-role {
+    font-size: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .member-vibe {
+    font-size: 0.7rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .return-root-btn {
+    top: 1.25rem;
+    left: 1.25rem;
+    bottom: auto;
+    transform: none;
+    padding: 0 1rem;
+    height: 36px;
+    font-size: 0.65rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  
+  .return-root-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Ensure profile modal works on short mobile screens */
+  .profile-modal-backdrop {
+    overflow-y: auto;
+    padding: 1rem !important;
+  }
+  
+  .profile-modal-card {
+    margin: auto;
+    padding: 2rem 1.5rem !important;
+    max-height: none !important;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .team-hero-title { font-size: 1.8rem; }
+  .avatar-wrapper { width: 80px; height: 80px; }
+}

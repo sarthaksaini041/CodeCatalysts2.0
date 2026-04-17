@@ -2,35 +2,20 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 
 /**
- * Global Persistent Scroll Restoration System
- * 
- * Requirements:
- * - Save scroll position per route (route + query params)
- * - Restore on: back/forward, internal links, page reload, same-session revisit
- * - Page B opens at top (0) if never visited, otherwise restores
- * - Use persistent localStorage
- * - Handle dynamic content via MutationObserver
- * - Performance: debounced saving, lightweight listeners
- * - Cleanup: Keep only most recent 50 entries
+ * ScrollRestoration Component
+ * Handles seamless scroll restoration across sessions and navigations.
  */
 
-const STORAGE_KEY_PREFIX = 'scroll:';
-const MAX_ENTRIES = 50;
+const STORAGE_KEY_PREFIX = 'scroll-pos:';
 
 const ScrollRestoration = () => {
   const router = useRouter();
   const scrollTimeout = useRef(null);
   const activeObserver = useRef(null);
-  
-  // Use a ref to track the current path because the scroll/unload listener 
-  // runs in a stale closure inside an empty dependency useEffect.
-  const currentPath = useRef('');
-  
-  // Track if we are actively restoring scroll position so we don't 
-  // accidentally save incorrect scroll offsets (like 0) while the DOM jumps.
   const isRestoring = useRef(false);
+  const currentPath = useRef('');
 
-  // Maintain fresh copy of current location.
+  // Update current path ref on every route change
   useEffect(() => {
     currentPath.current = router.asPath || (window.location.pathname + window.location.search);
   }, [router.asPath]);
@@ -38,199 +23,178 @@ const ScrollRestoration = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Guarantee initial path
-    currentPath.current = router.asPath || (window.location.pathname + window.location.search);
-
-    // 1. Take control of native browser scroll restoration
+    // 1. Take control of native scroll restoration
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
 
-    // 2. Storage operations
+    // 2. Storage Helpers
     const savePos = (url) => {
-      // Do not save a position if we are currently force-jumping to a target
       if (isRestoring.current || !url) return;
       try {
         const data = {
           y: Math.max(0, window.scrollY),
           ts: Date.now()
         };
-        localStorage.setItem(`${STORAGE_KEY_PREFIX}${url}`, JSON.stringify(data));
+        sessionStorage.setItem(`${STORAGE_KEY_PREFIX}${url}`, JSON.stringify(data));
       } catch (e) {
-        // Handle quota issues gracefully
-        if (e.name === 'QuotaExceededError') {
-          localStorage.clear();
-        }
+        console.warn('ScrollRestoration: Failed to save position', e);
       }
     };
 
     const getSavedPos = (url) => {
       try {
-        const item = localStorage.getItem(`${STORAGE_KEY_PREFIX}${url}`);
+        const item = sessionStorage.getItem(`${STORAGE_KEY_PREFIX}${url}`);
         return item ? JSON.parse(item) : null;
       } catch (e) {
         return null;
       }
     };
 
-    // 3. Keep localStorage clean and fast
-    const performCleanup = () => {
-      try {
-        const keys = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key?.startsWith(STORAGE_KEY_PREFIX)) {
-            const item = localStorage.getItem(key);
-            try {
-              const parsed = JSON.parse(item);
-              keys.push({ key, ts: parsed.ts || 0 });
-            } catch (err) {
-              keys.push({ key, ts: 0 });
-            }
-          }
-        }
-
-        if (keys.length > MAX_ENTRIES) {
-          keys.sort((a, b) => a.ts - b.ts);
-          const toDelete = keys.slice(0, keys.length - MAX_ENTRIES);
-          toDelete.forEach(k => localStorage.removeItem(k.key));
-        }
-      } catch (e) {
-        // Fail silently
-      }
-    };
-
-    // 4. Listeners (using refs to avoid stale closures!)
-    const handleScroll = () => {
-      if (scrollTimeout.current || isRestoring.current) return;
-      
-      // Debounce saving to prevent heavy write operations
-      scrollTimeout.current = setTimeout(() => {
-        savePos(currentPath.current);
-        scrollTimeout.current = null;
-      }, 150);
-    };
-
-    const handleBeforeUnload = () => {
-      // Always store exact position right before refresh / navigation exit
-      savePos(currentPath.current);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // 5. Intelligent Restoration
-    const restorePos = (url) => {
+    // 3. Restoration Logic
+    const restorePos = (url, forceTop = false) => {
       if (!url) return;
-      
+
+      const savedItem = getSavedPos(url);
+      const targetY = (savedItem && !forceTop) ? savedItem.y : 0;
+
+      // Start restoration process
+      isRestoring.current = true;
+
+      // Disconnect existing observer if any
       if (activeObserver.current) {
         activeObserver.current.disconnect();
         activeObserver.current = null;
       }
 
-      const savedItem = getSavedPos(url);
-      
-      // Lock saving mechanism during restore
-      isRestoring.current = true;
-      const targetY = savedItem ? savedItem.y : 0;
+      // 3.1. Instant Masking to prevent jump flicker
+      // Only mask if we are actually about to jump a significant distance
+      const shouldMask = targetY > 100;
+      if (shouldMask) {
+        document.documentElement.style.visibility = 'hidden';
+      }
 
       const executeScroll = () => {
         const docHeight = document.documentElement.scrollHeight;
         const viewportHeight = window.innerHeight;
         const maxScroll = Math.max(0, docHeight - viewportHeight);
-        
-        // If content is smaller than saved pos (e.g., deleted), bind to max
         const safeY = Math.min(targetY, maxScroll);
-        window.scrollTo({ top: safeY, behavior: 'auto' }); // 'auto' is instant
-      };
-
-      // Firing early helps mask load jumps
-      executeScroll();
-
-      // Guard against infinite polling edge cases
-      let rafId;
-      let attempts = 0;
-      const maxAttempts = 15;
-
-      const checkAndScroll = () => {
-        const currentHeight = document.documentElement.scrollHeight;
-        executeScroll();
         
-        // Target achieved, or we've attempted sufficiently
-        if (currentHeight >= (targetY - 50) || attempts >= maxAttempts) {
-          if (activeObserver.current) {
-            activeObserver.current.disconnect();
-            activeObserver.current = null;
-          }
-          // Release the lock safely after DOM layout settles
-          setTimeout(() => { isRestoring.current = false; }, 100);
+        window.scrollTo({ top: safeY, behavior: 'auto' });
+
+        // Unmask immediately after the first successful jump attempt
+        if (shouldMask) {
+          requestAnimationFrame(() => {
+            document.documentElement.style.visibility = '';
+          });
         }
       };
 
-      // Ensure that as async content loads (images, suspended boundaries), scroll corrects
+      // Micro-task restoration initiation
+      executeScroll();
+
+      // Mutation observer to handle dynamic content loading
+      let attempts = 0;
+      const maxAttempts = 20;
+
       const observer = new MutationObserver(() => {
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          attempts++;
-          checkAndScroll();
-        });
+        attempts++;
+        executeScroll();
+        
+        // If we've reached the target or max attempts, stop observing
+        const currentY = window.scrollY;
+        if (Math.abs(currentY - targetY) < 5 || attempts >= maxAttempts) {
+          observer.disconnect();
+          if (activeObserver.current === observer) activeObserver.current = null;
+          setTimeout(() => { isRestoring.current = false; }, 100);
+        }
       });
 
-      observer.observe(document.body, { 
-        childList: true, 
+      observer.observe(document.body, {
+        childList: true,
         subtree: true,
-        attributes: false 
+        attributes: true // Listen for style changes that might affect height
       });
       activeObserver.current = observer;
 
-      // Fail-safe unlock (e.g. page doesn't reach target height and stops mutating)
+      // Fail-safe unlock
       setTimeout(() => {
         if (activeObserver.current === observer) {
           observer.disconnect();
           activeObserver.current = null;
         }
         isRestoring.current = false;
-      }, 1500);
+      }, 2000);
     };
 
-    // 6. Router Lifecycle
+    // 4. Event Handlers
+    const handleScroll = () => {
+      if (isRestoring.current) return;
+      
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+      scrollTimeout.current = setTimeout(() => {
+        savePos(currentPath.current);
+      }, 150);
+    };
+
+    const handleBeforeUnload = () => {
+      savePos(currentPath.current);
+    };
+
+    // 5. Router Listeners
     const handleRouteChangeStart = () => {
       savePos(currentPath.current);
     };
 
     const handleRouteChangeComplete = (url) => {
-      // Delay to ensure the new page components have mounted
+      // Small delay to let React render the new page
       requestAnimationFrame(() => {
         restorePos(url);
-        performCleanup();
       });
     };
 
+    // Attach listeners
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('beforeunload', handleBeforeUnload);
     router.events.on('routeChangeStart', handleRouteChangeStart);
     router.events.on('routeChangeComplete', handleRouteChangeComplete);
 
-    // 7. Execute initial load restoration
-    // We do not wait for Next.js router.isReady because the client HTML is heavily cached,
-    // and using window locations immediately is faster and prevents screen flashes
-    restorePos(currentPath.current);
-    performCleanup();
+    // 6. Initial Load Restoration
+    const navEntries = performance.getEntriesByType('navigation');
+    const isRefresh = navEntries.length > 0 && navEntries[0].type === 'reload';
+    const isBackForward = navEntries.length > 0 && navEntries[0].type === 'back_forward';
+    
+    // Detect if we are returning from an internal page or external
+    const isInternalNavigation = typeof document !== 'undefined' && 
+                                 document.referrer && 
+                                 document.referrer.includes(window.location.host);
+
+    // Force top ONLY if it's a truly fresh opening (not a refresh, back/forward, or internal navigation)
+    // This perfectly aligns with: New URL paste/tab = TOP, Refresh/Back/Internal Return = RESTORE
+    const forceTop = !(isRefresh || isBackForward || isInternalNavigation);
+    
+    const initialUrl = router.asPath || (window.location.pathname + window.location.search);
+    
+    // Special case: If the URL has a hash, prioritze hash scrolling unless it's a back/forward
+    const hasHash = initialUrl.includes('#');
+    if (hasHash && !isBackForward && !isRefresh) {
+      // Let the browser/page handle the hash naturally
+      isRestoring.current = false;
+    } else {
+      restorePos(initialUrl, forceTop);
+    }
 
     // Cleanup
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      
       router.events.off('routeChangeStart', handleRouteChangeStart);
       router.events.off('routeChangeComplete', handleRouteChangeComplete);
       
-      if (activeObserver.current) {
-        activeObserver.current.disconnect();
-      }
+      if (activeObserver.current) activeObserver.current.disconnect();
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      
-      isRestoring.current = false;
     };
-  }, [router.events]); // Dependency array relies only on stable router.events
+  }, [router]);
 
   return null;
 };

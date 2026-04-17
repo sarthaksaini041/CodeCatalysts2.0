@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { fadeUpVariant, staggerContainer, SplitWords } from '../utils/animations.jsx';
 import ScrollReveal from './ScrollReveal';
 import Image from 'next/image';
+import { SHIMMER_16_10 } from '../utils/imageUtils';
 
 const EASE_EXPO = [0.87, 0, 0.13, 1];
 const EASE_OUT  = [0.16, 1, 0.3, 1];
@@ -109,17 +110,13 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                     delay={0}
                     duration={1}
                     amount={0.15}
-                    className="zig-zag-content"
+                    className="zig-zag-content glass-panel"
                     style={{
                       flex: 1,
-                      padding: 'clamp(1.5rem, 4vw, 4rem)',
-                      background: 'rgba(255,255,255,0.015)',
-                      borderRadius: '40px',
-                      border: '1px solid rgba(255,255,255,0.055)',
-                      backdropFilter: 'blur(20px)',
-                      boxShadow: `0 30px 60px -12px rgba(0,0,0,0.5), 0 0 30px ${accentColor}0d`,
+                      padding: 'clamp(2rem, 4vw, 4rem)',
                       position: 'relative',
                       overflow: 'hidden',
+                      boxShadow: `0 30px 60px -12px rgba(0,0,0,0.5), 0 0 30px ${accentColor}0d`,
                     }}
                   >
                     {/* Log badge */}
@@ -138,7 +135,7 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                         textTransform: 'uppercase',
                       }}
                     >
-                      CHAPTER_LOG :: {String(i + 1).padStart(2, '0')}
+                      PHASE 0{i + 1}
                     </motion.div>
 
                     {/* Step title — word by word */}
@@ -194,6 +191,8 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                       sizes="(max-width: 768px) 100vw, 50vw"
                       style={{ objectFit: 'cover' }}
                       className="zig-zag-image"
+                      placeholder="blur"
+                      blurDataURL={SHIMMER_16_10}
                     />
                     <div style={{
                       position: 'absolute', inset: 0,
@@ -206,7 +205,7 @@ const Chapter_Journey = ({ chapter3Steps = [], siteContent = {} }) => {
                       fontFamily: 'JetBrains Mono', fontSize: '0.6rem',
                       color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', fontWeight: 700,
                     }}>
-                      STEP_{String(i + 1).padStart(2, '0')}
+                      0{i + 1}
                     </div>
                   </ScrollReveal>
                 </div>

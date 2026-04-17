@@ -20,14 +20,15 @@ const Chapter_Hero = ({ siteContent = {} }) => {
 
           {/* TAG LINE — clip-path slide up */}
           <motion.p
-            initial={{ opacity: 0, y: 12, letterSpacing: '0.2em' }}
-            animate={{ opacity: 1, y: 0, letterSpacing: 'clamp(0.2em, 2vw, 0.8em)' }}
+            initial={{ opacity: 0, y: 12, letterSpacing: '0.2em', paddingLeft: '0.2em' }}
+            animate={{ opacity: 1, y: 0, letterSpacing: 'clamp(0.2em, 2vw, 0.8em)', paddingLeft: 'clamp(0.2em, 2vw, 0.8em)' }}
             transition={{ duration: 0.8, delay: 0.1, ease: EASE_OUT }}
             style={{
+              position: 'relative',
+              top: 'clamp(1.5rem, 5vh, 2.8rem)',
               marginBottom: '2.5rem',
               fontSize: '0.78rem',
               fontWeight: 900,
-              letterSpacing: '0.8em',
               color: 'var(--primary)',
               textTransform: 'uppercase',
             }}
@@ -86,6 +87,7 @@ const Chapter_Hero = ({ siteContent = {} }) => {
               fontSize: '0.65rem',
               fontWeight: 700,
               letterSpacing: '0.35em',
+              paddingLeft: '0.35em',
               color: 'rgba(255,255,255,0.2)',
               textTransform: 'uppercase',
             }}
@@ -100,7 +102,7 @@ const Chapter_Hero = ({ siteContent = {} }) => {
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 0.28, scale: 1 }}
-          transition={{ duration: 1.0, delay: 0.1, ease: EASE_OUT }}
+          transition={{ duration: 0.4, delay: 0, ease: EASE_OUT }}
           style={{
             width: '120vh',
             height: '120vh',
