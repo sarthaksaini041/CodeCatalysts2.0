@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ArrowRight, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
-import { useCMS } from '../hooks/useCMS';
-import { supabaseServer } from '../lib/supabase-server';
-import { GitHubIcon, LinkedInIcon } from '../components/icons/TechnicalIcons';
-import Footer from '../components/Footer';
-import Button from '../components/Button';
+import { useCMS } from '@/core/hooks/useCMS';
+import { supabaseServer } from '@/core/lib/supabase-server';
+import { GitHubIcon, LinkedInIcon } from '@/shared/components/icons/TechnicalIcons';
+import Footer from '@/shared/components/Footer';
+import Button from '@/shared/components/Button';
 
 // Animations
 const fadeUp = {

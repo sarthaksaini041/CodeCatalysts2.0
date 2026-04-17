@@ -4,30 +4,30 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { Sparkles, Info } from 'lucide-react';
-import Button from '../components/Button';
-import { useCMS } from '../hooks/useCMS';
+import Button from '@/shared/components/Button';
+import { useCMS } from '@/core/hooks/useCMS';
 
-import { supabaseServer } from '../lib/supabase-server';
+import { supabaseServer } from '@/core/lib/supabase-server';
 
 // ── Above-the-fold chapters (eagerly loaded) ──────────────────
-import Chapter_Hero    from '../components/Chapter_Hero';
-import Chapter_Genesis from '../components/Chapter_Genesis';
+import Chapter_Hero    from '@/features/landing/Chapter_Hero';
+import Chapter_Genesis from '@/features/landing/Chapter_Genesis';
 
 // ── Below-the-fold chapters (lazy loaded after hydration) ─────
 // These reduce initial JS bundle and only parse when needed.
-const Chapter_Shift = dynamic(() => import('../components/Chapter_Shift'), {
+const Chapter_Shift = dynamic(() => import('@/features/landing/Chapter_Shift'), {
   ssr: true,
 });
-const Chapter_Journey = dynamic(() => import('../components/Chapter_Journey'), {
+const Chapter_Journey = dynamic(() => import('@/features/landing/Chapter_Journey'), {
   ssr: true,
 });
-const Chapter_Forge = dynamic(() => import('../components/Chapter_Forge'), {
+const Chapter_Forge = dynamic(() => import('@/features/landing/Chapter_Forge'), {
   ssr: true,
 });
-const Chapter_Architects = dynamic(() => import('../components/Chapter_Architects'), {
+const Chapter_Architects = dynamic(() => import('@/features/landing/Chapter_Architects'), {
   ssr: true,
 });
-const Footer = dynamic(() => import('../components/Footer'), {
+const Footer = dynamic(() => import('@/shared/components/Footer'), {
   ssr: true,
 });
 

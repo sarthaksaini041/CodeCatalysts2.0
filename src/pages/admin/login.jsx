@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Mail, Lock, AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
-import { signIn } from '../../services/admin';
+import { signIn } from '@/core/services/admin';
 
 export default function AdminLoginPage() {
   const router = useRouter();

@@ -8,24 +8,24 @@ import {
   fetchApplications,
   updateApplicationStatus,
   deleteApplication,
-} from '../../services/admin';
-import { useDebounce } from '../../hooks/useDebounce';
+} from '@/core/services/admin';
+import { useDebounce } from '@/core/hooks/useDebounce';
 
 // Lazy-load heavy components
-const AdminLayout = dynamic(() => import('../../components/admin/layout/AdminLayout'), { ssr: false });
-const DashboardView = dynamic(() => import('../../components/admin/dashboard/DashboardView'), { ssr: false });
-const ApplicationsView = dynamic(() => import('../../components/admin/applications/ApplicationsView'), { ssr: false });
-const ApplicationDetail = dynamic(() => import('../../components/admin/applications/ApplicationDetail'), { ssr: false });
+const AdminLayout = dynamic(() => import('@/features/admin/layout/AdminLayout'), { ssr: false });
+const DashboardView = dynamic(() => import('@/features/admin/dashboard/DashboardView'), { ssr: false });
+const ApplicationsView = dynamic(() => import('@/features/admin/applications/ApplicationsView'), { ssr: false });
+const ApplicationDetail = dynamic(() => import('@/features/admin/applications/ApplicationDetail'), { ssr: false });
 
 // CMS Editors
-const HeroEditor = dynamic(() => import('../../components/admin/cms/HeroEditor'), { ssr: false });
-const GenesisEditor = dynamic(() => import('../../components/admin/cms/GenesisEditor'), { ssr: false });
-const ShiftEditor = dynamic(() => import('../../components/admin/cms/ShiftEditor'), { ssr: false });
-const JourneyEditor = dynamic(() => import('../../components/admin/cms/JourneyEditor'), { ssr: false });
-const ForgeEditor = dynamic(() => import('../../components/admin/cms/ForgeEditor'), { ssr: false });
-const ArchitectsEditor = dynamic(() => import('../../components/admin/cms/ArchitectsEditor'), { ssr: false });
-const TeamEditor = dynamic(() => import('../../components/admin/cms/TeamEditor'), { ssr: false });
-const FooterEditor = dynamic(() => import('../../components/admin/cms/FooterEditor'), { ssr: false });
+const HeroEditor = dynamic(() => import('@/features/cms/HeroEditor'), { ssr: false });
+const GenesisEditor = dynamic(() => import('@/features/cms/GenesisEditor'), { ssr: false });
+const ShiftEditor = dynamic(() => import('@/features/cms/ShiftEditor'), { ssr: false });
+const JourneyEditor = dynamic(() => import('@/features/cms/JourneyEditor'), { ssr: false });
+const ForgeEditor = dynamic(() => import('@/features/cms/ForgeEditor'), { ssr: false });
+const ArchitectsEditor = dynamic(() => import('@/features/cms/ArchitectsEditor'), { ssr: false });
+const TeamEditor = dynamic(() => import('@/features/cms/TeamEditor'), { ssr: false });
+const FooterEditor = dynamic(() => import('@/features/cms/FooterEditor'), { ssr: false });
 
 const CMS_TABS = {
   hero: HeroEditor,

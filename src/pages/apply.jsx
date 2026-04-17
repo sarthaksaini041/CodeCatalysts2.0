@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import { useCMS } from '../hooks/useCMS';
+import { useCMS } from '@/core/hooks/useCMS';
 import { motion } from 'framer-motion';
-import Button from '../components/Button';
+import Button from '@/shared/components/Button';
 import { useRouter } from 'next/router';
 import { AlertCircle } from 'lucide-react';
 
-const ApplyPageContent = dynamic(() => import('../components/content/ApplyPageContent'), { ssr: false });
+const ApplyPageContent = dynamic(() => import('@/features/apply/ApplyPageContent'), { ssr: false });
 
 export default function Apply() {
   const { siteContent, loading } = useCMS();
