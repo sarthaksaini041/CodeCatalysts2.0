@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Edit3, Trash2, ArrowUp, ArrowDown, Users, Crown, Shield, User } from 'lucide-react';
+import { Plus, Edit3, Trash2, Users, Crown, Shield, User } from 'lucide-react';
 import AdminInput from '@/features/admin/shared/AdminInput';
 import AdminButton from '@/features/admin/shared/AdminButton';
 import AdminModal from '@/features/admin/shared/AdminModal';
@@ -35,7 +35,6 @@ const TeamEditor = () => {
       const { data, error } = await supabase
         .from('team_members')
         .select('*')
-        .order('order_index', { ascending: true })
         .order('name', { ascending: true });
       if (error) throw error;
       setMembers(data || []);
@@ -67,12 +66,12 @@ const TeamEditor = () => {
       member || {
         name: '',
         role: 'Member',
-        department: '',
+        university: '',
+        tagline: '',
         bio: '',
         image_url: '',
         linkedin: '',
         github: '',
-        instagram: '',
       }
     );
     setEditing(member || {});
@@ -81,10 +80,7 @@ const TeamEditor = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const payload = {
-        ...formData,
-        order_index: editing?.id ? editing.order_index : members.length,
-      };
+      const payload = { ...formData };
 
       if (editing?.id) {
         const { id, created_at, ...updateData } = payload;
@@ -116,19 +112,7 @@ const TeamEditor = () => {
     loadData();
   };
 
-  const moveItem = async (index, direction) => {
-    const arr = [...members];
-    const target = index + direction;
-    if (target < 0 || target >= arr.length) return;
-    [arr[index], arr[target]] = [arr[target], arr[index]];
-    const updates = arr.map((m, idx) => ({ ...m, order_index: idx }));
-    await supabase.from('team_members').upsert(updates);
-    triggerRevalidation('/team');
-    loadData();
-  };
 
-  // Get flat index for a member in the full array (for move operations)
-  const getMemberIndex = (memberId) => members.findIndex((m) => m.id === memberId);
 
   if (loading) {
     return (
@@ -172,9 +156,7 @@ const TeamEditor = () => {
 
             {/* Members grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {roleMembers.map((member) => {
-                const idx = getMemberIndex(member.id);
-                return (
+              {roleMembers.map((member) => (
                   <div key={member.id} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm group hover:border-slate-300 transition-colors">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-slate-200">
@@ -191,20 +173,17 @@ const TeamEditor = () => {
                         </span>
                       </div>
                     </div>
-                    {member.department && (
+                    {member.university && (
                       <span className="inline-flex px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[11px] font-medium">
-                        {member.department}
+                        {member.university}
                       </span>
                     )}
                     <div className="flex items-center justify-end gap-0.5 mt-3 pt-3 border-t border-slate-100 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => moveItem(idx, -1)} className="p-1.5 rounded hover:bg-slate-100 text-slate-400"><ArrowUp size={14} /></button>
-                      <button onClick={() => moveItem(idx, 1)} className="p-1.5 rounded hover:bg-slate-100 text-slate-400"><ArrowDown size={14} /></button>
                       <button onClick={() => openModal(member)} className="p-1.5 rounded hover:bg-slate-100 text-slate-400"><Edit3 size={14} /></button>
                       <button onClick={() => handleDelete(member.id)} className="p-1.5 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>
                     </div>
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
         );
@@ -223,9 +202,7 @@ const TeamEditor = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {groupedMembers['Unassigned'].map((member) => {
-              const idx = getMemberIndex(member.id);
-              return (
+            {groupedMembers['Unassigned'].map((member) => (
                 <div key={member.id} className="bg-white border border-red-200 rounded-lg p-4 shadow-sm group hover:border-red-300 transition-colors">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-red-200">
@@ -245,8 +222,7 @@ const TeamEditor = () => {
                     <button onClick={() => handleDelete(member.id)} className="p-1.5 rounded hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>
                   </div>
                 </div>
-              );
-            })}
+              ))}
           </div>
         </div>
       )}
@@ -282,12 +258,12 @@ const TeamEditor = () => {
               options={ROLE_OPTIONS}
             />
           </div>
-          <AdminInput label="Department" value={formData.department || ''} onChange={(e) => setFormData({ ...formData, department: e.target.value })} placeholder="e.g. Engineering" />
+          <AdminInput label="University" value={formData.university || ''} onChange={(e) => setFormData({ ...formData, university: e.target.value })} placeholder="e.g. Delhi University" />
+          <AdminInput label="Tagline" value={formData.tagline || ''} onChange={(e) => setFormData({ ...formData, tagline: e.target.value })} placeholder="e.g. Full-Stack Developer" />
           <AdminInput label="Bio" type="textarea" rows={3} value={formData.bio || ''} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <AdminInput label="LinkedIn" value={formData.linkedin || ''} onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })} placeholder="URL" />
             <AdminInput label="GitHub" value={formData.github || ''} onChange={(e) => setFormData({ ...formData, github: e.target.value })} placeholder="URL" />
-            <AdminInput label="Instagram" value={formData.instagram || ''} onChange={(e) => setFormData({ ...formData, instagram: e.target.value })} placeholder="URL" />
           </div>
         </div>
       </AdminModal>

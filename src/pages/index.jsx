@@ -85,7 +85,7 @@ export async function getStaticProps() {
     supabaseServer.from('chapter3_steps').select('*').order('order_index', { ascending: true }),
     supabaseServer.from('projects').select('*').order('order_index', { ascending: true }),
     supabaseServer.from('chapter5_showcase').select('*').order('order_index', { ascending: true }),
-    supabaseServer.from('team_members').select('*').order('order_index', { ascending: true }).order('name', { ascending: true }),
+    supabaseServer.from('team_members').select('*').order('name', { ascending: true }),
     supabaseServer.from('footer_settings').select('*').maybeSingle(),
   ]);
 

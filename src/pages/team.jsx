@@ -132,7 +132,7 @@ export async function getStaticProps() {
     { data: footerSettings },
   ] = await Promise.all([
     supabaseServer.from('site_content').select('*'),
-    supabaseServer.from('team_members').select('*').order('order_index', { ascending: true }).order('name', { ascending: true }),
+    supabaseServer.from('team_members').select('*').order('name', { ascending: true }),
     supabaseServer.from('footer_settings').select('*').maybeSingle(),
   ]);
 

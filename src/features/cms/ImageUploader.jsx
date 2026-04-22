@@ -35,12 +35,12 @@ const ImageUploader = ({
       const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('images')
+        .from('website-assets')
         .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from('images').getPublicUrl(fileName);
+      const { data } = supabase.storage.from('website-assets').getPublicUrl(fileName);
       const publicUrl = data.publicUrl;
 
       setPreview(publicUrl);

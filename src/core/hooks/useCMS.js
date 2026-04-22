@@ -61,7 +61,7 @@ export const CMSProvider = ({ children, initialData = {} }) => {
                 supabase.from('chapter3_steps').select('*').order('order_index', { ascending: true }),
                 supabase.from('projects').select('*').order('order_index', { ascending: true }),
                 supabase.from('chapter5_showcase').select('*').order('order_index', { ascending: true }),
-                supabase.from('team_members').select('*').order('order_index', { ascending: true }).order('name', { ascending: true }),
+                supabase.from('team_members').select('*').order('name', { ascending: true }),
                 supabase.from('footer_settings').select('*').maybeSingle()
             ]);
 
